@@ -1,45 +1,94 @@
-# Pending Project Name (MERN Stack)
-## TO BE FULLY UPDATED!!!
-
-See live demo [here](https://alt-west-connect-neighbourhood-helper.vercel.app/).
-
-**Note**: The back end is hosted on Render's free tier - please allow ~10 seconds for the initial load while the server spins up from the cold start.
+# The Greenroom, Where Artists Meet Their Stage (MERN Stack)
 
 ## 1. Project Overview
 
-Neighbourhood Helper is a community-driven platform where users can request or offer small favours. Whether you need a ride, groceries, or quick assistance, the app connects people in Alt-West Leipzig willing to help within their neighbourhood.
+The Greenroom is a web platform connecting artists and small venues in Berlin for performances, jam sessions, and gigs. It provides a space where musicians, comedians, poets, and other performers can showcase their work and easily find performance opportunities, while venues can discover new talent and manage their bookings efficiently.
 
-Users can:
+## 2. Core Features
 
-- Browser help requests
-- Register and login
-- Offer help
-- Ask for help
-- Edit and delete help requests
-- Accept or decline help offers from other users
-- Edit their user account data (e.g., username, password)
-- Delete their own accounts and related requests and offers
+### User Accounts & Authentication
 
-## 2. Core Features & User Stories
+- User Registration & Login (Artists & Venues)
+- Welcome Email upon Signup (No email verification required)
+- Role Selection (Artist or Venue) upon Signup
+- Guest Access (Limited Browsing, No Chat or Booking Access)
 
-- As a user, I want to browse help requests without needing an account.
-- As a user, I want to register and log in so I can request and offer help.
-- As a user, I want to post help requests (ask for help) and see my requests displayed on the homepage.
-- As a user, I want to edit and delete my requests.
-- As a user, I want to offer help on one or many existing requests (these then are marked as "Helped" and no one else can offer help).
-- As a user, I want to see who offered help on my requests.
-- As a user, I want to be able accept or decline offers.
-- As a user, I want to see a history of my past requests/offers.
-- As a user, I want to edit my data (e.g., username, password).
-- As a user, I want to delete my account and all related data.
-- As a user, I want to log out securely.
+### Profile Management (Artists & Venues)
+- Edit profile information (bio, media, links, dates, revenue split)
+- Edit account settings (change email, update profile picture, update location)
+- Change password via user dashboard
+- Delete account and all associated data
 
-#### Possible future features:
+### Artist and Venue Features
 
-- As a user, I want to upload a user profile picture to display on my requests in the homepage.
-- As a user, I want to filter requests by category (e.g., groceries, rides, errands).
-- As a user, I want to receive a notification when someone offers help on my requests.
-- As a user, I want to contact other users directly via the platform.
+- Create bio and upload media and links about their work/space
+- Browse venues and artists and view individual profiles
+- Send & receive collaboration invitations
+- Chat with venues and artists (chat is unlocked after sending/receiving an invitation)
+- After chatting, venues send an offical offer to artists and artists accept/decline it
+- Both receive a confirmation email is offer is accepted
+- User dashboard is updated to show booked gigs
+- Rate and review artists and venues
+
+### Platform-Wide Features
+
+- Search & filter system with text search for artist and venue names, and dropdown filters for location (neighbourhood/district), perfomance type (e.g., Music), Genres (e.g., Stand-up) and venue type (e.g., Bar)
+- User dashboard (upcoming & past bookings, profile management)
+- Chat system for artist-venue interactions (socket.io or notifications received in the user dashboard)
+- Responsive design (accessible across devices)
+
+### Possible Future Features
+
+- Admin controls
+- Notifications system (for new messages, invitations, and gig offers)
+
+## 3. User Stories
+
+Users can be artists, venues or guests.
+
+### Artist User Stories
+
+- As an artist, I want to register and receive a confirmation by email (welcome message only, no confirmation needed). I am redirected to homepage.
+- As an artist, I want to create a profile so that I can showcase my work and attract venue opportunities.
+- As an artist, I want to upload videos, photos, and links so that venues can see examples of my performances.
+- As an artist, I want to browse available venues and see their listed gig dates and revenue split so that I can decide whether to apply.
+- As an artist, I want to browse other artists.
+- As an artist, I want to receive invitations from venues.
+- As an artist, I want to send invitations to venues.
+- As an artist, I want to chat with venues after sending or receiving an invitation so that I can discuss performance details like dates before making a decision. Chat is only available after sending or receiving an invitation.
+- As an artist, I want to receive an official offer from the venue in the chat, suggesting the gig date, time, and agreed revenue split, so that I can review and accept or decline it directly in the chat.
+- As an artist, I want to accept or decline an official offer from the venue within the chat and receive a confirmation via email with the booking details. If offer is declined, no confirmation email is sent.
+- As an artist, I want to see my upcoming and past bookings in my user dashboard with the booking details.
+- As an artist, I want to keep the chat open after accepting a gig so that I can coordinate performance details with the venue.
+- As an artist, I want to leave reviews and ratings for venues so that others can see their performance history.
+- As an artist, I want to receive feedback and ratings from venues so that I can build credibility on the platform.
+
+### Venue User Stories
+
+- As a venue owner, I want to register and receive a confirmation by email (welcome message only, no confirmation needed). I am redirected to homepage.
+- As a venue owner, I want to create a profile so that artists can learn about my venue and available gigs.
+- As a venue owner, I want to upload photos of my venue so that artists can see the performance space.
+- As a venue owner, I want to define the revenue split and list general available gig dates (e.g., Fridays and Saturdays) on my profile so that artists can see detail before applying.
+- As a venue owner, I want to browse available artists.
+- As a venue owner, I want to receive invitations from artists.
+- As a venue owner, I want to send invitations to artists.
+- As a venue owner, I want to chat with artists after sending or receiving an invitation so that we can discuss performance details like dates before making a decision. Chat is only available after sending or receiving an invitation.
+- As a venue owner, I want to send an official offer to an artist in the chat, confirming the gig date, time, and agreed revenue split, so that they can review and accept or decline it directly in the chat.
+- As a venue owner, I want to receive a confirmation in the chat when an artist accepts or declines my offer so that I know the status of the booking.
+- As a venue owner, I want to receive a confirmation email with booking details when an artist accepts an offer. If the artist declines, no confirmation email is sent.
+- As a venue owner, I want to see my upcoming and past bookings in my user dashboard with the booking details.
+- As a venue owner, I want to keep the chat open after confirming a booking so that I can coordinate performance details with the artist.
+- As a venue owner, I want to leave reviews and ratings for artists so that others can see their performance history.
+- As a venue owner, I want to receive reviews and ratings from artists so that I can build credibility on the platform.
+
+### Guest User Stories
+
+- As a guest, I want to see a homepage explaining how The Greenroom works so that I understand the platform’s purpose before signing up.
+- As a guest, I want to access the registration and login pages so that I can create an account when I’m ready.
+- As a guest, I want to browse venue profiles so that I can explore potential performance spaces before signing up.
+- As a guest, I want to browse artist profiles so that I can see the types of performers available on the platform.
+- As a guest, I want to see a homepage explaining how The Greenroom works so that I understand the platform’s purpose before signing up. Registred users can also do that.
+- As a guest, I want to see venue and artist profiles so that I can get a sense of the platform without being able to send invitations/collaboration requests.
 
 ## 3. Main Pages
 
@@ -126,15 +175,15 @@ Note: Zip Code is already set when user registers.
 
 #### 5.1. User Routes (`/users`)
 
-| Method | Endpoint        | Description                                                  | Logged in User? |
-| ------ | -----------     | ------------------------------------------------------       | --------------- |
-| POST   | `/register`     | Create a new user                                            | ❌ No           |
-| POST   | `/login`        | Authenticate user & return JWT token                         | ❌ No           |
-| POST   | `/login/google` | Authenticate user & return JWT token (registration & login)  | ❌ No           |
-| GET    | `/logout`       | Log out user                                                 | ✅ Yes          |
-| GET    | `/data`         | Fetch logged-in user data                                    | ✅ Yes          |
-| PATCH  | `/update`       | Update user data                                             | ✅ Yes          |
-| DELETE | `/delete`       | Delete user account and all related offers & requests.       | ✅ Yes          |
+| Method | Endpoint        | Description                                                 | Logged in User? |
+| ------ | --------------- | ----------------------------------------------------------- | --------------- |
+| POST   | `/register`     | Create a new user                                           | ❌ No           |
+| POST   | `/login`        | Authenticate user & return JWT token                        | ❌ No           |
+| POST   | `/login/google` | Authenticate user & return JWT token (registration & login) | ❌ No           |
+| GET    | `/logout`       | Log out user                                                | ✅ Yes          |
+| GET    | `/data`         | Fetch logged-in user data                                   | ✅ Yes          |
+| PATCH  | `/update`       | Update user data                                            | ✅ Yes          |
+| DELETE | `/delete`       | Delete user account and all related offers & requests.      | ✅ Yes          |
 
 #### How will the frontend use these?
 
@@ -144,14 +193,14 @@ Note: Zip Code is already set when user registers.
 
 #### 5.2. Requests Routes (`/requests`)
 
-| Method | Endpoint          | Description                            | Logged in User? |
-| ------ | ----------------- | -------------------------------------- | --------------- |
-| GET    | `/`               | Display all requests on homepage       | ❌ No           |
-| GET    | `/:id`            | View details of a specific request     | ❌ No           |
-| GET    | `/my-requests`    | Fetch all requests from logged-in user | ✅ Yes          |
-| POST   | `/`               | Create a new help request              | ✅ Yes          |
-| PATCH  | `/:id`            | Request creator edits their request    | ✅ Yes          |
-| DELETE | `/:id`            | Request creator deletes their request  | ✅ Yes          |
+| Method | Endpoint       | Description                            | Logged in User? |
+| ------ | -------------- | -------------------------------------- | --------------- |
+| GET    | `/`            | Display all requests on homepage       | ❌ No           |
+| GET    | `/:id`         | View details of a specific request     | ❌ No           |
+| GET    | `/my-requests` | Fetch all requests from logged-in user | ✅ Yes          |
+| POST   | `/`            | Create a new help request              | ✅ Yes          |
+| PATCH  | `/:id`         | Request creator edits their request    | ✅ Yes          |
+| DELETE | `/:id`         | Request creator deletes their request  | ✅ Yes          |
 
 #### How will the frontend use these?
 
@@ -163,15 +212,15 @@ Note: Zip Code is already set when user registers.
 
 #### 5.3. Offers Routes (`/offers`)
 
-| Method | Endpoint           | Description                                      | Logged in User? |
-| ------ | ------------------ | ------------------------------------------------ | --------------- |
-| GET    | `/my-offers`       | Fetch all offers from logged-in user             | ✅ Yes          |
-| POST   | `/:requestId`      | Post an offer on a request                       | ✅ Yes          |
-| GET    | `/:requestId`      | Fetch all offers for a specific request          | ✅ Yes          |
-| DELETE | `/cancel/:offerId` | User cancels own offers                          | ✅ Yes          |
-| DELETE | `/reject/:offerId` | User rejects offers from other users             | ✅ Yes          |
-| PATCH  | `/accept/:offerId` | Request owner accepts an offer                   | ✅ Yes          |
-| PATCH  | `/:offerId`        | Offer owner edits their offer (NOT APPLIED)      | ✅ Yes          |
+| Method | Endpoint           | Description                                 | Logged in User? |
+| ------ | ------------------ | ------------------------------------------- | --------------- |
+| GET    | `/my-offers`       | Fetch all offers from logged-in user        | ✅ Yes          |
+| POST   | `/:requestId`      | Post an offer on a request                  | ✅ Yes          |
+| GET    | `/:requestId`      | Fetch all offers for a specific request     | ✅ Yes          |
+| DELETE | `/cancel/:offerId` | User cancels own offers                     | ✅ Yes          |
+| DELETE | `/reject/:offerId` | User rejects offers from other users        | ✅ Yes          |
+| PATCH  | `/accept/:offerId` | Request owner accepts an offer              | ✅ Yes          |
+| PATCH  | `/:offerId`        | Offer owner edits their offer (NOT APPLIED) | ✅ Yes          |
 
 #### How will the frontend use these?
 
@@ -276,15 +325,15 @@ Note: Zip Code is already set when user registers.
 
 #### Pages
 
-| Page              | Description                                                                  |
-| ----------------- | ---------------------------------------------------------------------------- |
-| `Register.jsx`    | Create an account                                                            |
-| `Login.jsx`       | Securely log in                                                              |
-| `Homepage.jsx`    | Browse help requests & "Need Help?" button                                   |
-| `AskForHelp.jsx`  | Post a help request                                                          |
-| `About.jsx`       | About the project and the community                                          |
-| `MyAccount.jsx`   | User dashboard (see/edit/delete requests, offers, user data, & user account) |
-| `NotFound.jsx`    | A 404 page for invalid URLs                                                  |
+| Page             | Description                                                                  |
+| ---------------- | ---------------------------------------------------------------------------- |
+| `Register.jsx`   | Create an account                                                            |
+| `Login.jsx`      | Securely log in                                                              |
+| `Homepage.jsx`   | Browse help requests & "Need Help?" button                                   |
+| `AskForHelp.jsx` | Post a help request                                                          |
+| `About.jsx`      | About the project and the community                                          |
+| `MyAccount.jsx`  | User dashboard (see/edit/delete requests, offers, user data, & user account) |
+| `NotFound.jsx`   | A 404 page for invalid URLs                                                  |
 
 #### State Management (Context API & Reducers)
 
