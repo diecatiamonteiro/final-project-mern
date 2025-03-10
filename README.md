@@ -14,6 +14,7 @@ The Greenroom is a web platform connecting artists and small venues in Berlin fo
 - Guest Access (Limited Browsing, No Chat or Booking Access)
 
 ### Profile Management (Artists & Venues)
+
 - Edit profile information (bio, media, links, dates, revenue split)
 - Edit account settings (change email, update profile picture, update location)
 - Change password via user dashboard
@@ -81,94 +82,161 @@ Users can be artists, venues or guests.
 - As a venue owner, I want to leave reviews and ratings for artists so that others can see their performance history.
 - As a venue owner, I want to receive reviews and ratings from artists so that I can build credibility on the platform.
 
+- No unnecessary restrictions—artists and venues can freely send offers and chat.
+
 ### Guest User Stories
 
-- As a guest, I want to see a homepage explaining how The Greenroom works so that I understand the platform’s purpose before signing up.
-- As a guest, I want to access the registration and login pages so that I can create an account when I’m ready.
+- As a guest, I want to see a homepage explaining how The Greenroom works so that I understand the platform's purpose before signing up.
+- As a guest, I want to access the registration and login pages so that I can create an account when I'm ready.
 - As a guest, I want to browse venue profiles so that I can explore potential performance spaces before signing up.
 - As a guest, I want to browse artist profiles so that I can see the types of performers available on the platform.
-- As a guest, I want to see a homepage explaining how The Greenroom works so that I understand the platform’s purpose before signing up. Registred users can also do that.
+- As a guest, I want to see a homepage explaining how The Greenroom works so that I understand the platform's purpose before signing up. Registred users can also do that.
 - As a guest, I want to see venue and artist profiles so that I can get a sense of the platform without being able to send invitations/collaboration requests.
 
-## 3. Main Pages
+## 3. Pages in the FE
 
 - **Register Page**: Sign up for an account
 - **Login Page**: Securely log in
 - **Homepage**: Browse all help requests and offer help
-- **Ask for Help Page**: Post a help request on homepage
 - **About Page**: Learn more about the project and the community
-- **My Account Page (User Dashboard)**:
-  - User Information
-  - My Requests (requests the user has posted)
-  - My Offers (requests the user has offered to help with)
+- **Venues Page**: Browse all venues available for gigs
+- **Artists Page**: Browse all the artists available for performance
+- **Individual Venue Page**: Venue profile with links, media, description and split revenue
+- **Individual Artist Page**: Artist profile with links, media and description
+- **User Dashboard**:
+  - User Profile
+  - Account Information
+  - Upcoming and past collaborations
+  - Offers received
+  - Offers sent
+- **Chat Page**: Artists and venues can chat and close deals
+- **Not Found Page**: A 404 page for invalid URLs
 
 ## 4. Data Structure (MongoDB & Mongoose)
 
-#### 4.1. User Collection (to store user information)
+#### 4.1. User Collection (Manages authentication for both artists & venues)
 
 ```js
 {
-  username: { type: String, required, unique },
-  firstName: { type: String, required },
-  lastName: { type: String, required },
-  email: { type: String, required, unique },
-  password: { type: String, required },
-  zipCode: {
-    type: String,
-    enum: [
-      "04177 Lindenau, Alt-Lindenau, Neu-Lindenau",
-      "04178 Böhlitz-Ehrenberg, Rückmarsdorf, Burghausen",
-      "04179 Leutzsch",
-    ],
-    required,
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, enum: ["artist", "venue"], required: true }, // Defines account type
   },
-  requests: [{ type: Schema.Types.ObjectId, ref: "Request" }], // Requests posted by the user
-  offers: [{ type: Schema.Types.ObjectId, ref: "Offer" }], // Offers made by the user
-  offersReceived: [{ type: Schema.Types.ObjectId, ref: "Offer" }], // Offers received on user's requests
-  createdAt: { type: Date, default: Date.now },
+{ timestamps: true }
+
+```
+
+#### UPDATED User Collection (Stores artist-specific data)
+
+```js
+{
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, enum: ["artist", "venue"], required: true }, // Defines account type
+    name: { type: String },
+    description: { type: String }, // bio & description
+    type: [{ type: String }], // performance & venue
+    profilePicture: { type: String, default: "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v1700000000/default-avatar.png"}, // Default Cloudinary image
+    media: [
+      {
+        url: { type: String }, // YouTube, Spotify, SoundCloud LINKS only
+        platform: { type: String, enum: ["YouTube", "Spotify", "SoundCloud", "Other"] },
+      },
+    ], // for both artists & venues
+    images: [{ type: String }], // Cloudinary URLs to store artist performing images
+    socialLinks: [{ type: String }], // Artist's social media and portfolio
+    calendar: [] // For venues only
+    bookedDates: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }] // for venues & artists?
+  },
+{ timestamps: true }
+```
+
+If user registers as artist, render the form wiht media; if not, with photo only.
+In register controller user only email, pass & role; in the createProfile controller use the remaining collection/schema fields. Hence they are not required: true, so the user can register without filling these out.
+
+AVAILABLE DATES COLLECTION
+```js
+{
+    users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Participants
 }
 ```
 
-#### 4.2. Request Collection (to store help requests information)
+
+#### 4.2. Artist Collection (Stores artist-specific data)
 
 ```js
 {
-  userId: { type: Schema.Types.ObjectId, ref: "User" }, // Who posted it
-  description: { type: String, required },
-  category: {
-    type: String,
-    enum: [
-      "Errands",
-      "Groceries",
-      "Transport",
-      "Household",
-      "Pet Care",
-      "Childcare",
-      "Tutoring",
-      "Tech Support",
-      "Moving",
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    name: { type: String, required: true },
+    bio: { type: String, required: true },
+    performanceTypes: [{ type: String, required: true }],
+    profilePicture: { type: String, default: "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v1700000000/default-avatar.png"}, // Default Cloudinary image
+    media: [
+      {
+        url: { type: String, required: true }, // YouTube, Spotify, SoundCloud LINKS only
+        platform: { type: String, enum: ["YouTube", "Spotify", "SoundCloud", "Other"] },
+      },
     ],
-    default: "Errands",
+    images: [{ type: String }], // Cloudinary URLs to store artist performing images
+    socialLinks: [{ type: String }], // Artist's social media and portfolio
   },
-  when: { type: String, required },
-  status: { type: String, enum: ["open", "helped"], default: "open" },
-  acceptedHelper: { type: Schema.Types.ObjectId, ref: "User" }, // Who helped (not the user who posted the request)
-  receivedOffers: [{ type: Schema.Types.ObjectId, ref: "Offer" }], // Offers received on a request (not the offers made by the user)
-  createdAt: { type: Date, default: Date.now },
-}
+{ timestamps: true }
 ```
 
-Note: Zip Code is already set when user registers.
+**Create a dropdown in the FE only with the following:**
 
-#### 4.3. Offer Collection (to store help offers information)
+- performanceType: ["Music", "Comedy", "Poetry & Spoken Word", "Dance", "Theater", "Experimental & Visual", "Other"]
+
+**!Use react-player library**: can automatically detect a link (YouTube, Spotify, SoundCloud, etc.) and render it as an embedded player. Alternatively, use react-embed or react-oembed-container.
+
+#### 4.3. Venue Collection (Stores venue-specific data)
 
 ```js
 {
-  requestId: { type: Schema.Types.ObjectId, ref: "Request" }, // To which request
-  helperId: { type: Schema.Types.ObjectId, ref: "User" }, // Who offered help
-  message: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
-}
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    name: { type: String, required: true },
+    location: { type: String, required: true }, // address typed by user
+    description: { type: String, required: true },
+    venueType: { type: String, required: true },
+    revenueSplit: { type: { type: String },
+    profilePicture: { type: String, default: "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v1700000000/default-venue.png" }, // Default Cloudinary image
+    images: [{ type: String }], // Photos of the venue
+    socialLinks: [{ type: String }], // Artist's social media and portfolio
+  },
+{ timestamps: true }
+```
+
+**Create a dropdown in the FE only with the following:**
+
+- venueType: ["Bar", "Café", "Club", "Pub", "Restaurant", "Live Music Venue", "Theater", "Art Gallery", "Community Center", "Cultural Space", "Outdoor Venue", "Concert Hall", "Jazz Club", "Underground Venue", "Co-working Space", "Bookstore", "Hotel Lounge", "Rooftop Venue", "Pop-up Space", "Other",]
+- revenueSplit: ["100% to Artist", "80/20 (Artist/Venue)", "70/30 (Artist/Venue)", "50/50", "Other"]
+
+#### 4.4. Message Collection (Stores chat messages & offers)
+
+```js
+{
+    senderId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    receiverId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    messages: [{ type: String }], // Normal message flow content
+    messageType: { type: String, enum: ["text", "offer"], default: "text" }, // Regular message or an offer
+    offers: {},
+    gigDate: { type: Date }, // Only for offer messages
+    revenueSplit: { type: String }, // Only for offer messages
+    offerStatus: { type: String, enum: ["pending", "accepted"], default: "pending" }, // Tracks accepted offers (when rejected, offer remain in chat but is not stored as rejected in the DB)
+    createdAt: { type: Date, default: Date.now },
+  }
+```
+
+#### 4.5. Booking Collection (Stores only confirmed bookings, i.e. accepted offers in the chat)
+
+```js
+ {
+    artistId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    venueId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    gigDate: { type: Date, required: true },
+    revenueSplit: { type: String, required: true }, // from Message model (message.revenueSplit)
+    createdAt: { type: Date, default: Date.now },
+  }
 ```
 
 ## 5. Backend API Design (Express & MongoDB)
@@ -181,36 +249,22 @@ Note: Zip Code is already set when user registers.
 | POST   | `/login`        | Authenticate user & return JWT token                        | ❌ No           |
 | POST   | `/login/google` | Authenticate user & return JWT token (registration & login) | ❌ No           |
 | GET    | `/logout`       | Log out user                                                | ✅ Yes          |
-| GET    | `/data`         | Fetch logged-in user data                                   | ✅ Yes          |
+| GET    | `/data`         | Fetch logged-in user data ????                              | ✅ Yes          |
 | PATCH  | `/update`       | Update user data                                            | ✅ Yes          |
-| DELETE | `/delete`       | Delete user account and all related offers & requests.      | ✅ Yes          |
+| DELETE | `/delete`       | Delete user account and all related data                    | ✅ Yes          |
 
-#### How will the frontend use these?
-
-- The register & login pages will use `/register` and `/login`.
-- The frontend will store the JWT token in localStorage or cookies to authenticate the user.
-- After login, the app will use `GET /data` to show the logged-in user's profile or dashboard, and to keep user logged in after refreshing page.
-
-#### 5.2. Requests Routes (`/requests`)
+#### 5.2. Artist Routes (`/artists`)
 
 | Method | Endpoint       | Description                            | Logged in User? |
 | ------ | -------------- | -------------------------------------- | --------------- |
-| GET    | `/`            | Display all requests on homepage       | ❌ No           |
-| GET    | `/:id`         | View details of a specific request     | ❌ No           |
+| GET    | `/`            | Display all artists on artists page    | ❌ No           |
+| GET    | `/:id`         | Display individual artist profile page | ❌ No           |
 | GET    | `/my-requests` | Fetch all requests from logged-in user | ✅ Yes          |
 | POST   | `/`            | Create a new help request              | ✅ Yes          |
 | PATCH  | `/:id`         | Request creator edits their request    | ✅ Yes          |
 | DELETE | `/:id`         | Request creator deletes their request  | ✅ Yes          |
 
-#### How will the frontend use these?
-
-- The homepage (`GET /requests`) will display all requests.
-- The request card (`GET /requests/:id`) will show details of a specific request.
-- The create request page (`POST /requests`) will let users add a new request.
-- The edit request page (`PATCH /requests/:id`) will allow modifying a request.
-- A delete button (`DELETE /requests/:id`) will let users remove their request.
-
-#### 5.3. Offers Routes (`/offers`)
+#### 5.3. Venue Routes (`/venues`)
 
 | Method | Endpoint           | Description                                 | Logged in User? |
 | ------ | ------------------ | ------------------------------------------- | --------------- |
@@ -222,12 +276,29 @@ Note: Zip Code is already set when user registers.
 | PATCH  | `/accept/:offerId` | Request owner accepts an offer              | ✅ Yes          |
 | PATCH  | `/:offerId`        | Offer owner edits their offer (NOT APPLIED) | ✅ Yes          |
 
-#### How will the frontend use these?
+#### 5.4. Message Routes (`/messages`)
 
-- On a request card, users will see a button "Offer Help" → This calls `POST /offers/:requestId`.
-- The request owner can see who offered help → This uses `GET /offers/:requestId`.
-- If a user wants to refuse a help offer, they will use `DELETE /offers/:offerId`.
-- If a user wants to accept a help offer, they will use `PATCH /offers/:offerId`.
+| Method | Endpoint           | Description                                 | Logged in User? |
+| ------ | ------------------ | ------------------------------------------- | --------------- |
+| GET    | `/my-offers`       | Fetch all offers from logged-in user        | ✅ Yes          |
+| POST   | `/:requestId`      | Post an offer on a request                  | ✅ Yes          |
+| GET    | `/:requestId`      | Fetch all offers for a specific request     | ✅ Yes          |
+| DELETE | `/cancel/:offerId` | User cancels own offers                     | ✅ Yes          |
+| DELETE | `/reject/:offerId` | User rejects offers from other users        | ✅ Yes          |
+| PATCH  | `/accept/:offerId` | Request owner accepts an offer              | ✅ Yes          |
+| PATCH  | `/:offerId`        | Offer owner edits their offer (NOT APPLIED) | ✅ Yes          |
+
+#### 5.5. Booking Routes (`/bookings`)
+
+| Method | Endpoint           | Description                                 | Logged in User? |
+| ------ | ------------------ | ------------------------------------------- | --------------- |
+| GET    | `/my-offers`       | Fetch all offers from logged-in user        | ✅ Yes          |
+| POST   | `/:requestId`      | Post an offer on a request                  | ✅ Yes          |
+| GET    | `/:requestId`      | Fetch all offers for a specific request     | ✅ Yes          |
+| DELETE | `/cancel/:offerId` | User cancels own offers                     | ✅ Yes          |
+| DELETE | `/reject/:offerId` | User rejects offers from other users        | ✅ Yes          |
+| PATCH  | `/accept/:offerId` | Request owner accepts an offer              | ✅ Yes          |
+| PATCH  | `/:offerId`        | Offer owner edits their offer (NOT APPLIED) | ✅ Yes          |
 
 ## 6. User Journey
 
