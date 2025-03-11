@@ -2,46 +2,50 @@
 
 ## 1. Project Overview
 
-The Greenroom is a web platform connecting artists and small venues in Berlin for performances, jam sessions, and gigs. It provides a space where musicians, comedians, poets, and other performers can showcase their work and easily find performance opportunities, while venues can discover new talent and manage their bookings efficiently.
+The Greenroom is a web platform connecting artists and small venues in Germany for performances, jam sessions, and gigs. It provides a space where musicians, comedians, poets, and other performers can showcase their work and easily find performance opportunities, while venues can discover new talent and manage their bookings efficiently.
 
 ## 2. Core Features
 
 ### User Accounts & Authentication
 
-- User Registration & Login (Artists & Venues)
+- User Registration & Login (Artists & venues)
 - Welcome Email upon Signup (No email verification required)
-- Role Selection (Artist or Venue) upon Signup
-- Guest Access (Limited Browsing, No Chat or Booking Access)
+- Role Selection (Artist or venue) upon Signup
+- Guest Access (Limited browsing, no booking access or chat/contact)
 
-### Profile Management (Artists & Venues)
+### Profile Management in User Dashboard (Artists & Venues)
 
-- Edit profile information (bio, media, links, dates, revenue split)
-- Edit account settings (change email, update profile picture, update location)
-- Change password via user dashboard
+- Edit profile information (description, media, photos, revenue split, etc.)
+- Edit account settings (email, profile picture, etc.)
+- Set own available dates on calendar
+- Change password
 - Delete account and all associated data
 
 ### Artist and Venue Features
 
-- Create bio and upload media and links about their work/space
+- Create bio and upload media and photos about their work/space
 - Browse venues and artists and view individual profiles
-- Send & receive collaboration invitations
-- Chat with venues and artists (chat is unlocked after sending/receiving an invitation)
-- After chatting, venues send an offical offer to artists and artists accept/decline it
-- Both receive a confirmation email is offer is accepted
-- User dashboard is updated to show booked gigs
-- Rate and review artists and venues
+- Set own available dates on dashboard
+- Check availability and book an artist or venue via calendar (both artists and venues can do this)
+- Request a booking (both artists and venues can do this)
+- Receive a booking (both artists and venues can do this)
+- Received and made bookings are stored under My Bookings in the user dashboard
+- Once booking is accepted by the other party, the booking moves from My Bookings to My Gigs
+- When a booking is declined by the other party, an email is sent to both users and it is not kept in userdashboard BUT it is kept in DB
+- When a booking is cancelled by the other party, an email is sent to both users and it is not kept in userdashboard BUT it is kept in DB
 
 ### Platform-Wide Features
 
-- Search & filter system with text search for artist and venue names, and dropdown filters for location (neighbourhood/district), perfomance type (e.g., Music), Genres (e.g., Stand-up) and venue type (e.g., Bar)
-- User dashboard (upcoming & past bookings, profile management)
-- Chat system for artist-venue interactions (socket.io or notifications received in the user dashboard)
+- Search & filter system with text search for artist and venue names, and dropdown filters for location (neighbourhood/district), perfomance type (e.g., Music) and venue type (e.g., Bar)
+- User dashboard (upcoming & past bookings, profile and user data management)
+- Contact user feature by email or social links
 - Responsive design (accessible across devices)
 
 ### Possible Future Features
 
 - Admin controls
 - Notifications system (for new messages, invitations, and gig offers)
+- Review and rating system
 
 ## 3. User Stories
 
@@ -51,193 +55,144 @@ Users can be artists, venues or guests.
 
 - As an artist, I want to register and receive a confirmation by email (welcome message only, no confirmation needed). I am redirected to homepage.
 - As an artist, I want to create a profile so that I can showcase my work and attract venue opportunities.
-- As an artist, I want to upload videos, photos, and links so that venues can see examples of my performances.
-- As an artist, I want to browse available venues and see their listed gig dates and revenue split so that I can decide whether to apply.
+- As an artist, I want to upload links and photos so that venues can see examples of my performances.
+- As an artist, I want to browse available venues and see their available gig dates and revenue split so that I can decide whether to make a booking.
 - As an artist, I want to browse other artists.
-- As an artist, I want to receive invitations from venues.
-- As an artist, I want to send invitations to venues.
-- As an artist, I want to chat with venues after sending or receiving an invitation so that I can discuss performance details like dates before making a decision. Chat is only available after sending or receiving an invitation.
-- As an artist, I want to receive an official offer from the venue in the chat, suggesting the gig date, time, and agreed revenue split, so that I can review and accept or decline it directly in the chat.
-- As an artist, I want to accept or decline an official offer from the venue within the chat and receive a confirmation via email with the booking details. If offer is declined, no confirmation email is sent.
+- As an artist, I want to receive bookings from venues via my calendar.
+- As an artist, I want to book venues via the venue's calendar.
+- As an artist, I want to receive a confirmation email when a venue accepts my booking. If the venue declines, a confirmation email is also sent.
+- As an artist, I want to contact the venue via email once booking is confirmed. Users can always access each other's social media.
 - As an artist, I want to see my upcoming and past bookings in my user dashboard with the booking details.
-- As an artist, I want to keep the chat open after accepting a gig so that I can coordinate performance details with the venue.
-- As an artist, I want to leave reviews and ratings for venues so that others can see their performance history.
-- As an artist, I want to receive feedback and ratings from venues so that I can build credibility on the platform.
 
 ### Venue User Stories
 
 - As a venue owner, I want to register and receive a confirmation by email (welcome message only, no confirmation needed). I am redirected to homepage.
 - As a venue owner, I want to create a profile so that artists can learn about my venue and available gigs.
 - As a venue owner, I want to upload photos of my venue so that artists can see the performance space.
-- As a venue owner, I want to define the revenue split and list general available gig dates (e.g., Fridays and Saturdays) on my profile so that artists can see detail before applying.
+- As a venue owner, I want to define the revenue split and available dates on a calendar on my profile.
+- As a venue owner, I want to browse other venues.
 - As a venue owner, I want to browse available artists.
-- As a venue owner, I want to receive invitations from artists.
-- As a venue owner, I want to send invitations to artists.
-- As a venue owner, I want to chat with artists after sending or receiving an invitation so that we can discuss performance details like dates before making a decision. Chat is only available after sending or receiving an invitation.
-- As a venue owner, I want to send an official offer to an artist in the chat, confirming the gig date, time, and agreed revenue split, so that they can review and accept or decline it directly in the chat.
-- As a venue owner, I want to receive a confirmation in the chat when an artist accepts or declines my offer so that I know the status of the booking.
-- As a venue owner, I want to receive a confirmation email with booking details when an artist accepts an offer. If the artist declines, no confirmation email is sent.
+- As a venue owner, I want to receive bookings from artists via my calendar.
+- As a venue owner, I want to book artists via the artist's calendar.
+- As a venue owner, I want to receive a confirmation email when an artist accepts my booking. If the artist declines, a confirmation email is also sent.
+- As a venue owner, I want to contact the artist via email once booking is confirmed. Users can always access each other's social media.
 - As a venue owner, I want to see my upcoming and past bookings in my user dashboard with the booking details.
-- As a venue owner, I want to keep the chat open after confirming a booking so that I can coordinate performance details with the artist.
-- As a venue owner, I want to leave reviews and ratings for artists so that others can see their performance history.
-- As a venue owner, I want to receive reviews and ratings from artists so that I can build credibility on the platform.
-
-- No unnecessary restrictions—artists and venues can freely send offers and chat.
 
 ### Guest User Stories
 
-- As a guest, I want to see a homepage explaining how The Greenroom works so that I understand the platform's purpose before signing up.
-- As a guest, I want to access the registration and login pages so that I can create an account when I'm ready.
-- As a guest, I want to browse venue profiles so that I can explore potential performance spaces before signing up.
-- As a guest, I want to browse artist profiles so that I can see the types of performers available on the platform.
 - As a guest, I want to see a homepage explaining how The Greenroom works so that I understand the platform's purpose before signing up. Registred users can also do that.
-- As a guest, I want to see venue and artist profiles so that I can get a sense of the platform without being able to send invitations/collaboration requests.
+- As a guest, I want to access the registration and login pages so that I can create an account when I'm ready.
+- As a guest, I want to browse venues so that I can explore potential performance spaces before signing up. I cannot make bookings nor email venues. But I can see their social media links.
+- As a guest, I want to browse artists so that I can see the types of performers available on the platform. I cannot make bookings nor email artists. But I can see their social media links.
+- As a guest, I want to see individual venue and artist profiles so that I can get a sense of the platform. I cannot make bookings nor email artists/venues. But I can see their social media links.
 
 ## 3. Pages in the FE
 
 - **Register Page**: Sign up for an account
 - **Login Page**: Securely log in
-- **Homepage**: Browse all help requests and offer help
-- **About Page**: Learn more about the project and the community
+- **Homepage**: Explain how platform works and have a glimpse of what users can expect
+- **??? About Page**: Learn more about the project and the community (MAYBE HOMEPAGE IS ENOUGH?)
 - **Venues Page**: Browse all venues available for gigs
 - **Artists Page**: Browse all the artists available for performance
-- **Individual Venue Page**: Venue profile with links, media, description and split revenue
-- **Individual Artist Page**: Artist profile with links, media and description
+- **Individual Venue Page**: Venue profile with name, description, venue type, media, photos, opening times, location, revenue split, social links, reviews, and calendar
+- **Individual Artist Page**: Artist profile with name, bio, performance type, media, photos, social links, reviews, and calendar
 - **User Dashboard**:
   - User Profile
   - Account Information
-  - Upcoming and past collaborations
-  - Offers received
-  - Offers sent
-- **Chat Page**: Artists and venues can chat and close deals
+  - Confirmed Gigs
+  - Open Bookings - Requested & Received (to accept, decline or cancel) - once accepted, moves to upcoming; if declined, booking is deleted from DB and email is sent; if cancelled, booking disappears from dashboard and email is sent
 - **Not Found Page**: A 404 page for invalid URLs
 
 ## 4. Data Structure (MongoDB & Mongoose)
 
-#### 4.1. User Collection (Manages authentication for both artists & venues)
+#### 4.1. User Collection (Stores user data for both artists and venues)
 
 ```js
 {
+    // Registration
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, enum: ["artist", "venue"], required: true }, // Defines account type
+
+    // Profile
+    name: { type: String }, // artisticName for artists & venue name for venues
+    description: { type: String }, // Bio for artists & description for venues
+    type: [{ type: String }], // Performance type for artists & venue type for venues
+
+    //Venue only
+    additionalInfo: {
+    address: {
+      streetName: { type: String },
+      number: { type: String },
+      zipCode: { type: String },
+      city: { type: String }
+    },
+    revenueSplit: { type: String },
+    openingTimes: [{ type: String }],
+    performingTimes: [{ type: String }],
   },
-{ timestamps: true }
 
-```
-
-#### UPDATED User Collection (Stores artist-specific data)
-
-```js
-{
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    role: { type: String, enum: ["artist", "venue"], required: true }, // Defines account type
-    name: { type: String },
-    description: { type: String }, // bio & description
-    type: [{ type: String }], // performance & venue
+    // Media
     profilePicture: { type: String, default: "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v1700000000/default-avatar.png"}, // Default Cloudinary image
-    media: [
-      {
-        url: { type: String }, // YouTube, Spotify, SoundCloud LINKS only
-        platform: { type: String, enum: ["YouTube", "Spotify", "SoundCloud", "Other"] },
-      },
-    ], // for both artists & venues
-    images: [{ type: String }], // Cloudinary URLs to store artist performing images
-    socialLinks: [{ type: String }], // Artist's social media and portfolio
-    calendar: [] // For venues only
-    bookedDates: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }] // for venues & artists?
-  },
+    media: [{ url: { type: String }, platform: { type: String}}], // For artists & venues, YouTube, Spotify, SoundCloud LINKS only
+    images: [{ type: String }], // For venues & artists, Cloudinary URLs to store images
+    socialLinks: [{ type: String }], // For artists' & venues' social media and portfolio
+
+    // Mark own availability
+    availability: [{ type: Date }], // Artists/Venues mark available dates for gigs
+
+    // Bookings
+    bookingsReceived: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Booking' }],
+    bookingsSent: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Booking' }],
+},
 { timestamps: true }
 ```
 
-If user registers as artist, render the form wiht media; if not, with photo only.
-In register controller user only email, pass & role; in the createProfile controller use the remaining collection/schema fields. Hence they are not required: true, so the user can register without filling these out.
+---
+**FE suggestions:**
 
-AVAILABLE DATES COLLECTION
-```js
-{
-    users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Participants
-}
-```
-
-
-#### 4.2. Artist Collection (Stores artist-specific data)
-
-```js
-{
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    name: { type: String, required: true },
-    bio: { type: String, required: true },
-    performanceTypes: [{ type: String, required: true }],
-    profilePicture: { type: String, default: "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v1700000000/default-avatar.png"}, // Default Cloudinary image
-    media: [
-      {
-        url: { type: String, required: true }, // YouTube, Spotify, SoundCloud LINKS only
-        platform: { type: String, enum: ["YouTube", "Spotify", "SoundCloud", "Other"] },
-      },
-    ],
-    images: [{ type: String }], // Cloudinary URLs to store artist performing images
-    socialLinks: [{ type: String }], // Artist's social media and portfolio
-  },
-{ timestamps: true }
-```
+- If user registers as artist, render the form wiht media; if not, with photo only.
+- In register controller user only needs email, pass & role; in the createProfile controller use the remaining collection/schema fields. Hence they are not required: true, so the user can register without filling these out.
+- React-calendar package (check if it's free) - https://www.npmjs.com/package/react-calendar
 
 **Create a dropdown in the FE only with the following:**
 
 - performanceType: ["Music", "Comedy", "Poetry & Spoken Word", "Dance", "Theater", "Experimental & Visual", "Other"]
-
-**!Use react-player library**: can automatically detect a link (YouTube, Spotify, SoundCloud, etc.) and render it as an embedded player. Alternatively, use react-embed or react-oembed-container.
-
-#### 4.3. Venue Collection (Stores venue-specific data)
-
-```js
-{
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    name: { type: String, required: true },
-    location: { type: String, required: true }, // address typed by user
-    description: { type: String, required: true },
-    venueType: { type: String, required: true },
-    revenueSplit: { type: { type: String },
-    profilePicture: { type: String, default: "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v1700000000/default-venue.png" }, // Default Cloudinary image
-    images: [{ type: String }], // Photos of the venue
-    socialLinks: [{ type: String }], // Artist's social media and portfolio
-  },
-{ timestamps: true }
-```
-
-**Create a dropdown in the FE only with the following:**
-
 - venueType: ["Bar", "Café", "Club", "Pub", "Restaurant", "Live Music Venue", "Theater", "Art Gallery", "Community Center", "Cultural Space", "Outdoor Venue", "Concert Hall", "Jazz Club", "Underground Venue", "Co-working Space", "Bookstore", "Hotel Lounge", "Rooftop Venue", "Pop-up Space", "Other",]
 - revenueSplit: ["100% to Artist", "80/20 (Artist/Venue)", "70/30 (Artist/Venue)", "50/50", "Other"]
 
-#### 4.4. Message Collection (Stores chat messages & offers)
+**Manage source of media & social links protection in BE:**
+
+- "YouTube", "Vimeo", "Spotify", "SoundCloud", "Apple Music", "Bandcamp", "Audiomack", "Instagram", "TikTok", "Other"
+
+**React-player library**
+
+- can automatically detect a link (YouTube, Spotify, SoundCloud, etc.) and render it as an embedded player. Alternatively, use react-embed or react-oembed-container.
+
+---
+
+#### 4.2. Booking Collection (Stores booking data between artists and venues)
 
 ```js
 {
-    senderId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    receiverId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    messages: [{ type: String }], // Normal message flow content
-    messageType: { type: String, enum: ["text", "offer"], default: "text" }, // Regular message or an offer
-    offers: {},
-    gigDate: { type: Date }, // Only for offer messages
-    revenueSplit: { type: String }, // Only for offer messages
-    offerStatus: { type: String, enum: ["pending", "accepted"], default: "pending" }, // Tracks accepted offers (when rejected, offer remain in chat but is not stored as rejected in the DB)
-    createdAt: { type: Date, default: Date.now },
-  }
+  initiatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // venue or artist who makes the request booking
+  receivedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // venue or artist who receives the request booking
+  performanceDate: { type: Date, required: true },
+  status: { type: String, enum: ['pending', 'confirmed', 'declined', 'cancelled'], default: 'pending' },
+  statusUpdatedAt: { type: Date, default: Date.now },
+  isCancelledOrDeclined: { type: Boolean, default: false }, // soft deleted from DB (i.e., not deleted from DB but does not appear in the FE)
+},
+{ timestamps: true };
 ```
 
-#### 4.5. Booking Collection (Stores only confirmed bookings, i.e. accepted offers in the chat)
+---
 
-```js
- {
-    artistId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    venueId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    gigDate: { type: Date, required: true },
-    revenueSplit: { type: String, required: true }, // from Message model (message.revenueSplit)
-    createdAt: { type: Date, default: Date.now },
-  }
-```
+FE will check: If a date is in availability, it's clickable (open for booking).
+Once booked, the date is removed from availability and stored in the Booking model.
+
+---
 
 ## 5. Backend API Design (Express & MongoDB)
 
@@ -301,6 +256,23 @@ AVAILABLE DATES COLLECTION
 | PATCH  | `/:offerId`        | Offer owner edits their offer (NOT APPLIED) | ✅ Yes          |
 
 ## 6. User Journey
+
+1. Artist/Venue initiates booking
+
+   - Creates pending booking
+   - Other party receives notification
+
+2. Other party confirms booking
+
+   - Booking status → 'confirmed'
+   - Update both users' availability
+   - Add booking to both users' bookings array
+   - Send confirmation emails
+   - Enable messaging
+
+3. After event
+   - Booking status → 'completed'
+   - Enable reviews
 
 #### 📌 User registers
 
