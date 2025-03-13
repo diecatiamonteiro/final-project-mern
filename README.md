@@ -134,7 +134,7 @@ Users can be artists, venues or guests.
     description: { type: String }, // Bio for artists & description for venues
     type: [{ type: String }], // Performance type for artists & venue type for venues
 
-    //Venue only
+    //Venue or Artist only
     additionalInfo: {
     address: {
       streetName: { type: String },
@@ -145,6 +145,7 @@ Users can be artists, venues or guests.
     revenueSplit: { type: String },
     openingTimes: [{ type: String }],
     performingTimes: [{ type: String }],
+    genre: [{type: String}] // Genre for artist only
   },
 
     // Media
@@ -304,9 +305,21 @@ Step 2: Profile Creation (POST /api/users/:id/create-profile)
 Updates the existing user with profile details (name, bio, media, availability, etc.).
 Does not modify email, password, or role.
 
-## 6. User Journey
+## 6. Backend Middleware
+
+| Page              | Description                                                                                   |
+| ----------------- | --------------------------------------------------------------------------------------------- |
+| `checkToken.js`   | Validates user identity and ensures that only authenticated users can access protected routes |
+| `errorHandler.js` | Global error handler                                                                          |
+| `checkProfile.js` | Checks if user profile is completed in order to make bookings                                 |
+| `checkUploads.js` | Checks link origin for media, images and social links                                         |
+
+## 7. User Journey
+
+#### 🎭 User Registration & Authentication Flow
 
 📌 **User registers (with email verification)**
+
 1. User clicks "Register".
 2. Selects role: Artist or Venue.
 3. Fills out the form (email, password, first name, last name).
@@ -317,22 +330,25 @@ Does not modify email, password, or role.
 8. Sees message on register page: "Please check your email to verify your account before logging in."
 
 📌 **User verifies email after registration**
+
 1. User opens the email.
 2. Clicks the verification link.
 3. Redirected to login page with a added message on top: "Your email has been successfully verified. Please log in to continue."
-5. User manually enters credentials & logs in.
-6. Account is now marked as "isConfirmed: true" in the database.
+4. User manually enters credentials & logs in.
+5. Account is now marked as "isConfirmed: true" in the database.
 
 📌 **User tries to log in without verifying email**
+
 1. User goes to the login page.
 2. Enters email & password.
 3. Clicks "Login".
 4. Sees error message: "Please verify your email before logging in."
-6. Can request resend verification email.
+5. Can request resend verification email.
 
 📌 **User is logged in and changes password in dashboard**
+
 1. User logs in and navigates to Dashboard > My Account.
-2. Clicks "Change Password". 
+2. Clicks "Change Password".
 3. Backend generates a one-time secure link with a token.
 4. Email is sent and sees a message: "For security reasons, we have sent you an email with a link to change your password."
 5. User receives an email with a "Change Password" button.
@@ -340,9 +356,10 @@ Does not modify email, password, or role.
 7. Enters New Password & Confirm Password.
 8. Clicks "Save New Password" and password is updated.
 9. User is logged out. Previous session is invalidated (logs out from all devices).
-9. User logs in manually again.
+10. User logs in manually again.
 
 📌 **User is logged out and forgets password**
+
 1. User clicks "Forgot Password?" on the login page.
 2. Enters their email address.
 3. Clicks "Send Reset Link".
@@ -352,7 +369,184 @@ Does not modify email, password, or role.
 7. Sees confirmation message:"Your password has been updated. Please log in."
 8. User logs in manually.
 
-## 6. Permissions
+📌 **User logs in after verifying account**
+
+1. User clicks "Log In".
+2. Enters email & password.
+3. Clicks "Login".
+4. Redirected to the homepage.
+5. Can now access their dashboard.
+
+📌 **User deletes account**
+
+1. User navigates to Dashboard > My Account.
+2. Clicks "Delete Account".
+3. Sees confirmation modal.
+4. Clicks "Confirm Delete".
+5. Account is deleted & user is logged out.
+
+#### Profile Management Flow
+
+📌 **User creates or updates profile**
+
+1. Navigates to Dashboard > My Profile.
+2. Fills out profile fields:
+   - Name (artist name/venue name)
+   - Bio/Description
+   - Profile Picture
+   - **For venues**: Revenue split, opening times, address
+   - Media links (YouTube, Spotify, etc.)
+   - Images (venue photos, artist performances)
+   - Social media links
+3. Clicks "Save Changes".
+4. Success message appears.
+5. Profile is updated.
+
+📌 **User sets availability (calendar)**
+
+1. Navigates to Dashboard > My Profile.
+2. Clicks on the availability calendar.
+3. Selects available dates.
+4. Clicks "Save".
+5. Success toast appears.
+6. Available dates are saved and can now be booked.
+
+#### Booking Flow
+
+📌 **Artist/venue initiates booking**
+
+1. User navigates to an artist or venue profile.
+2. Clicks "Request Booking".
+3. Selects an available date from the calendar.
+4. Clicks "Send Request".
+5. Success toast appears.
+6. Pending booking is created and added to Dashboard > My Bookings > Received.
+7. The other party receives an email.
+
+📌 **Artist/venue who initiated booking edits a pending booking**
+
+1. User navigates to Dashboard > My Bookings > Sent.
+2. Clicks "Edit Booking".
+3. Modal appears and user selects another available date from the calendar.
+4. Clicks "Update Booking".
+5. Success toast appears.
+6. Pending booking is updated and awaits confirmation from the other party.
+7. The other party receives an email and the booking is updated in their user dashboard.
+
+📌 **Other party confirms booking**
+
+1. User navigates to Dashboard > My Bookings > Received.
+2. Sees pending booking request.
+3. Clicks "Accept".
+4. Success toast appears.
+5. Booking status updates to "accepted".
+6. An email confirmation is sent to the other party.
+7. The booked date is removed from availability.
+8. Booking moves from "My Bookings" to "My Gigs".
+9. Messaging (email form - nodemailer) is now enabled.
+
+📌 **Other party declines booking**
+
+1. User navigates to Dashboard > My Bookings > Received.
+2. Sees pending booking request.
+3. Clicks "Decline".
+4. Success toast appears.
+5. Booking status updates to "declined".
+6. An email is sent to the other party.
+7. The booking disappears from the dashboard (soft delete).
+8. The requested date remains available.
+
+📌 **User cancels an accepted booking**
+
+1. User navigates to Dashboard > My Gigs.
+2. Clicks "Cancel Booking".
+3. Sees confirmation modal.
+4. Clicks "Confirm Cancel".
+5. Success toast appears.
+6. Booking status updates to "cancelled".
+7. The booking disappears from the dashboard (soft delete).
+8. The date becomes available again in the calendar.
+9. An email is sent to the other party.
+
+#### Search & Browse Flow
+
+📌 **User searches for artists or venues**
+
+1. Navigates to "Artists" or "Venues" page.
+2. Can browse all artists and venues (pagination)
+3. Can use the search bar to type a name.
+4. Can use filters (performance type, venue type, location, revenue split) to refine search.
+5. Clicks "Apply Filters".
+6. Sees filtered results.
+7. Clicks on a profile to view more details.
+
+📌 **Guest browsing**
+
+1. Navigates to homepage.
+2. Reads how The Greenroom works.
+3. Clicks on "Browse Artists" or "Browse Venues".
+4. Can view profiles, including:
+   - Name
+   - Description
+   - Media links (YouTube, SoundCloud, etc.)
+   - Social media links
+   - Revenue split (for venues)
+   - Availability calendar (but cannot book)
+5. Cannot book Artist/Venue or contact them via email form.
+6. When tries to book, is redirected to login page.
+
+#### Favourites Flow
+
+📌 **User favourites an artist/venue**
+
+1. Navigates to an artist or venue profile.
+2. Clicks heart icon.
+3. Success toast appears.
+4. The favourite is saved.
+5. Navigates to Favourites page.
+6. Sees list of saved artists and venues.
+7. Guests users are redirected to login page when trying to favourite artists/venues.
+
+📌 **User removes a favourite**
+
+1. Navigates to Favourites page.
+2. Clicks "Remove Favourite" button on an artist/venue.
+3. Success toast appears.
+4. Artist/venue is removed from favourites.
+
+#### Communication Flow
+
+📌 **User contacts another user**
+
+1. Once a booking is accepted, only then is the email form enabled.
+2. User clicks "Contact".
+3. Writes a message in a form with pre-filled sender and receiver emails.
+4. Clicks "Send Message".
+5. The other party receives an email.
+
+#### Error & Edge Case Flow
+
+📌 **User tries to book a date that was taken**
+
+1. User navigates to an artist or venue profile.
+2. Tries to select a date that was recently booked by someone else, button is faded and unclickable.
+3. Selects a new date & reattempts booking.
+
+📌 **User tries to edit booking after it is accepted**
+
+1. User navigates to Dashboard > My Bookings > Sent.
+2. Tries to edit confirmed booking.
+3. Edit button is disabled.
+4. Message appears: "Your booking was accepted. You can no longer edit it."
+
+📌 **User tries to book without a profile**
+
+1. User logs in but hasn't completed their profile.
+2. Tries to book an artist/venue.
+3. Sees error message: "Please complete your profile before making a booking." (middleware to check for profile completion)
+4. Redirected to Dashboard > My Profile.
+
+## 8. Permissions
 
 | Action                                          | Unregistered User (Guest) | Registered User (Artist/Venue) |
 | ----------------------------------------------- | ------------------------- | ------------------------------ |
@@ -378,7 +572,7 @@ Does not modify email, password, or role.
 | Favorite artists & venues                       | ❌ No                     | ✅ Yes                         |
 | Delete account                                  | ❌ No                     | ✅ Yes                         |
 
-## 7. Frontend Structure
+## 9. Frontend Structure
 
 | Page                       | Description                                                   |
 | -------------------------- | ------------------------------------------------------------- |
@@ -399,7 +593,7 @@ Does not modify email, password, or role.
 - Bookings (`bookingsReducer.js`)
 - These are managed in `Context.jsx` to provide a **global state**.
 
-## 8. Branch naming
+## 10. Branch naming
 
 - Use **`feature/...`** if you’re adding or enhancing functionality or content.
 
@@ -417,7 +611,7 @@ Does not modify email, password, or role.
 
 `swagatika/refactor/home-page`
 
-## 9. Getting Started
+## 11. Getting Started
 
 1. Clone the repository:
 
