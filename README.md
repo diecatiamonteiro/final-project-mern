@@ -306,98 +306,51 @@ Does not modify email, password, or role.
 
 ## 6. User Journey
 
-1. Artist/Venue initiates booking
+📌 **User registers (with email verification)**
+1. User clicks "Register".
+2. Selects role: Artist or Venue.
+3. Fills out the form (email, password, first name, last name).
+4. Clicks "Create Account".
+5. Account is created in "isConfirmed: false" state.
+6. Verification email is sent with a unique link.
+7. User is NOT automatically logged in.
+8. Sees message on register page: "Please check your email to verify your account before logging in."
 
-   - Creates pending booking
-   - Other party receives notification
+📌 **User verifies email after registration**
+1. User opens the email.
+2. Clicks the verification link.
+3. Redirected to login page with a added message on top: "Your email has been successfully verified. Please log in to continue."
+5. User manually enters credentials & logs in.
+6. Account is now marked as "isConfirmed: true" in the database.
 
-2. Other party confirms booking
+📌 **User tries to log in without verifying email**
+1. User goes to the login page.
+2. Enters email & password.
+3. Clicks "Login".
+4. Sees error message: "Please verify your email before logging in."
+6. Can request resend verification email.
 
-   - Booking status → 'accepted'
-   - Update both users' availability
-   - Add booking to both users' bookings array
-   - Send confirmation emails
-   - Enable messaging
+📌 **User is logged in and changes password in dashboard**
+1. User logs in and navigates to Dashboard > My Account.
+2. Clicks "Change Password". 
+3. Backend generates a one-time secure link with a token.
+4. Email is sent and sees a message: "For security reasons, we have sent you an email with a link to change your password."
+5. User receives an email with a "Change Password" button.
+6. Clicks the link → Redirected to Dashboard page with an open change password modal.
+7. Enters New Password & Confirm Password.
+8. Clicks "Save New Password" and password is updated.
+9. User is logged out. Previous session is invalidated (logs out from all devices).
+9. User logs in manually again.
 
-3. After event
-   - Booking status → 'completed'
-   - Enable reviews
-
-#### 📌 User registers
-
-1. User creates an account.
-2. Automatically logged in.
-3. Redirected to the homepage (see all requests).
-
-#### 📌 User asks for help
-
-1. User logs in.
-2. Redirected to the homepage.
-3. Clicks on "Ask for Help" page.
-4. Fills out a form:
-   - Category (e.g., "Transport").
-   - Description (details about the request).
-   - When (date and time).
-5. Clicks "Submit Request" → Sees success message → Request is added to the homepage.
-6. Other users see the request on homepage and can offer help.
-
-#### 📌 User offers help
-
-1. User logs in.
-2. Redirected to the homepage.
-3. Clicks "Offer Help" in chosen request card.
-4. Fills out a form:
-   - Message.
-5. Clicks "Submit Offer" → Sees success message → Offer is added to the request.
-6. Button "Offer Help" turned into "Offer Sent" and no more clicks are allowed on this request.
-
-#### 📌 User securely logs out
-
-1. User clicks "Logout".
-2. JWT token is removed from storage.
-3. Redirected to homepage.
-
-#### 📌 User views their dashboard to see and manage their requests & offers
-
-1. User logs in.
-2. Redirected to the homepage (all requests).
-3. Clicks on "My Account".
-4. Sees:
-   - User information.
-   - My Requests (requests they posted).
-   - My Offers (requests they offered help on).
-5. Can update their account data and delete their account.
-6. Can edit or delete their own requests.
-7. Can accept or decline offers on other users' requests.
-
-#### 📌 Request owner chooses who helps them by accepting or declining help offers
-
-1. User logs in.
-2. Redirected to the homepage.
-3. Clicks on and goes to "My Account" page.
-4. Clicks on a request with offers.
-5. Sees a list of users who offered help.
-6. Clicks "Accept" on one of the offers.
-7. Request is marked as "Helped" and deleted from the homepage (other users can't offer help anymore).
-8. Alternatively, clicks "Reject" to reject an offer.
-
-#### 📌 User updates their data (e.g., username, password) and deletes their account
-
-1. User logs in.
-2. Redirected to the homepage.
-3. Clicks on and goes to "My Account" page.
-4. Clicks on "Update Profile" and updates the names, username, email, or Zip code.
-5. Clicks on "Change Password" and updates the password.
-6. Alternatively, clicks "Delete Account" → Account is permanently deleted.
-
-#### 📌 User updates or deletes own requests
-
-1. User logs in.
-2. Redirected to the homepage.
-3. Clicks on and goes to "My Account" page.
-4. Clicks "Edit Request" and updates the message of the request.
-5. Alternatively, clicks "Delete Request" → Request is removed from homepage.
-   test
+📌 **User is logged out and forgets password**
+1. User clicks "Forgot Password?" on the login page.
+2. Enters their email address.
+3. Clicks "Send Reset Link".
+4. Receives an email with a unique link.
+5. Clicks the link and is redirected to the login page with a added message on top: "Your password has been successfully changed. Please log in to continue."
+6. Enters a new password and clicks "Save New Password".
+7. Sees confirmation message:"Your password has been updated. Please log in."
+8. User logs in manually.
 
 ## 6. Permissions
 
