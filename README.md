@@ -397,6 +397,7 @@ Does not modify email, password, or role.
 3. Clicks on and goes to "My Account" page.
 4. Clicks "Edit Request" and updates the message of the request.
 5. Alternatively, clicks "Delete Request" → Request is removed from homepage.
+   test
 
 ## 6. Permissions
 
