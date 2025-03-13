@@ -9,7 +9,7 @@ The Greenroom is a web platform connecting artists and small venues in Germany f
 ### User Accounts & Authentication
 
 - User Registration & Login (Artists & venues)
-- Welcome Email upon Signup (No email verification required)
+- Welcome Email upon Signup (email verification required)
 - Role Selection (Artist or venue) upon Signup
 - Guest Access (Limited browsing, no booking access or chat/contact)
 
@@ -53,7 +53,8 @@ Users can be artists, venues or guests.
 
 ### Artist User Stories
 
-- As an artist, I want to register and receive a confirmation by email (welcome message only, no confirmation needed). I am redirected to homepage.
+- As an artist, I want to register and receive a verification email. I am redirected to homepage.
+- As an artist, I want to be able to change my password using a verification link in my email that redirects me to user dashboard with the open change password modal.
 - As an artist, I want to create a profile so that I can showcase my work and attract venue opportunities.
 - As an artist, I want to upload links and photos to my profile so that venues can see examples of my performances.
 - As an artist, I want to be able to set my availability in my calendar in the user dashboard.
@@ -71,7 +72,8 @@ Users can be artists, venues or guests.
 
 ### Venue User Stories
 
-- As a venue owner, I want to register and receive a confirmation by email (welcome message only, no confirmation needed). I am redirected to homepage.
+- As a venue owner, I want to register and receive a verification email. I am redirected to homepage.
+- As an venue owner, I want to be able to change my password using a verification link in my email that redirects me to user dashboard with the open change password modal.
 - As a venue owner, I want to create a profile so that artists can learn about my venue and available gigs.
 - As a venue owner, I want to upload photos of my venue so that artists can see the performance space.
 - As a venue owner, I want to be able to set my availability in my calendar in the user dashboard.
@@ -125,6 +127,7 @@ Users can be artists, venues or guests.
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, enum: ["artist", "venue"], required: true }, // Defines account type
+    isConfirmed: {type: Boolean, default: false} // email verification
 
     // Profile
     name: { type: String }, // artisticName for artists & venue name for venues
@@ -151,7 +154,7 @@ Users can be artists, venues or guests.
     socialLinks: [{ type: String }], // For artists' & venues' social media and portfolio
 
     // Mark own availability
-    availability: [{ type: Date }], // Artists/Venues mark available dates for gigs
+    availability: [{ type: Date }],  // Dates the user has marked as available
 
     // Bookings
     bookingsReceived: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Booking' }],
@@ -170,6 +173,7 @@ Users can be artists, venues or guests.
 - If user registers as artist, render the form wiht media; if not, with photo only.
 - In register controller user only needs email, pass & role; in the createProfile controller use the remaining collection/schema fields. Hence they are not required: true, so the user can register without filling these out.
 - React-calendar package (check if it's free) - https://www.npmjs.com/package/react-calendar
+- FE needs to visually differentiate verified and unverified social links.
 
 **Create a dropdown in the FE only with the following:**
 
@@ -194,7 +198,7 @@ Users can be artists, venues or guests.
   initiatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // venue or artist who makes the request booking
   receivedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // venue or artist who receives the request booking
   performanceDate: { type: Date, required: true },
-  status: { type: String, enum: ['pending', 'confirmed', 'declined', 'cancelled'], default: 'pending' },
+  status: { type: String, enum: ['pending', 'accepted', 'declined', 'cancelled'], default: 'pending' },
   statusUpdatedAt: { type: Date, default: Date.now },
   isCancelledOrDeclined: { type: Boolean, default: false }, // soft deleted from DB (i.e., not deleted from DB but does not appear in the FE)
 },
@@ -206,48 +210,67 @@ Users can be artists, venues or guests.
 FE will check: If a date is in availability, it's clickable (open for booking).
 Once booked, the date is removed from availability and stored in the Booking model.
 
+#### How the Booking Flow Works
+
+1. User Requests a Booking
+2. A booking is created with status: "pending".
+3. The requested date is still available in the calendar.
+
+#### User Accepts a Booking
+
+1. The booking status updates from "pending" → "confirmed".
+2. FE now blocks that date in the calendar.
+3. Other pending requests for the same date are still visible but won't block the date.
+
+#### User Declines a Booking
+
+1. The booking status updates to "declined".
+2. The date remains available.
+
+#### User Cancels a Confirmed Booking
+
+1. The booking status updates to "cancelled".
+2. FE removes the date from blocked dates, making it available again.
+
 ---
 
 ## 5. Backend API Design (Express & MongoDB)
 
 #### 5.1. Auth Routes (`/api/auth`)
 
-| Method | Endpoint          | Description                                                 | Logged in User? |
-| ------ | ----------------- | ----------------------------------------------------------- | --------------- |
-| POST   | `/register`       | Register a new user as an artist or venue                   | ❌ No           |
-| POST   | `/login`          | Authenticate user & return JWT token                        | ❌ No           |
-| POST   | `/login/google`   | Authenticate user & return JWT token (registration & login) | ❌ No           |
-| GET    | `/logout`         | Log out user                                                | ✅ Yes          |
-| GET    | `/user-data`      | Fetch logged-in user data                                   | ✅ Yes          |
-| PATCH  | `/update-account` | Update user auth data                                       | ✅ Yes          |
-| DELETE | `/delete-account` | Delete user account and all related data                    | ✅ Yes          |
+| Method | Endpoint           | Description                                                                           | Logged in User? |
+| ------ | ------------------ | ------------------------------------------------------------------------------------- | --------------- |
+| POST   | `/register`        | Register a new user as an artist or venue                                             | ❌ No           |
+| GET    | `/verify-email`    | User verifies email and is sent to log in page                                        | ❌ No           |
+| POST   | `/login`           | Authenticate user & return JWT token                                                  | ❌ No           |
+| POST   | `/login/google`    | Authenticate user & return JWT token (registration & login)                           | ❌ No           |
+| GET    | `/logout`          | Log out user                                                                          | ✅ Yes          |
+| GET    | `/user-data`       | Fetch logged-in user data                                                             | ✅ Yes          |
+| PATCH  | `/update-account`  | Update user auth data                                                                 | ✅ Yes          |
+| PATCH  | `/change-password` | User clicks change password, is sent an email and redirected to change password modal | ❌ No           |
+| DELETE | `/delete-account`  | Delete user account and all related data                                              | ✅ Yes          |
 
 #### 5.2. User Routes: Artists & Venues (`api/users`)
 
-| Method | Endpoint                     | Description                                                                             | Logged in User? |
-| ------ | ---------------------------- | --------------------------------------------------------------------------------------- | --------------- |
-| GET    | `/venues`                    | Display all venues on venues page                                                       | ❌ No           |
-| GET    | `/artists`                   | Display all artists on artists page                                                     | ❌ No           |
-| GET    | `/:id`                       | Get entire specific artist/venue profile (profile pic & calendar availability included) | ❌ No           |
-| ------ | ---------------------------- | --------------------------------------------------------------------------------------- | --------------- |
-| POST   | `/:id/create-profile`        | Create an artist/venue profile (profile pic & calendar availability included)           | ✅ Yes          |
-| POST   | `/:id/upload-media`          | Upload media links                                                                      | ✅ Yes          |
-| POST   | `/:id/upload-images`         | Upload images                                                                           | ✅ Yes          |
-| PATCH  | `/:id/update-profile`        | Update artists/venue profile (profile pic & calendar availability included)             | ✅ Yes          |
-| PATCH  | `/:id/update-media`          | Update media links                                                                      | ✅ Yes          |
-| PATCH  | `/:id/update-images`         | Update images on profile                                                                | ✅ Yes          |
-| DELETE | `/:id/delete-media/:mediaId` | Delete individual media link                                                            | ✅ Yes          |
-| DELETE | `/:id/delete-image/:imageId` | Delete individual image                                                                 | ✅ Yes          |
-| ------ | ---------------------------- | --------------------------------------------------------------------------------------- | --------------- |
-| POST   | `/favourites`                | Add artist/venue to favourites                                                          | ✅ Yes          |
-| DELETE | `/favourites/:id`            | Remove artist/venue from favourites                                                     | ✅ Yes          |
-| GET    | `/favourites`                | Display all favourited artists/venues                                                   | ✅ Yes          |
-| ------ | ---------------------------- | --------------------------------------------------------------------------------------- | --------------- |
-| GET    | `/:id/bookings`              | Get all received & sent bookings of a user                                              | ✅ Yes          |
-| GET    | `/:id/bookings/received`     | Get only received bookings of a user                                                    | ✅ Yes          |
-| GET    | `/:id/bookings/sent`         | Get only sent bookings of a user                                                        | ✅ Yes          |
-| ------ | ---------------------------- | --------------------------------------------------------------------------------------- | --------------- |
-| GET    | `/search?q=searchTerm`       | Search by name, performance/venue type, location (city=leipzig&revenueSplit=80/20)      | ✅ Yes          |
+| Method | Endpoint                     | Description                                                                                       | Logged in User? |
+| ------ | ---------------------------- | ------------------------------------------------------------------------------------------------- | --------------- |
+| GET    | `/venues`                    | Display all venues on venues page                                                                 | ❌ No           |
+| GET    | `/artists`                   | Display all artists on artists page                                                               | ❌ No           |
+| GET    | `/:id`                       | Get entire specific artist/venue profile (profile pic & calendar availability included)           | ❌ No           |
+| ------ | ---------------------------- | ---------------------------------------------------------------------------------------           | --------------- |
+| PATCH  | `/:id/update-profile`        | Updae an existing artist/venue profile (includes everything profile related)                      | ✅ Yes          |
+| DELETE | `/:id/delete-media/:mediaId` | Delete individual media link                                                                      | ✅ Yes          |
+| DELETE | `/:id/delete-image/:imageId` | Delete individual image                                                                           | ✅ Yes          |
+| ------ | ---------------------------- | ---------------------------------------------------------------------------------------           | --------------- |
+| POST   | `/favourites`                | Add artist/venue to favourites                                                                    | ✅ Yes          |
+| DELETE | `/favourites/:id`            | Remove artist/venue from favourites                                                               | ✅ Yes          |
+| GET    | `/favourites`                | Display all favourited artists/venues                                                             | ✅ Yes          |
+| ------ | ---------------------------- | ---------------------------------------------------------------------------------------           | --------------- |
+| GET    | `/:id/bookings`              | Get all received & sent bookings of a user                                                        | ✅ Yes          |
+| GET    | `/:id/bookings/received`     | Get only received bookings of a user                                                              | ✅ Yes          |
+| GET    | `/:id/bookings/sent`         | Get only sent bookings of a user                                                                  | ✅ Yes          |
+| ------ | ---------------------------- | ---------------------------------------------------------------------------------------           | --------------- |
+| GET    | `/search?q=searchTerm`       | Search artists/venues by name, performance/venue type, location (city=leipzig&revenueSplit=80/20) | ✅ Yes          |
 
 #### 5.3. Booking Routes (`api/bookings`)
 
@@ -290,7 +313,7 @@ Does not modify email, password, or role.
 
 2. Other party confirms booking
 
-   - Booking status → 'confirmed'
+   - Booking status → 'accepted'
    - Update both users' availability
    - Add booking to both users' bookings array
    - Send confirmation emails
@@ -374,6 +397,7 @@ Does not modify email, password, or role.
 3. Clicks on and goes to "My Account" page.
 4. Clicks "Edit Request" and updates the message of the request.
 5. Alternatively, clicks "Delete Request" → Request is removed from homepage.
+   test
 
 ## 6. Permissions
 
@@ -402,23 +426,6 @@ Does not modify email, password, or role.
 | Delete account                                  | ❌ No                     | ✅ Yes                         |
 
 ## 7. Frontend Structure
-
-#### Pages
-
-- **Register Page**: Sign up for an account
-- **Login Page**: Securely log in
-- **Homepage**: Explain how platform works and have a glimpse of what users can expect
-- **All Venues Page**: Browse all venues available for gigs
-- **All Artists Page**: Browse all the artists available for performance
-- **Individual Venue Page**: Venue profile with name, description, venue type, media, photos, opening times, location, revenue split, social links, reviews, and calendar
-- **Individual Artist Page**: Artist profile with name, bio, performance type, media, photos, social links, reviews, and calendar
-- **Favourites Page**: User can view their favourite artists/venues
-- **User Dashboard**:
-  - **My Account**: Email, first name, last name, password. Ability to edit all data and delete account.
-  - **My Profile**: Artistic name/venue name, description, profile picture, calendar availability, media links, images, and social links. Address, revenue split, opening times and performing times for venues only. Ability to edit all data.
-  - **My Bookings** - Received (to accept, decline) & sent (with option to edit booking date, only enabled until booking is accepted). If accepted, booking moves to My Gigs and an email is sent to the other party. If declined, booking remains in DB but dissappears from dashboard (soft delete) and an email is sent to the other party.
-  - **My Gigs** - Booking cards with option to cancel. If cancelled, booking remains in DB but dissappears from dashboard (soft delete) and an email is sent to the other party.
-- **Not Found Page**: A 404 page for invalid URLs
 
 | Page                       | Description                                                   |
 | -------------------------- | ------------------------------------------------------------- |
