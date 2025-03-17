@@ -1,13 +1,32 @@
-import './App.css'
+import { Routes, Route } from "react-router-dom";
+import Layout from "./pages/Layout";
+import Homepage from "./pages/Homepage";
+import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
+import AllVenuesPage from "./pages/AllVenuesPage";
+import AllArtistsPage from "./pages/AllArtistsPage";
+import IndividualVenuePage from "./pages/IndividualVenuePage";
+import IndividualArtistPage from "./pages/IndividualArtistPage";
+import FavouritesPage from "./pages/FavouritesPage";
+import UserDashboardPage from "./pages/UserDashboardPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
-
   return (
-    <>
-    <div className="flex h-screen items-center justify-center bg-gray-900 text-white text-3xl font-bold">
-      Tailwind is working! 🎉
-    </div>
-    </>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Homepage />} />
+        <Route path="register" element={<RegisterPage />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="venues" element={<AllVenuesPage />} />
+        <Route path="artists" element={<AllArtistsPage />} />
+        <Route path="venue/:venueId" element={<IndividualVenuePage />} />
+        <Route path="artist/:artistId" element={<IndividualArtistPage />} />
+        <Route path="favourites" element={<FavouritesPage />} />
+        <Route path="dashboard" element={<UserDashboardPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
   )
 }
 
