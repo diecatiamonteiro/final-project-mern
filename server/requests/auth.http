@@ -1,0 +1,61 @@
+@baseUrl = "http://localhost:8000/api/auth"
+
+### REGISTER A NEW USER
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "firstName":"",
+  "lastName":"",
+  "email":"",
+  "password":"",
+  "role":"",
+  "isConfirmed":""
+}
+
+### VERIFY REGISTERED USER'S EMAIL
+GET {{baseUrl}}/verify-email
+
+### LOGIN A USER
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email":"",
+  "password":""
+}
+
+// LOGIN A USER WITH GOOGLE
+POST {{baseUrl}}/login/google
+Content-Type: application/json
+
+{
+
+}
+
+### LOGOUT A USER
+GET {{baseUrl}}/logout
+
+### GET USER AUTH DATA
+GET {{baseUrl}}/user-data
+
+### UPDATE USER AUTH DATA
+PATCH {{baseUrl}}/update-account
+Content-Type: application/json
+
+{
+  "firstName":"",
+  "lastName":""
+}
+
+### CHANGE PASSWORD
+PATCH {{baseUrl}}/change-password
+Content-Type: application/json
+
+{
+  "password":""
+}
+
+### DELETE USER ACCOUNT AND ALL RELATED DATA
+DELETE {{baseUrl}}/delete-account
+

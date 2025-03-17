@@ -1,0 +1,10 @@
+@baseUrl = "http://localhost:8000/api/users"
+
+### GET ALL VENUES
+GET {{baseUrl}}/venues
+
+### GET ALL ARTISTS
+GET {{baseUrl}}/artists
+
+### GET SPECIFIC ARTIST/VENUE
+GET {{baseUrl}}/:id
