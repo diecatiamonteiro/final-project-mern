@@ -1,0 +1,15 @@
+@baseUrl = "http://localhost:8000/api/users/favourites"
+
+### ADD ARTIST/VENUE TO FAVOURITES
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "favourites":[""]
+}
+
+### REMOVE ARTIST/VENUE FROM FAVOURITES
+DELETE {{baseUrl}}/:id
+
+### GET ALL FAVOURITED ARTISTS
+GET {{baseUrl}}

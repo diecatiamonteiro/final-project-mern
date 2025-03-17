@@ -1,0 +1,55 @@
+@baseUrl = "http://localhost:8000/api/users"
+
+### UPDATE ARTIST PROFILE
+PATCH {{baseUrl}}/:id/update-profile
+Content-Type: application/json
+
+{
+  "name":"",
+  "description":"",
+  "type":[""],
+  "additionalInfo": {"genre":[""]},
+  "profilePicture":"",
+  "media":[""],
+  "images":[""],
+  "socialLinks":[""],
+  "availability":[""],
+  "bookingsReceived":[""],
+  "bookingsSent":[""],
+  "favourites":[""]
+}
+
+### UPDATE VENUE PROFILE
+PATCH {{baseUrl}}/:id/update-profile
+Content-Type: application/json
+
+{
+  "name":"",
+  "description":"",
+  "type":[""],
+  "additionalInfo":{
+    "address":{
+      "streetName":"",
+      "number":"",
+      "zipCode":"",
+      "city":""
+    },
+    "revenueSplit":"",
+    "openingTimes":[""],
+    "performingTimes":[""]
+  },
+  "profilePicture":"",
+  "media":[""],
+  "images":[""],
+  "socialLinks":[""],
+  "availability":[""],
+  "bookingsReceived":[""],
+  "bookingsSent":[""],
+  "favourites":[""]
+}
+
+### DELETE INDIVIDUAL MEDIA LINK
+DELETE {{baseUrl}}/:id/delete-media/:mediaId
+
+### DELETE INDIVIDUAL IMAGE
+DELETE {{baseUrl}}/:id/delete-image/:imageId
