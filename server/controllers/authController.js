@@ -26,7 +26,7 @@ const tokenizeCookie = async (user, res) => {
     });
 
     res.cookie("jwtToken", token, {
-      maxAge: 60 * 60 * 1000, // 1-hour expiration
+      maxAge: 24 * 60 * 60 * 1000, // 1-day expiration
       httpOnly: true,
       sameSite: "strict",
     });
@@ -265,7 +265,23 @@ export const logout = async (req, res, next) => {
 
 export const getUserData = async (req, res, next) => {
   try {
-  } catch (error) {}
+    // Get user ID from checkToken middleware
+    const userId = req.user.id;
+
+    // Find user and exclude password from response
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      throw createError(404, "User not found");
+    }
+
+    res.status(200).json({
+      message: "User data retrieved successfully",
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 /**

@@ -1,4 +1,4 @@
-@baseUrl = "http://localhost:8000/api/email"
+@baseUrl = http://localhost:8000/api/email
 
 ### SEND MESSAGE VIA EMAIL FORM
 POST {{baseUrl}}

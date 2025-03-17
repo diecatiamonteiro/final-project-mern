@@ -1,4 +1,4 @@
-@baseUrl = "http://localhost:8000/api/users/favourites"
+@baseUrl = http://localhost:8000/api/users/favourites
 
 ### ADD ARTIST/VENUE TO FAVOURITES
 POST {{baseUrl}}

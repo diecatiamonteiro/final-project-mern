@@ -1,4 +1,4 @@
-@baseUrl = "http://localhost:8000/api/bookings"
+@baseUrl = http://localhost:8000/api/bookings
 
 ### REQUEST AN ARTIST OR VENUE
 POST {{baseUrl}}

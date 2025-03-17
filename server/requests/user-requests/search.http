@@ -1,4 +1,4 @@
-@baseUrl = "http://localhost:8000/api/users"
+@baseUrl = http://localhost:8000/api/users
 
 ### SEARCH ARTISTS/VENUES
 GET {{baseUrl}}/search?q=searchTerm
