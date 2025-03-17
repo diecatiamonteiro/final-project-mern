@@ -1,0 +1,52 @@
+@baseUrl = "http://localhost:8000/api/bookings"
+
+### REQUEST AN ARTIST OR VENUE
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "initiatedBy":"",
+  "receivedBy":"",
+  "performanceDate":"",
+  "status":""
+}
+
+### GET A SPECIFIC BOOKING
+GET {{baseUrl}}/:id
+
+### EDIT BOOKING DATE
+PATCH {{baseUrl}}/:id/edit
+Content-Type: application/json
+
+{
+  "performanceDate":""
+}
+
+### ACCEPT BOOKING REQUEST
+PATCH {{baseUrl}}/:id/accept
+Content-Type: application/json
+
+{
+  "status":""
+}
+
+### DECLINE BOOKING REQUEST
+PATCH {{baseUrl}}/:id/decline
+Content-Type: application/json
+
+{
+  "status":"",
+  "isCancelledOrDeclined":true
+}
+
+### CANCEL ACCEPTED BOOKING
+PATCH {{baseUrl}}/:id/cancel
+Content-Type: application/json
+
+{
+  "status":"",
+  "isCancelledOrDeclined":true
+}
+
+### GET ALL ACCEPTED BOOKINGS
+GET {{baseUrl}}/accepted

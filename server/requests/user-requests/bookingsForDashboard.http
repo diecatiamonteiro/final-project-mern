@@ -1,0 +1,10 @@
+@baseUrl = "http://localhost:8000/api/users"
+
+### GET ALL RECEIVED & SENT BOOKINGS OF A USER
+GET {{baseUrl}}/:id/bookings
+
+### GET ONLY RECEIVED BOOKINGS OF A USER
+GET {{baseUrl}}/:id/bookings/received
+
+### GET ONLY SENT BOOKINGS OF A USER
+GET {{baseUrl}}/:id/bookings/sent
