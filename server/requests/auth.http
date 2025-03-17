@@ -1,16 +1,15 @@
-@baseUrl = "http://localhost:8000/api/auth"
+@baseUrl = http://localhost:8000/api/auth
 
 ### REGISTER A NEW USER
 POST {{baseUrl}}/register
 Content-Type: application/json
 
 {
-  "firstName":"",
-  "lastName":"",
-  "email":"",
-  "password":"",
-  "role":"",
-  "isConfirmed":""
+  "firstName":"Evie",
+  "lastName":"Wilcock",
+  "email":"eviewilcock01@gmail.com",
+  "password":"123456",
+  "role":"artist"  
 }
 
 ### VERIFY REGISTERED USER'S EMAIL
@@ -21,8 +20,8 @@ POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
-  "email":"",
-  "password":""
+  "email":"eviewilcock01@gmail.com",
+  "password":"123456"
 }
 
 // LOGIN A USER WITH GOOGLE

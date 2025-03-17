@@ -5,7 +5,7 @@ import createError from "http-errors";
  * @desc  Validates user identity and ensures that only authenticated users can access protected routes
  */
 
-const checkToken = async () => {
+const checkToken = async (req, res, next) => {
   try {
     // Extract token from cookies
     const jwtToken = req.cookies.jwtToken;
