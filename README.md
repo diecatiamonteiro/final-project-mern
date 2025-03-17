@@ -180,6 +180,7 @@ Users can be artists, venues or guests.
 
 - performanceType: ["Music", "Comedy", "Poetry & Spoken Word", "Dance", "Theater", "Experimental & Visual", "Other"]
 - venueType: ["Bar", "Café", "Club", "Pub", "Restaurant", "Live Music Venue", "Theater", "Art Gallery", "Community Center", "Cultural Space", "Outdoor Venue", "Concert Hall", "Jazz Club", "Underground Venue", "Co-working Space", "Bookstore", "Hotel Lounge", "Rooftop Venue", "Pop-up Space", "Other",]
+- genre: ["Rock", "Pop", "Hip-Hop", "Jazz", "Classical", "Electronic", "Folk", "Reggae", "Blues", "Indie", "Funk", "R&B", "Soul", "Punk", "Metal", "Alternative", "Experimental", "House", "Techno", "Country", "Latin", "Gospel", "Orchestral", "Afrobeats", "K-Pop, "Other"]
 - revenueSplit: ["100% to Artist", "80/20 (Artist/Venue)", "70/30 (Artist/Venue)", "50/50", "Other"]
 
 **Manage source of media & social links protection in BE:**
