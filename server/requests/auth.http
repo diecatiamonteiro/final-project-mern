@@ -5,12 +5,11 @@ POST {{baseUrl}}/register
 Content-Type: application/json
 
 {
-  "firstName":"",
-  "lastName":"",
-  "email":"",
-  "password":"",
-  "role":"",
-  "isConfirmed":""
+  "firstName":"Evie",
+  "lastName":"Wilcock",
+  "email":"eviewilcock01@gmail.com",
+  "password":"123456",
+  "role":"artist"  
 }
 
 ### VERIFY REGISTERED USER'S EMAIL
