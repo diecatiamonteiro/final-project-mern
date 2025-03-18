@@ -119,7 +119,6 @@ export const register = async (req, res, next) => {
 export const verifyEmail = async (req, res, next) => {
   try {
     const { token, userId } = req.query;
-    console.log("token: ", token, "userId: ", userId);
 
     if (!token || !userId) {
       throw createError(400, "Missing verification information");
