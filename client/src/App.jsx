@@ -10,6 +10,7 @@ import IndividualArtistPage from "./pages/IndividualArtistPage";
 import FavouritesPage from "./pages/FavouritesPage";
 import UserDashboardPage from "./pages/UserDashboardPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import VerificationPage from "./pages/VerificationPage";
 
 function App() {
   return (
@@ -24,10 +25,11 @@ function App() {
         <Route path="artist/:artistId" element={<IndividualArtistPage />} />
         <Route path="favourites" element={<FavouritesPage />} />
         <Route path="dashboard" element={<UserDashboardPage />} />
+        <Route path="verify-email" element={<VerificationPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;
