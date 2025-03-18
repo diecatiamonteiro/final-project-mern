@@ -13,7 +13,7 @@ Content-Type: application/json
 }
 
 ### VERIFY REGISTERED USER'S EMAIL
-GET {{baseUrl}}/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NDIyMjA2OTYsImV4cCI6MTc0MjMwNzA5Nn0.GyLPeL24c4uKXVuZsI8WraSMXPtavbeCHastxHsfKCM&userId=67d82d9898e0104f79481500
+GET {{baseUrl}}/verify-email
 
 ### LOGIN A USER
 POST {{baseUrl}}/login
