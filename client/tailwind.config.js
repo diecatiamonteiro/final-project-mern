@@ -5,7 +5,8 @@ export default {
     extend: {
       colors: {
         midnightBlack: "#0A0A0A",
-        deepGreen: "#1B3329",
+        green: "#059669",
+        greenHover: "#047857",
         offwhite: "#F5F5F3",
   
       },
