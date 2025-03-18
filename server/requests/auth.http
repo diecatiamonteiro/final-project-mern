@@ -24,13 +24,6 @@ Content-Type: application/json
   "password":"123456"
 }
 
-// LOGIN A USER WITH GOOGLE
-POST {{baseUrl}}/login/google
-Content-Type: application/json
-
-{
-
-}
 
 ### LOGOUT A USER
 GET {{baseUrl}}/logout
@@ -43,8 +36,7 @@ PATCH {{baseUrl}}/update-account
 Content-Type: application/json
 
 {
-  "firstName":"",
-  "lastName":""
+  "firstName":"Ev"
 }
 
 ### CHANGE PASSWORD
@@ -52,7 +44,8 @@ PATCH {{baseUrl}}/change-password
 Content-Type: application/json
 
 {
-  "password":""
+  "currentPassword":"123456",
+  "newPassword":"1234567"
 }
 
 ### DELETE USER ACCOUNT AND ALL RELATED DATA
