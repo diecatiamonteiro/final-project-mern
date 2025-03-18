@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import createError from "http-errors";
+import User from "../models/User.js";
 
 /**
  * @desc  Validates user identity and ensures that only authenticated users can access protected routes

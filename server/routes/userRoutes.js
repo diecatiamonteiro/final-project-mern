@@ -16,6 +16,11 @@ import {
   getAllSentBookings,
   searchForArtistOrVenue,
 } from "../controllers/userController.js";
+import {
+  checkImages,
+  checkMediaLinks,
+  checkSocialLinks,
+} from "../middleware/checkUploads.js";
 
 const userRouter = express.Router();
 
@@ -27,7 +32,14 @@ userRouter
 
 // Update own profile and delete media links and images
 userRouter
-  .patch("/:id/update-profile", checkToken, updateProfile)
+  .patch(
+    "/:id/update-profile",
+    checkToken,
+    checkMediaLinks,
+    checkImages,
+    checkSocialLinks,
+    updateProfile
+  )
   .delete("/:id/delete-media/:mediaId", checkToken, deleteSingleMedia)
   .delete("/:id/delete-image/:imageId", checkToken, deleteSingleImage);
 
