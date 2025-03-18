@@ -13,7 +13,7 @@ Content-Type: application/json
 }
 
 ### VERIFY REGISTERED USER'S EMAIL
-GET {{baseUrl}}/verify-email
+GET {{baseUrl}}/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NDIyMjA2OTYsImV4cCI6MTc0MjMwNzA5Nn0.GyLPeL24c4uKXVuZsI8WraSMXPtavbeCHastxHsfKCM&userId=67d82d9898e0104f79481500
 
 ### LOGIN A USER
 POST {{baseUrl}}/login
@@ -24,13 +24,6 @@ Content-Type: application/json
   "password":"123456"
 }
 
-// LOGIN A USER WITH GOOGLE
-POST {{baseUrl}}/login/google
-Content-Type: application/json
-
-{
-
-}
 
 ### LOGOUT A USER
 GET {{baseUrl}}/logout
@@ -43,8 +36,7 @@ PATCH {{baseUrl}}/update-account
 Content-Type: application/json
 
 {
-  "firstName":"",
-  "lastName":""
+  "firstName":"Ev"
 }
 
 ### CHANGE PASSWORD
@@ -52,7 +44,8 @@ PATCH {{baseUrl}}/change-password
 Content-Type: application/json
 
 {
-  "password":""
+  "currentPassword":"123456",
+  "newPassword":"1234567"
 }
 
 ### DELETE USER ACCOUNT AND ALL RELATED DATA

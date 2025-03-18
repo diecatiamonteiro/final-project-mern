@@ -119,6 +119,7 @@ export const register = async (req, res, next) => {
 export const verifyEmail = async (req, res, next) => {
   try {
     const { token, userId } = req.query;
+    console.log("token: ", token, "userId: ", userId);
 
     if (!token || !userId) {
       throw createError(400, "Missing verification information");
@@ -195,7 +196,11 @@ export const googleLogin = async (req, res, next) => {
   try {
     const { token } = req.body;
 
-    // Get user info from Google
+    if (!token) {
+      throw createError(400, "Access token is required");
+    }
+
+    // Fetch user info from Google using the access token
     const response = await axios.get(
       `https://www.googleapis.com/oauth2/v3/userinfo`,
       {
@@ -204,6 +209,10 @@ export const googleLogin = async (req, res, next) => {
     );
 
     const { email, given_name, family_name } = response.data;
+
+    if (!email) {
+      throw createError(400, "Failed to retrieve user email from Google");
+    }
 
     // Check if user exists
     let user = await User.findOne({ email });
