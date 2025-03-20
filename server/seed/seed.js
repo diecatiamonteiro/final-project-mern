@@ -17,8 +17,8 @@ const seedDatabase = async () => {
     await User.deleteMany({});
     console.log("Cleared existing users...");
 
-    // Hash a common password for all seed users
-    const password = "123456";
+    // Hash a common password for all seed users (for testing purposes only)
+    const password = "123456"; // Simple password allowed for test data
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Prepare the users with hashed password and confirmed status

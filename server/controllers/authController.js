@@ -66,23 +66,49 @@ export const register = async (req, res, next) => {
       throw createError(400, "All fields are required");
     }
 
+    // Validate email format
+    if (!validator.isEmail(email)) {
+      throw createError(400, "Invalid email format");
+    }
+
+    // Validate password strength
+    if (
+      !validator.isStrongPassword(password, {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+      })
+    ) {
+      throw createError(
+        400,
+        "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+      );
+    }
+
+    // Sanitize inputs
+    const sanitizedFirstName = validator.escape(firstName);
+    const sanitizedLastName = validator.escape(lastName);
+    const sanitizedEmail = validator.normalizeEmail(email);
+
     // Check if user already exists
-    const exisitingUser = await User.findOne({ email });
-    if (exisitingUser) {
+    const existingUser = await User.findOne({ email: sanitizedEmail });
+    if (existingUser) {
       throw createError(400, "User already exists");
     }
 
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user
+    // Create new user with sanitized inputs
     const newUser = new User({
-      firstName,
-      lastName,
-      email,
+      firstName: sanitizedFirstName,
+      lastName: sanitizedLastName,
+      email: sanitizedEmail,
       password: hashedPassword,
       role,
-      isConfirmed: false, // Not confirmed until email verification
+      isConfirmed: false,
     });
     const savedUser = await newUser.save();
 
@@ -161,25 +187,49 @@ export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user exists
-    const user = await User.findOne({ email });
-    if (!user) throw createError(401, "Invalid credentials");
+    // Check if fields are provided
+    if (!email || !password) {
+      throw createError(400, "Email and password are required");
+    }
 
-    // Add this check
+    // Validate email format
+    if (!validator.isEmail(email)) {
+      throw createError(400, "Invalid email format");
+    }
+
+    // Sanitize email
+    const sanitizedEmail = validator.normalizeEmail(email);
+
+    // Check if user exists (using sanitized email)
+    const user = await User.findOne({ email: sanitizedEmail });
+    if (!user) {
+      // Using a generic message for security
+      throw createError(401, "Invalid credentials");
+    }
+
+    // Check email verification status
     if (!user.isConfirmed) {
       throw createError(401, "Please verify your email before logging in");
     }
 
     // Compare provided password with stored hash
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) throw createError(401, "Invalid credentials");
+    if (!isMatch) {
+      // Using a generic message for security
+      throw createError(401, "Invalid credentials");
+    }
 
     // Set token as a cookie after successful login
     await tokenizeCookie(user, res);
 
-    res
-      .status(200)
-      .json({ message: "User successfully logged in", data: user });
+    // Don't send password in response
+    const userWithoutPassword = user.toObject();
+    delete userWithoutPassword.password;
+
+    res.status(200).json({
+      message: "Login successful",
+      data: userWithoutPassword,
+    });
   } catch (error) {
     next(error);
   }

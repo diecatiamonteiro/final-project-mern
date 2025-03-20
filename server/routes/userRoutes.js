@@ -1,5 +1,4 @@
 import express from "express";
-import multer from "multer";
 
 import checkToken from "../middleware/checkToken.js";
 
@@ -25,8 +24,6 @@ import {
 } from "../middleware/checkUploads.js";
 // import { upload } from "../middleware/uploadMiddleware.js";
 
-const upload = multer({ dest: "uploads/" });
-
 const userRouter = express.Router();
 
 userRouter
@@ -44,11 +41,9 @@ userRouter
   .patch(
     "/:id/update-profile",
     // checkToken,
-    // upload,
     // checkMediaLinks,
     // checkImages,
     // checkSocialLinks,
-    upload.single("image"),
     updateProfile
   )
   .delete("/:id/delete-media/:mediaId", checkToken, deleteSingleMedia)
