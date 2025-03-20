@@ -7,4 +7,4 @@ GET {{baseUrl}}/venues
 GET {{baseUrl}}/artists
 
 ### GET SPECIFIC ARTIST/VENUE
-GET {{baseUrl}}/:id
+GET {{baseUrl}}/67d9787538abedcfa89660f3

@@ -36,7 +36,8 @@ PATCH {{baseUrl}}/update-account
 Content-Type: application/json
 
 {
-  "firstName":"Ev"
+  "firstName":"Test",
+  "lastName":"Venue"
 }
 
 ### CHANGE PASSWORD

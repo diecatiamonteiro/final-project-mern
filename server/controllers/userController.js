@@ -1,6 +1,7 @@
 import createError from "http-errors";
 import User from "../models/User.js";
 import Booking from "../models/Booking.js";
+import mongoose from "mongoose";
 
 //! Display venues, artists, and their individual profiles ------------------------->
 
@@ -64,6 +65,11 @@ export const getIndividualArtistOrVenue = async (req, res, next) => {
   try {
     const { id } = req.params;
 
+    // Add ObjectId validation
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw createError(400, "Invalid user ID format");
+    }
+
     // Find user by ID and exclude password
     const user = await User.findById(id).select("-password").populate({
       path: "favourites",
@@ -79,9 +85,6 @@ export const getIndividualArtistOrVenue = async (req, res, next) => {
       data: user,
     });
   } catch (error) {
-    if (error.kind === "ObjectId") {
-      return next(createError(400, "Invalid user ID format"));
-    }
     next(error);
   }
 };
@@ -97,7 +100,9 @@ export const getIndividualArtistOrVenue = async (req, res, next) => {
 export const updateProfile = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id; // From checkToken middleware
+    const userId = req.user?.id; // From checkToken middleware
+
+    console.log(req.file);
 
     // Check if user is updating their own profile
     if (id !== userId) {
@@ -135,6 +140,8 @@ export const updateProfile = async (req, res, next) => {
       },
       { new: true, runValidators: true }
     ).select("-password");
+
+    console.log("Updated user: ", updatedUser);
 
     if (!updatedUser) {
       throw createError(404, "User not found");
@@ -183,9 +190,6 @@ export const deleteSingleMedia = async (req, res, next) => {
       data: updatedUser,
     });
   } catch (error) {
-    if (error.kind === "ObjectId") {
-      return next(createError(400, "Invalid ID format"));
-    }
     next(error);
   }
 };
@@ -227,9 +231,6 @@ export const deleteSingleImage = async (req, res, next) => {
       data: updatedUser,
     });
   } catch (error) {
-    if (error.kind === "ObjectId") {
-      return next(createError(400, "Invalid ID format"));
-    }
     next(error);
   }
 };
@@ -277,9 +278,6 @@ export const addFavourite = async (req, res, next) => {
       data: updatedUser,
     });
   } catch (error) {
-    if (error.kind === "ObjectId") {
-      return next(createError(400, "Invalid ID format"));
-    }
     next(error);
   }
 };
@@ -324,9 +322,6 @@ export const removeFavourite = async (req, res, next) => {
       data: updatedUser,
     });
   } catch (error) {
-    if (error.kind === "ObjectId") {
-      return next(createError(400, "Invalid ID format"));
-    }
     next(error);
   }
 };
@@ -339,7 +334,9 @@ export const removeFavourite = async (req, res, next) => {
 
 export const getAllFavourites = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.id; // From checkToken middleware
+
+    console.log(req.user);
 
     const user = await User.findById(userId).select("favourites").populate({
       path: "favourites",
@@ -356,9 +353,6 @@ export const getAllFavourites = async (req, res, next) => {
       data: user.favourites,
     });
   } catch (error) {
-    if (error.kind === "ObjectId") {
-      return next(createError(400, "Invalid ID format"));
-    }
     next(error);
   }
 };
@@ -414,9 +408,6 @@ export const getAllReceivedAndSentBookings = async (req, res, next) => {
       },
     });
   } catch (error) {
-    if (error.kind === "ObjectID") {
-      return next(createError(400, "Invalid ID format"));
-    }
     next(error);
   }
 };
@@ -452,9 +443,6 @@ export const getAllReceivedBookings = async (req, res, next) => {
       data: user.bookingsReceived,
     });
   } catch (error) {
-    if (error.kind === "ObjectId") {
-      return next(createError(400, "Invalid ID format"));
-    }
     next(error);
   }
 };
@@ -490,9 +478,6 @@ export const getAllSentBookings = async (req, res, next) => {
       data: user.bookingsSent,
     });
   } catch (error) {
-    if (error.kind === "ObjectId") {
-      return next(createError(400, "Invalid ID format"));
-    }
     next(error);
   }
 };
@@ -507,5 +492,50 @@ export const getAllSentBookings = async (req, res, next) => {
 
 export const searchForArtistOrVenue = async (req, res, next) => {
   try {
-  } catch (error) {}
+    const { q, city, type, revenueSplit } = req.query;
+
+    // Build search query
+    let searchQuery = {};
+
+    // Text search on name, description, type, city, and genre
+    if (q) {
+      searchQuery.$or = [
+        { name: { $regex: q, $options: "i" } },
+        { description: { $regex: q, $options: "i" } },
+        { type: { $regex: q, $options: "i" } },
+        { "additionalInfo.address.city": { $regex: q, $options: "i" } },
+        { "additionalInfo.genre": { $regex: q, $options: "i" } },
+      ];
+    }
+
+    // Filter by city
+    if (city) {
+      searchQuery["additionalInfo.address.city"] = {
+        $regex: city,
+        $options: "i",
+      };
+    }
+
+    // Filter by type (performance type for artists or venue type)
+    if (type) {
+      searchQuery.type = { $regex: type, $options: "i" };
+    }
+
+    // Filter by revenue split (for venues)
+    if (revenueSplit) {
+      searchQuery["additionalInfo.revenueSplit"] = revenueSplit;
+    }
+
+    const results = await User.find(searchQuery).select(
+      "-password -bookingsReceived -bookingsSent"
+    );
+
+    res.status(200).json({
+      message: "Search results retrieved successfully",
+      count: results.length,
+      data: results,
+    });
+  } catch (error) {
+    next(error);
+  }
 };

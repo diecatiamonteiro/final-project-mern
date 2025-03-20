@@ -12,6 +12,7 @@ import FavouritesPage from "./pages/FavouritesPage";
 import UserDashboardPage from "./pages/UserDashboardPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import VerificationPage from "./pages/VerificationPage";
+import UploadImage from "./components/UploadImage";
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
         <Route path="favourites" element={<FavouritesPage />} />
         <Route path="dashboard" element={<UserDashboardPage />} />
         <Route path="verify-email" element={<VerificationPage />} />
+        <Route path="upload-image" element={<UploadImage />} />
+
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
