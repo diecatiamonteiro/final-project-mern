@@ -249,42 +249,42 @@ Once booked, the date is removed from availability and stored in the Booking mod
 | GET    | `/logout`          | Log out user                                                                          | ✅ Yes          |
 | GET    | `/user-data`       | Fetch logged-in user data                                                             | ✅ Yes          |
 | PATCH  | `/update-account`  | Update user auth data                                                                 | ✅ Yes          |
-| PATCH  | `/change-password` | User clicks change password, is sent an email and redirected to change password modal | ❌ No           |
+| PATCH  | `/change-password` | User clicks change password, is sent an email and redirected to change password modal | ✅ Yes          |
 | DELETE | `/delete-account`  | Delete user account and all related data                                              | ✅ Yes          |
 
 #### 5.2. User Routes: Artists & Venues (`api/users`)
 
-| Method | Endpoint                     | Description                                                                                       | Logged in User? |
-| ------ | ---------------------------- | ------------------------------------------------------------------------------------------------- | --------------- |
-| GET    | `/venues`                    | Display all venues on venues page                                                                 | ❌ No           |
-| GET    | `/artists`                   | Display all artists on artists page                                                               | ❌ No           |
-| GET    | `/:id`                       | Get entire specific artist/venue profile (profile pic & calendar availability included)           | ❌ No           |
-| ------ | ---------------------------- | ---------------------------------------------------------------------------------------           | --------------- |
-| PATCH  | `/:id/update-profile`        | Updae an existing artist/venue profile (includes everything profile related)                      | ✅ Yes          |
-| DELETE | `/:id/delete-media/:mediaId` | Delete individual media link                                                                      | ✅ Yes          |
-| DELETE | `/:id/delete-image/:imageId` | Delete individual image                                                                           | ✅ Yes          |
-| ------ | ---------------------------- | ---------------------------------------------------------------------------------------           | --------------- |
-| POST   | `/favourites`                | Add artist/venue to favourites                                                                    | ✅ Yes          |
-| DELETE | `/favourites/:id`            | Remove artist/venue from favourites                                                               | ✅ Yes          |
-| GET    | `/favourites`                | Display all favourited artists/venues                                                             | ✅ Yes          |
-| ------ | ---------------------------- | ---------------------------------------------------------------------------------------           | --------------- |
-| GET    | `/:id/bookings`              | Get all received & sent bookings of a user                                                        | ✅ Yes          |
-| GET    | `/:id/bookings/received`     | Get only received bookings of a user                                                              | ✅ Yes          |
-| GET    | `/:id/bookings/sent`         | Get only sent bookings of a user                                                                  | ✅ Yes          |
-| ------ | ---------------------------- | ---------------------------------------------------------------------------------------           | --------------- |
-| GET    | `/search?q=searchTerm`       | Search artists/venues by name, performance/venue type, location (city=leipzig&revenueSplit=80/20) | ✅ Yes          |
+| Method | Endpoint                     | Description                                                                                                     | Logged in User? |
+| ------ | ---------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------- |
+| GET    | `/venues`                    | Display all venues on venues page                                                                               | ❌ No           |
+| GET    | `/artists`                   | Display all artists on artists page                                                                             | ❌ No           |
+| GET    | `/:id`                       | Get entire specific artist/venue profile (profile pic & calendar availability included)                         | ❌ No           |
+| ------ | ---------------------------- | ---------------------------------------------------------------------------------------                         | --------------- |
+| PATCH  | `/:id/update-profile`        | Update an existing artist/venue profile (includes everything profile related)                                   | ✅ Yes          |
+| DELETE | `/:id/delete-media/:mediaId` | Delete individual media link                                                                                    | ✅ Yes          |
+| DELETE | `/:id/delete-image/:imageId` | Delete individual image                                                                                         | ✅ Yes          |
+| ------ | ---------------------------- | ---------------------------------------------------------------------------------------                         | --------------- |
+| POST   | `/favourites`                | Add artist/venue to favourites                                                                                  | ✅ Yes          |
+| DELETE | `/favourites/:id`            | Remove artist/venue from favourites                                                                             | ✅ Yes          |
+| GET    | `/favourites`                | Display all favourited artists/venues                                                                           | ✅ Yes          |
+| ------ | ---------------------------- | ---------------------------------------------------------------------------------------                         | --------------- |
+| GET    | `/:id/bookings`              | Get all received & sent bookings of a user                                                                      | ✅ Yes          |
+| GET    | `/:id/bookings/received`     | Get only received bookings of a user                                                                            | ✅ Yes          |
+| GET    | `/:id/bookings/sent`         | Get only sent bookings of a user                                                                                | ✅ Yes          |
+| ------ | ---------------------------- | ---------------------------------------------------------------------------------------                         | --------------- |
+| GET    | `/search?q=searchTerm`       | Search artists/venues by name, performance/venue type, artist genre, location (city=leipzig&revenueSplit=80/20) | ✅ Yes          |
 
 #### 5.3. Booking Routes (`api/bookings`)
 
-| Method | Endpoint       | Description                                                             | Logged in User? |
-| ------ | -------------- | ----------------------------------------------------------------------- | --------------- |
-| POST   | `/`            | Artist requests a venue or venue request an artist (updates user model) | ✅ Yes          |
-| GET    | `/:id`         | Get a specific booking                                                  | ✅ Yes          |
-| PATCH  | `/:id/edit`    | Modify booking date (only enabled until booking accepted)               | ✅ Yes          |
-| PATCH  | `/:id/accept`  | Accept booking request and notify other party (automatic email)         | ✅ Yes          |
-| PATCH  | `/:id/decline` | Decline request and notify other party (automatic email)                | ✅ Yes          |
-| PATCH  | `/:id/cancel`  | Cancel accepted booking and notify other party (automatic email)        | ✅ Yes          |
-| GET    | `/accepted`    | Get all accepted bookings (under My Gigs)                               | ✅ Yes          |
+| Method | Endpoint       | Description                                                              | Logged in User? |
+| ------ | -------------- | ------------------------------------------------------------------------ | --------------- |
+| POST   | `/`            | Artist requests a venue or venue requests an artist (updates user model) | ✅ Yes          |
+| GET    | `/:id`         | Get a specific booking                                                   | ✅ Yes          |
+| PATCH  | `/:id/edit`    | Modify booking date (only enabled until booking accepted)                | ✅ Yes          |
+| PATCH  | `/:id/accept`  | Accept booking request and notify other party (automatic email)          | ✅ Yes          |
+| PATCH  | `/:id/decline` | Decline request and notify other party (automatic email)                 | ✅ Yes          |
+| PATCH  | `/:id/cancel`  | Cancel accepted booking and notify other party (automatic email)         | ✅ Yes          |
+| GET    | `/accepted`    | Get all accepted bookings (under My Gigs)                                | ✅ Yes          |
 
 #### 5.4 Email Routes (`api/email`)
 
@@ -311,7 +311,7 @@ Does not modify email, password, or role.
 | Page              | Description                                                                                   |
 | ----------------- | --------------------------------------------------------------------------------------------- |
 | `checkToken.js`   | Validates user identity and ensures that only authenticated users can access protected routes |
-| `errorHandler.js` | Global error handler                                                                          |
+| `errorHandler.js` | Global error handler & 404 route not found                                                    |
 | `checkProfile.js` | Checks if user profile is completed in order to make bookings                                 |
 | `checkUploads.js` | Checks link origin for media, images and social links                                         |
 
@@ -334,9 +334,10 @@ Does not modify email, password, or role.
 
 1. User opens the email.
 2. Clicks the verification link.
-3. Redirected to login page with a added message on top: "Your email has been successfully verified. Please log in to continue."
-4. User manually enters credentials & logs in.
-5. Account is now marked as "isConfirmed: true" in the database.
+3. Redirected to verification page (loading state).
+4. Once verification is complete, automatically redirected to login page with an added message on top: "Your email has been successfully verified. Please log in to continue."
+5. User manually enters credentials & logs in.
+6. Account is now marked as "isConfirmed: true" in the database.
 
 📌 **User tries to log in without verifying email**
 
@@ -476,7 +477,7 @@ Does not modify email, password, or role.
 1. Navigates to "Artists" or "Venues" page.
 2. Can browse all artists and venues (pagination)
 3. Can use the search bar to type a name.
-4. Can use filters (performance type, venue type, location, revenue split) to refine search.
+4. Can use filters (performance type, venue type, artist genre, location, revenue split) to refine search.
 5. Clicks "Apply Filters".
 6. Sees filtered results.
 7. Clicks on a profile to view more details.
@@ -578,6 +579,7 @@ Does not modify email, password, or role.
 | Page                       | Description                                                   |
 | -------------------------- | ------------------------------------------------------------- |
 | `RegisterPage.jsx`         | Create an account                                             |
+| `VerificationPage.jsx`     | Temporary page during email verification process              |
 | `LoginPage.jsx`            | Securely log in                                               |
 | `Homepage.jsx`             | Overview, FAQ, how it works                                   |
 | `AllVenuesPage.jsx`        | Browse all venues                                             |

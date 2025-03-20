@@ -1,55 +1,70 @@
 @baseUrl = http://localhost:8000/api/users
 
 ### UPDATE ARTIST PROFILE
-PATCH {{baseUrl}}/:id/update-profile
+PATCH {{baseUrl}}/67d9787538abedcfa89660f3/update-profile
 Content-Type: application/json
 
 {
-  "name":"",
-  "description":"",
-  "type":[""],
-  "additionalInfo": {"genre":[""]},
+  "name":"Evie",
+  "description":"Hi! I'm Evie, an indie-folk singer from the UK based in Leipzig. Let's connect!",
+  "type":["Singer"],
+  "additionalInfo": {"genre":["Indie", "Folk"]},
   "profilePicture":"",
-  "media":[""],
-  "images":[""],
-  "socialLinks":[""],
-  "availability":[""],
-  "bookingsReceived":[""],
-  "bookingsSent":[""],
-  "favourites":[""]
+  "media":[
+    {
+      "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "platform": "YouTube"
+    },
+    {
+      "url": "https://open.spotify.com/track/YOUR_TRACK_ID",
+      "platform": "Spotify"
+    },
+    {
+      "url": "https://soundcloud.com/artist-name/track-name",
+      "platform": "SoundCloud"
+    }
+  ],
+  "images":["https://picsum.photos/200"],
+  "socialLinks":[
+    "https://www.instagram.com/your_profile",
+    "https://www.facebook.com/your_page",
+    "https://twitter.com/your_handle"
+  ],
+  "availability":[""]
 }
 
 ### UPDATE VENUE PROFILE
-PATCH {{baseUrl}}/:id/update-profile
+PATCH {{baseUrl}}/67d9619581fea814fa967a34/update-profile
 Content-Type: application/json
 
 {
-  "name":"",
-  "description":"",
-  "type":[""],
+  "name":"Noch Besser Leben",
+  "description":"Welcome to Noch Besser Leben, a hidden spot for those who live for live music.",
+  "type":["Bar"],
   "additionalInfo":{
     "address":{
-      "streetName":"",
-      "number":"",
-      "zipCode":"",
-      "city":""
+      "streetName":"Karl-Heine-Str.",
+      "number":"56",
+      "zipCode":"04229",
+      "city":"Leipzig"
     },
-    "revenueSplit":"",
-    "openingTimes":[""],
-    "performingTimes":[""]
+    "revenueSplit":"80-20",
+    "openingTimes":["Monday-Sunday: 18:00-02:00"],
+    "performingTimes":["20:00-00:00"]
   },
   "profilePicture":"",
-  "media":[""],
-  "images":[""],
-  "socialLinks":[""],
-  "availability":[""],
-  "bookingsReceived":[""],
-  "bookingsSent":[""],
-  "favourites":[""]
+  "media":[],
+  "images":["https://picsum.photos/200"],
+  "socialLinks":[
+    "https://www.instagram.com/your_profile",
+    "https://www.facebook.com/your_page",
+    "https://twitter.com/your_handle"
+  ],
+  "availability":[]
 }
 
 ### DELETE INDIVIDUAL MEDIA LINK
-DELETE {{baseUrl}}/:id/delete-media/:mediaId
+DELETE {{baseUrl}}/67d9787538abedcfa89660f3/delete-media/67dbddd4961ddd1cc269aed3
 
 ### DELETE INDIVIDUAL IMAGE
-DELETE {{baseUrl}}/:id/delete-image/:imageId
+DELETE {{baseUrl}}/67d9787538abedcfa89660f3/delete-image/:imageId

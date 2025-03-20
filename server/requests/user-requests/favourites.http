@@ -5,11 +5,11 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "favourites":[""]
+  "favouriteId":"67d9787538abedcfa89660f3"
 }
 
 ### REMOVE ARTIST/VENUE FROM FAVOURITES
-DELETE {{baseUrl}}/:id
+DELETE {{baseUrl}}/67d9787538abedcfa89660f3
 
 ### GET ALL FAVOURITED ARTISTS
 GET {{baseUrl}}

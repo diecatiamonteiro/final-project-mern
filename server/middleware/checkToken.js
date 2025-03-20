@@ -10,7 +10,6 @@ const checkToken = async (req, res, next) => {
   try {
     // Extract token from cookies
     const jwtToken = req.cookies.jwtToken;
-    console.log("JWT Token:", jwtToken);
 
     if (!jwtToken) {
       throw createError(401, "Unauthorized request - No token");
@@ -18,11 +17,10 @@ const checkToken = async (req, res, next) => {
 
     // Verify and decode the token
     const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
-    console.log("Decoded token:", decoded);
 
     // Find the user based on decoded token ID
     const user = await User.findById(decoded.id);
-    console.log("Found user:", user);
+    // console.log("Found user:", user);
 
     if (!user) {
       throw createError(401, "User no longer exists");

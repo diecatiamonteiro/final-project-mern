@@ -5,48 +5,35 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "initiatedBy":"",
-  "receivedBy":"",
-  "performanceDate":"",
-  "status":""
+  "receiverId":"67d9619581fea814fa967a34",
+  "performanceDate":"2026-05-01T20:00:00.000Z"
 }
 
 ### GET A SPECIFIC BOOKING
-GET {{baseUrl}}/:id
+GET {{baseUrl}}/67dbcf92e04a79c12202717c
 
 ### EDIT BOOKING DATE
-PATCH {{baseUrl}}/:id/edit
+PATCH {{baseUrl}}/67dbcf92e04a79c12202717c/edit
 Content-Type: application/json
 
 {
-  "performanceDate":""
+  "performanceDate":"2025-05-01T20:00:00.000Z"
 }
 
 ### ACCEPT BOOKING REQUEST
-PATCH {{baseUrl}}/:id/accept
+PATCH {{baseUrl}}/67dbcf92e04a79c12202717c/accept
 Content-Type: application/json
 
-{
-  "status":""
-}
 
 ### DECLINE BOOKING REQUEST
-PATCH {{baseUrl}}/:id/decline
+PATCH {{baseUrl}}/67dbcf92e04a79c12202717c/decline
 Content-Type: application/json
 
-{
-  "status":"",
-  "isCancelledOrDeclined":true
-}
 
 ### CANCEL ACCEPTED BOOKING
-PATCH {{baseUrl}}/:id/cancel
+PATCH {{baseUrl}}/67dbcf92e04a79c12202717c/cancel
 Content-Type: application/json
 
-{
-  "status":"",
-  "isCancelledOrDeclined":true
-}
 
 ### GET ALL ACCEPTED BOOKINGS
 GET {{baseUrl}}/accepted

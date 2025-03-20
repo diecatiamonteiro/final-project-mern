@@ -5,5 +5,7 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  
+    "bookingId": "67dbcf92e04a79c12202717c", 
+    "subject": "Question about the upcoming gig",
+    "message": "Hi! What is the max capacity at Noch Besser Leben? I couldn't find it on your page."
 }
