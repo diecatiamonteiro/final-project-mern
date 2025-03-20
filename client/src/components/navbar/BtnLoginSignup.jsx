@@ -3,7 +3,7 @@ import Button from "../Button";
 
 export default function BtnLoginSignup() {
   return (
-    <Button to="/login" variant="primary">
+    <Button to="/login" variant="green">
       Login / Signup
     </Button>
   );
