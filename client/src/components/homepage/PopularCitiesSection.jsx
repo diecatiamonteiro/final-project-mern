@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { fetchCityImage } from "../../utils/unsplashApi";
+import Button from "../Button";
 
 //! Temporary mock data - will be replaced by data from UsersReducer later
 const MOCK_CITIES = [
@@ -68,16 +70,36 @@ export default function PopularCitiesSection() {
   return (
     <section className="py-24 px-6 full-width-section bg-green/30">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="col-span-1 text-center lg:text-left flex flex-col justify-center">
+        <motion.div
+          initial={{ x: -100, opacity: 0 }}
+          whileInView={{ x: 0, opacity: 1 }}
+          viewport={{ once: false, amount: 0.3 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="col-span-1 text-center lg:text-left flex flex-col justify-center"
+        >
           <h2 className="text-4xl lg:text-6xl font-bold mb-8">
             Your Next Stage is Here
           </h2>
-          <h3 className="text-xl lg:text-2xl">
+          <h3 className="text-xl lg:text-2xl mb-8">
             Find where our registered venues are located and book a stage to
             perform.
           </h3>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 col-span-2 gap-6">
+          <Button
+            to="/venues"
+            variant="outlineBlack"
+            size="small"
+            className="w-fit mx-auto lg:mx-0 lg:text-left"
+          >
+            See all Stages
+          </Button>
+        </motion.div>
+        <motion.div
+          initial={{ x: 100, opacity: 0 }}
+          whileInView={{ x: 0, opacity: 1 }}
+          viewport={{ once: false, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 col-span-2 gap-6"
+        >
           {cities.map((city) => (
             <div
               key={city.id}
@@ -99,7 +121,7 @@ export default function PopularCitiesSection() {
               </div>
             </div>
           ))}
-        </div>
+        </motion.div>
         {/* <div className="text-xs text-gray-500 text-center mt-4">
           Photos by various photographers on <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" className="underline">Unsplash</a>
         </div> */}

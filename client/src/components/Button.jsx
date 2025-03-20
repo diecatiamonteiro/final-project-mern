@@ -12,7 +12,8 @@ export default function Button({
   className = "",
 }) {
   // Base classes
-  const baseClasses = "font-medium rounded-3xl transition-colors";
+  const baseClasses =
+    "font-medium rounded-3xl transition-colors shadow-lg shadow-midnightBlack/20";
 
   // Size classes
   const sizeClasses = {

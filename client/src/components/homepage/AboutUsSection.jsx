@@ -1,13 +1,6 @@
 import React from "react";
-import { motion } from "framer-motion";
 import homepageAboutUs from "../../assets/homepage/homepage-aboutUs.jpg";
 import Button from "../Button";
-
-// Animation variants for reuse
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-};
 
 export default function AboutUsSection() {
   return (
@@ -15,12 +8,8 @@ export default function AboutUsSection() {
       {/* Text */}
       <div className="lg:w-1/2 flex flex-col space-y-8 items-center">
         {/* Title & Intro */}
-        <motion.div
+        <div
           className="text-center lg:text-left"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
         >
           <h2 className="text-4xl lg:text-6xl font-bold mb-4">The Greenroom</h2>
           <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-midnightBlack/70">
@@ -42,12 +31,8 @@ export default function AboutUsSection() {
                 splits, and focus on what you do best: performing.
               </p>
               {/* Buttons */}
-              <motion.div
+              <div
                 className="flex flex-wrap justify-end w-full gap-4"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.6 }}
               >
                 <Button
                   to="/venues"
@@ -56,14 +41,12 @@ export default function AboutUsSection() {
                 >
                   Find Your Stage
                 </Button>
-              </motion.div>
+              </div>
             </div>
 
             {/* Are you a venue owner? */}
             <div className="flex flex-col gap-4 border border-midnightBlack/10 shadow-lg shadow-midnightBlack/30 p-6 rounded-lg hover:shadow-midnightBlack/50 transition-all duration-300">
-              <h3 className="text-2xl lg:text-3xl font-bold mb-4">
-                I'm a venue owner
-              </h3>
+              <h3 className="text-3xl font-bold mb-4">I'm a venue owner</h3>
               <p className="text-lg text-gray-600">
                 Running a venue? Whether you own a bar, café, club, or
                 alternative space, find the right artists to bring your stage to
@@ -73,12 +56,8 @@ export default function AboutUsSection() {
                 details.
               </p>
               {/* Buttons */}
-              <motion.div
+              <div
                 className="flex flex-wrap justify-end w-full gap-4 pt-6"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.6 }}
               >
                 <Button
                   to="/artists"
@@ -87,19 +66,15 @@ export default function AboutUsSection() {
                 >
                   Find Your Performer
                 </Button>
-              </motion.div>
+              </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Image */}
-      <motion.div
+      <div
         className="lg:w-1/2 flex"
-        initial={{ opacity: 0, x: -50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
       >
         <img
           src={homepageAboutUs}
@@ -107,7 +82,7 @@ export default function AboutUsSection() {
           className="rounded-lg shadow-lg w-full"
           style={{ filter: "grayscale(100%)" }}
         />
-      </motion.div>
+      </div>
     </section>
   );
 }
