@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import User from "../models/User.js";
-import { artists } from "./seed/artistsSeed.js";
-import { venues } from "./seed/venuesSeed.js";
+import { artists } from "./artistsSeed.js";
+import { venues } from "./venuesSeed.js";
 import bcrypt from "bcrypt";
 
 dotenv.config();
@@ -10,7 +10,7 @@ dotenv.config();
 const seedDatabase = async () => {
   try {
     // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.DB_URI);
     console.log("Connected to MongoDB...");
 
     // Clear existing data
@@ -51,6 +51,9 @@ const seedDatabase = async () => {
   } catch (error) {
     console.error("Error seeding data:", error);
     process.exit(1);
+  } finally {
+    mongoose.connection.close();
+    console.log("Database connection closed");
   }
 };
 
