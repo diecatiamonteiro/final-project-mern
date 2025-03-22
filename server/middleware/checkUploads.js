@@ -49,7 +49,7 @@ export const checkMediaLinks = () => {
 
 /**
  * @desc  Validates image URLs (Cloudinary only)
- * TODO: Users dont upload cloudinary link. We use "form data" in FE and then we check image using multer and save images using cloudinary
+ * TODO: Users dont upload cloudinary link. We use "form data" in FE and then save images using cloudinary and send the link to the backend
  */
 export const checkImages = () => {
   return (req, res, next) => {
