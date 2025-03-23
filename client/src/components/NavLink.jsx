@@ -4,7 +4,8 @@ import { Link, useLocation } from 'react-router-dom'
 export default function NavLink({ 
   to, 
   children, 
-  className = "" 
+  className = "",
+  onClick 
 }) {
   const location = useLocation();
   const isActive = location.pathname === to;
@@ -21,7 +22,7 @@ export default function NavLink({
   const linkClasses = `${baseClasses} ${activeClasses} ${className}`;
   
   return (
-    <Link to={to} className={linkClasses}>
+    <Link to={to} className={linkClasses} onClick={onClick}>
       {children}
     </Link>
   );

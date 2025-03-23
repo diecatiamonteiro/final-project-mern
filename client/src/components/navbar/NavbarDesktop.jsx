@@ -31,7 +31,7 @@ export default function NavbarDesktop() {
 
   return (
     <div
-      className={`sticky top-0 z-10 hidden lg:block full-width-nav bg-midnightBlack transition-transform duration-300 ${
+      className={`sticky top-0 z-10 px-6 hidden xl:block full-width-nav bg-midnightBlack transition-transform duration-300 ${
         visible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
@@ -47,7 +47,7 @@ export default function NavbarDesktop() {
 
         {/* Right side: Login/Signup & Favourites, Dashboard, Logout */}
         <div className="flex flex-row gap-12 ml-32 items-center">
-          <BtnLoginSignup />
+         
           <NavLinkFavourites />
           <NavLinkDashboard />
           <BtnLogout />

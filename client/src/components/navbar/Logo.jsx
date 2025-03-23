@@ -2,11 +2,12 @@ import React from "react";
 import logo from "../../../public/logo.png";
 import { Link } from "react-router-dom";
 
-export default function Logo() {
+export default function Logo({ onClick }) {
   return (
     <Link
       to={"/"}
       className="flex items-center gap-2 group transition-transform duration-200 hover:scale-105 active:scale-95"
+      onClick={onClick}
     >
       <img
         src={logo}
