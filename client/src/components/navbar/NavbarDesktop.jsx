@@ -31,7 +31,7 @@ export default function NavbarDesktop() {
 
   return (
     <div
-      className={`sticky top-0 z-10 px-6 hidden xl:block full-width-nav bg-midnightBlack transition-transform duration-300 ${
+      className={`sticky top-0 z-50 px-6 hidden xl:block full-width-nav bg-midnightBlack transition-transform duration-300 ${
         visible ? "translate-y-0" : "-translate-y-full"
       }`}
     >

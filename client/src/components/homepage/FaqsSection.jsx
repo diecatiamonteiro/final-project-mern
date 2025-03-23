@@ -73,7 +73,7 @@ export default function FaqsSection() {
 
       {/* Content */}
       <div className="max-w-4xl mx-auto relative z-10">
-        <h2 className="text-6xl font-bold text-center mb-16 text-offwhite">
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-16 text-offwhite">
           Frequently Asked Questions
         </h2>
         <div className="space-y-4">
@@ -86,7 +86,7 @@ export default function FaqsSection() {
                 className="flex justify-between items-center w-full p-6 text-left focus:outline-none"
                 onClick={() => toggleFAQ(index)}
               >
-                <span className="font-semibold text-lg">{faq.question}</span>
+                <span className="font-semibold text-base md:text-lg">{faq.question}</span>
                 <span className="text-green">
                   {openIndex === index ? (
                     <FiChevronUp size={20} />
@@ -105,7 +105,7 @@ export default function FaqsSection() {
                   transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
                 }}
               >
-                <p>{faq.answer}</p>
+                <p className="text-base lg:text-lg">{faq.answer}</p>
               </div>
             </div>
           ))}
