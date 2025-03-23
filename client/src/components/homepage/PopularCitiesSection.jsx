@@ -77,10 +77,10 @@ export default function PopularCitiesSection() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="col-span-1 text-center lg:text-left flex flex-col justify-center"
         >
-          <h2 className="text-4xl lg:text-6xl font-bold mb-8">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8">
             Your Next Stage is Here
           </h2>
-          <h3 className="text-xl lg:text-2xl mb-8">
+          <h3 className="text-xl md:text-2xl   mb-8">
             Find where our registered venues are located and book a stage to
             perform.
           </h3>

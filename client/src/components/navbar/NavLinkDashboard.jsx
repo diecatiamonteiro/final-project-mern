@@ -5,7 +5,7 @@ import { FaRegCircleUser } from "react-icons/fa6";
 export default function NavLinkDashboard({ onClick }) {
   return (
     <>
-      <NavLink to="/dashboard" className="font-medium hidden lg:block">
+      <NavLink to="/dashboard" className="font-medium hidden lg:block" onClick={onClick}>
         My Greenroom
       </NavLink>
       <NavLink

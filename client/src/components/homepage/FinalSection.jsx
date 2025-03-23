@@ -7,9 +7,9 @@ export default function FinalSection() {
   const navigate = useNavigate();
 
   return (
-    <section className="py-32 my-48 px-6 bg-gradient-to-br from-green/30 to-green/90 text-midnightBlack">
+    <section className="py-24 lg:py-32 my-24 lg:my-48 px-6 bg-gradient-to-br from-green/30 to-green/90 text-midnightBlack">
       <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl md:text-4xl lg:text-6xl font-bold mb-6">
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
           Ready to Find Your Next Gig?
         </h2>
         <p className="text-xl lg:text-2xl mb-12">

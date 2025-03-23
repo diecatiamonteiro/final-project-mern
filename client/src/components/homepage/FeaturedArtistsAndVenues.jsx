@@ -114,16 +114,16 @@ export default function FeaturedArtistsAndVenues() {
   }
 
   return (
-    <section className="py-24 my-48 px-6 bg-white full-width-section">
+    <section className="py-12 lg:py-24 my-24 lg:my-48 px-6 bg-white full-width-section">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-6xl font-bold text-center lg:text-left mb-16">
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-left mb-12 lg:mb-16">
           Featured on The Greenroom
         </h2>
 
         {/* Artists Section */}
         <div className="mb-16">
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="text-2xl lg:text-4xl font-semibold">
+          <div className="flex justify-between items-center mb-4 md:mb-8">
+            <h3 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
               Featured Artists
             </h3>
             <Button
@@ -150,7 +150,7 @@ export default function FeaturedArtistsAndVenues() {
                   />
                 </div>
                 <div className="p-6">
-                  <h3 className="font-semibold text-2xl mb-2">
+                  <h3 className="font-semibold text-xl md:text-2xl mb-2">
                     {profile.name}
                   </h3>
                   <p className="text-gray-600 mb-2">
@@ -174,8 +174,8 @@ export default function FeaturedArtistsAndVenues() {
 
         {/* Venues Section */}
         <div>
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="text-2xl lg:text-4xl font-semibold">
+          <div className="flex justify-between items-center mb-4 md:mb-8">
+            <h3 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
               Featured Venues
             </h3>
             <Button
@@ -206,7 +206,9 @@ export default function FeaturedArtistsAndVenues() {
                   </p>
                 </div>
                 <div className="p-6">
-                  <h3 className="font-semibold text-2xl mb-2">{profile.name}</h3>
+                  <h3 className="font-semibold text-xl md:text-2xl mb-2">
+                    {profile.name}
+                  </h3>
                   <p className="text-gray-600 mb-2">{profile.venueType}</p>
                   <p className="text-gray-500 text-sm">
                     <span className="inline-block mr-2">

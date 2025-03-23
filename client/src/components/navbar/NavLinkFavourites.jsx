@@ -5,7 +5,7 @@ import { FaRegHeart } from "react-icons/fa";
 export default function NavLinkFavourites({ onClick }) {
   return (
     <>
-      <NavLink to="/favourites" className="font-medium hidden lg:block">
+      <NavLink to="/favourites" className="font-medium hidden lg:block" onClick={onClick}>
         My Favourites
       </NavLink>
       <NavLink

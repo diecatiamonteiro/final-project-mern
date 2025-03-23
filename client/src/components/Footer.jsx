@@ -6,12 +6,12 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <div className="mt-auto full-width-section bg-midnightBlack">
+    <div className="mt-auto full-width-section bg-midnightBlack px-6 lg:px-6">
       <footer className="max-width-content py-12">
         {/* Grid Container */}
-        <div className="grid grid-cols-5 gap-12 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-12 mb-8">
           {/* Logo & Description */}
-          <div className="col-span-2">
+          <div className="col-span-1 md:col-span-2">
             <Logo />
             <p className="text-offwhite/90 mt-4 text-sm">
               Connecting artists with venues across Germany.

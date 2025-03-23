@@ -18,7 +18,7 @@ export default function Button({
   // Size classes
   const sizeClasses = {
     small: "px-4 py-2 text-sm",
-    medium: "px-6 py-3 text-base",
+    medium: "px-6 py-3 text-base lg:text-lg",
     large: "px-8 py-4 text-lg",
   };
 
