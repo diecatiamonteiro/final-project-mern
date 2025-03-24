@@ -12,7 +12,7 @@ const checkToken = async (req, res, next) => {
     const jwtToken = req.cookies.jwtToken;
 
     if (!jwtToken) {
-      throw createError(401, "Unauthorized request - No token");
+      return next(createError(401, "Unauthorized request - No token"));
     }
 
     // Verify and decode the token
@@ -20,10 +20,9 @@ const checkToken = async (req, res, next) => {
 
     // Find the user based on decoded token ID
     const user = await User.findById(decoded.id);
-    // console.log("Found user:", user);
 
     if (!user) {
-      throw createError(401, "User no longer exists");
+      return next(createError(401, "User no longer exists"));
     }
 
     // Attach user data to request object
