@@ -38,7 +38,7 @@ const UserSchema = new Schema(
     profilePicture: {
       type: String,
       default:
-        "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v1700000000/default-avatar.png",
+        "https://res.cloudinary.com/dtlnz58z5/image/upload/v1742665279/icon-7797704_1280_lifkba.webp",
     }, // Default Cloudinary image
     media: [{ url: { type: String }, platform: { type: String } }], // For artists & venues, YouTube, Spotify, SoundCloud LINKS only
     images: [{ type: String }], // Cloudinary URLs to store images

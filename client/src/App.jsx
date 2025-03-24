@@ -12,27 +12,27 @@ import FavouritesPage from "./pages/FavouritesPage";
 import UserDashboardPage from "./pages/UserDashboardPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import VerificationPage from "./pages/VerificationPage";
-import UploadImage from "./components/UploadImage";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route path="/" element={<Homepage />} />
-        <Route path="register" element={<RegisterPage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="venues" element={<AllVenuesPage />} />
-        <Route path="artists" element={<AllArtistsPage />} />
-        <Route path="venue/:venueId" element={<IndividualVenuePage />} />
-        <Route path="artist/:artistId" element={<IndividualArtistPage />} />
-        <Route path="favourites" element={<FavouritesPage />} />
-        <Route path="dashboard" element={<UserDashboardPage />} />
-        <Route path="verify-email" element={<VerificationPage />} />
-        <Route path="upload-image" element={<UploadImage />} />
-
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
-    </Routes>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route path="/" element={<Homepage />} />
+          <Route path="register" element={<RegisterPage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="venues" element={<AllVenuesPage />} />
+          <Route path="artists" element={<AllArtistsPage />} />
+          <Route path="venue/:venueId" element={<IndividualVenuePage />} />
+          <Route path="artist/:artistId" element={<IndividualArtistPage />} />
+          <Route path="favourites" element={<FavouritesPage />} />
+          <Route path="dashboard" element={<UserDashboardPage />} />
+          <Route path="verify-email" element={<VerificationPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+      </Routes>
+    </GoogleOAuthProvider>
   );
 }
 
