@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Button from "../components/Button";
-import { GoogleLogin } from "@react-oauth/google";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -34,21 +33,6 @@ export default function RegisterPage() {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-      await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login/google`,
-        {
-          token: credentialResponse.credential,
-          role: formData.role, // Pass selected role to backend
-        }
-      );
-      navigate("/dashboard");
-    } catch (err) {
-      setError(err.response?.data?.message || "Google registration failed");
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
@@ -62,7 +46,7 @@ export default function RegisterPage() {
               to="/login"
               className="font-medium text-green-600 hover:text-green-500 underline"
             >
-              Sign in here
+              Log in here
             </Link>
           </p>
         </div>
@@ -175,25 +159,6 @@ export default function RegisterPage() {
             <Button type="submit" variant="green" fullWidth>
               Create Account
             </Button>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
-                  Or continue with
-                </span>
-              </div>
-            </div>
-
-            <div className="flex justify-center">
-              <GoogleLogin
-                clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
-                onSuccess={handleGoogleSuccess}
-                onError={() => setError("Google registration failed")}
-              />
-            </div>
           </div>
         </form>
       </div>
