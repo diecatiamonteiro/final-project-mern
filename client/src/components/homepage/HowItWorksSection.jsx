@@ -9,7 +9,7 @@ function StepCard({ number, title, description }) {
         {number}
       </div>
       <h3 className="font-bold text-xl mb-2">{title}</h3>
-      <p className="text-gray-600">{description}</p>
+      <p className="text-base lg:text-lg text-gray-600">{description}</p>
     </div>
   );
 }
@@ -43,7 +43,7 @@ export default function HowItWorksSection() {
   ];
 
   return (
-    <section className="py-24 my-24 flex flex-col lg:flex-row items-start justify-between gap-16 px-6">
+    <section className="py-24 mb-12 lg:my-24 flex flex-col lg:flex-row items-start justify-between gap-16 px-6">
       {/* Image */}
       <div
         className="lg:w-1/2 flex"
@@ -69,8 +69,8 @@ export default function HowItWorksSection() {
       >
         {/* Title & Intro */}
         <div className="text-center lg:text-left">
-          <h2 className="text-6xl font-bold mb-2">How It Works</h2>
-          <p className="text-lg text-gray-600">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2">How It Works</h2>
+          <p className="text-base md:text-lg text-gray-600">
             The Greenroom connects artists with stages in Germany for
             performances, jam sessions, and gigs. Follow these steps to get
             started:

@@ -1,10 +1,20 @@
-import React from 'react'
+import React from "react";
 import NavLink from "../NavLink";
+import { FaRegCircleUser } from "react-icons/fa6";
 
-export default function NavLinkDashboard() {
+export default function NavLinkDashboard({ onClick }) {
   return (
-    <NavLink to="/dashboard">
-    My Greenroom
-  </NavLink>
+    <>
+      <NavLink to="/dashboard" className="font-medium hidden lg:block" onClick={onClick}>
+        My Greenroom
+      </NavLink>
+      <NavLink
+        to="/dashboard"
+        className="block lg:hidden"
+        onClick={onClick}
+      >
+        <FaRegCircleUser className="text-xl" />
+      </NavLink>
+    </>
   );
 }

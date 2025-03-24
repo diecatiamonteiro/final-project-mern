@@ -37,7 +37,7 @@ export default function CallToActionSection() {
         <div className="absolute top-0 left-0 mt-10 md:mt-40 w-full">
           <motion.h2
             {...leftToRightAnimation}
-            className="text-white text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-bold px-8 xl:px-40"
+            className="text-white text-4xl sm:text-6xl md:text-7xl lg:text-9xl font-bold px-8 xl:px-40"
           >
             Are you an <span className="text-green">artist</span>?
           </motion.h2>
@@ -62,7 +62,7 @@ export default function CallToActionSection() {
         <div className="absolute bottom-0 left-0 mb-10 md:mb-40 w-full text-right">
           <motion.h2
             {...getAnimationWithDelay(rightToLeftAnimation, 0.3)}
-            className="text-white text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-bold px-8 xl:px-40"
+            className="text-white text-4xl sm:text-6xl md:text-7xl lg:text-9xl font-bold px-8 xl:px-40"
           >
             Do you have a <span className="text-green">stage</span>?
           </motion.h2>
