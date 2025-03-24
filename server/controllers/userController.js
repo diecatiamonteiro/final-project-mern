@@ -102,8 +102,6 @@ export const updateProfile = async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user?.id; // From checkToken middleware
 
-    console.log(req.file);
-
     // Check if user is updating their own profile
     if (id !== userId) {
       throw createError(403, "You can only update your own profile");
@@ -121,6 +119,13 @@ export const updateProfile = async (req, res, next) => {
       socialLinks,
       availability,
     } = req.body;
+
+    console.log("Received images:", images); // Add this for debugging
+
+    // Add validation for gallery images
+    if (images && images.length > 10) {
+      throw createError(400, "Maximum 10 images allowed in gallery");
+    }
 
     // Find user and update with new data
     const updatedUser = await User.findByIdAndUpdate(

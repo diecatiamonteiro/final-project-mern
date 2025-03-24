@@ -40,7 +40,7 @@ userRouter
 userRouter
   .patch(
     "/:id/update-profile",
-    // checkToken,
+    checkToken,
     // checkMediaLinks,
     // checkImages,
     // checkSocialLinks,
