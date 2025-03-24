@@ -12,6 +12,7 @@ export const usersInitialState = {
 };
 
 export const USER_ACTIONS = {
+  // Global
   SET_LOADING: "SET_LOADING",
   SET_ERROR: "SET_ERROR",
 
@@ -26,7 +27,7 @@ export const USER_ACTIONS = {
   CHANGE_PASSWORD: "CHANGE_PASSWORD",
   DELETE_ACCOUNT: "DELETE_ACCOUNT",
 
-  // Profile
+  // Users
   GET_ALL_VENUES: "GET_ALL_VENUES",
   GET_ALL_ARTISTS: "GET_ALL_ARTISTS",
   GET_INDIVIDUAL_ARTIST_OR_VENUE: "GET_INDIVIDUAL_ARTIST_OR_VENUE",
@@ -99,14 +100,14 @@ export const usersReducer = (state, action) => {
     case USER_ACTIONS.GET_ALL_VENUES:
       return {
         ...state,
-        venues: action.payload.data, // payload.data.data / payload.data.count
+        venues: action.payload.data, // .data & .count
         error: null,
       };
 
     case USER_ACTIONS.GET_ALL_ARTISTS:
       return {
         ...state,
-        artists: action.payload.data,
+        artists: action.payload.data, // .data & .count
         error: null,
       };
 
@@ -131,36 +132,36 @@ export const usersReducer = (state, action) => {
     case USER_ACTIONS.GET_ALL_FAVOURITES:
       return {
         ...state,
-        favourites: action.payload.data,
+        favourites: action.payload.data, // .data & .count
         error: null,
       };
 
     case USER_ACTIONS.GET_ALL_RECEIVED_AND_SENT_BOOKINGS:
       return {
         ...state,
-        bookingsReceived: action.payload.data.received.bookings,
-        bookingsSent: action.payload.data.sent.bookings,
+        bookingsReceived: action.payload.data.received.bookings, // & .count
+        bookingsSent: action.payload.data.sent.bookings, // & .count
         error: null,
       };
 
     case USER_ACTIONS.GET_ALL_RECEIVED_BOOKINGS:
       return {
         ...state,
-        bookingsReceived: action.payload.data,
+        bookingsReceived: action.payload.data, // .data & .count
         error: null,
       };
 
     case USER_ACTIONS.GET_ALL_SENT_BOOKINGS:
       return {
         ...state,
-        bookingsSent: action.payload.data,
+        bookingsSent: action.payload.data, // .data & .count
         error: null,
       };
 
     case USER_ACTIONS.SEARCH_FOR_ARTIST_OR_VENUE:
       return {
         ...state,
-        searchResults: action.payload.data,
+        searchResults: action.payload.data, // .data & .count
         error: null,
       };
 

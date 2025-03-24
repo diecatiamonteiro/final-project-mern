@@ -6,8 +6,11 @@ export const bookingsInitialState = {
 };
 
 export const BOOKING_ACTIONS = {
+  // Global
   SET_LOADING: "SET_LOADING",
   SET_ERROR: "SET_ERROR",
+
+  // Bookings
   REQUEST_ARTIST_OR_VENUE: "REQUEST_ARTIST_OR_VENUE",
   GET_SPECIFIC_BOOKING: "GET_SPECIFIC_BOOKING",
   EDIT_BOOKING_DATE: "EDIT_BOOKING_DATE",
