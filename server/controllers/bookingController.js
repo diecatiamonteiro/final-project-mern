@@ -23,13 +23,13 @@ export const requestArtistOrVenue = async (req, res, next) => {
 
     // Validate input
     if (!receiverId || !performanceDate) {
-      throw createError(400, "Please provide all required fields");
+      return next(createError(400, "Please provide all required fields"));
     }
 
     // Check if date is in the future
     const bookingDate = new Date(performanceDate);
     if (bookingDate < new Date()) {
-      throw createError(400, "Performance date must be in the future");
+      return next(createError(400, "Performance date must be in the future"));
     }
 
     // Get both users
@@ -40,12 +40,14 @@ export const requestArtistOrVenue = async (req, res, next) => {
 
     // Validate users exist
     if (!sender || !receiver) {
-      throw createError(404, "User not found");
+      return next(createError(404, "User not found"));
     }
 
     // Check if sender and receiver have different roles (artist/venue)
     if (sender.role === receiver.role) {
-      throw createError(400, "Artists can only book venues and vice versa");
+      return next(
+        createError(400, "Artists can only book venues and vice versa")
+      );
     }
 
     // Check if booking already exists for this date and users
@@ -59,9 +61,11 @@ export const requestArtistOrVenue = async (req, res, next) => {
     });
 
     if (existingBooking) {
-      throw createError(
-        400,
-        "A booking already exists for this date between these users"
+      return next(
+        createError(
+          400,
+          "A booking already exists for this date between these users"
+        )
       );
     }
 
@@ -96,8 +100,8 @@ export const requestArtistOrVenue = async (req, res, next) => {
 
     // Return populated booking
     const populatedBooking = await Booking.findById(newBooking._id)
-      .populate("initiatedBy", "-password")
-      .populate("receivedBy", "-password");
+      .populate("initiatedBy")
+      .populate("receivedBy");
 
     res.status(201).json({
       message: "Booking request sent successfully",
@@ -121,11 +125,11 @@ export const getSpecificBooking = async (req, res, next) => {
 
     // Find booking and populate user details
     const booking = await Booking.findById(id)
-      .populate("initiatedBy", "-password")
-      .populate("receivedBy", "-password");
+      .populate("initiatedBy")
+      .populate("receivedBy");
 
     if (!booking) {
-      throw createError(404, "Booking not found");
+      return next(createError(404, "Booking not found"));
     }
 
     // Check if user is part of the booking
@@ -133,7 +137,9 @@ export const getSpecificBooking = async (req, res, next) => {
       booking.initiatedBy._id.toString() !== userId &&
       booking.receivedBy._id.toString() !== userId
     ) {
-      throw createError(403, "Access denied. You are not part of this booking");
+      return next(
+        createError(403, "Access denied. You are not part of this booking")
+      );
     }
 
     res.status(200).json({
@@ -162,29 +168,31 @@ export const editBookingDate = async (req, res, next) => {
 
     // Validate input
     if (!performanceDate) {
-      throw createError(400, "Please provide a new performance date");
+      return next(createError(400, "Please provide a new performance date"));
     }
 
     // Check if date is in the future
     const newBookingDate = new Date(performanceDate);
     if (newBookingDate < new Date()) {
-      throw createError(400, "Performance date must be in the future");
+      return next(createError(400, "Performance date must be in the future"));
     }
 
     // Find the booking
     const booking = await Booking.findById(id);
     if (!booking) {
-      throw createError(404, "Booking not found");
+      return next(createError(404, "Booking not found"));
     }
 
     // Check if user is the initiator of the booking
     if (booking.initiatedBy.toString() !== userId) {
-      throw createError(403, "Only the booking initiator can edit the request");
+      return next(
+        createError(403, "Only the booking initiator can edit the request")
+      );
     }
 
     // Check if booking is still pending
     if (booking.status !== "pending") {
-      throw createError(400, "Only pending bookings can be edited");
+      return next(createError(400, "Only pending bookings can be edited"));
     }
 
     // Check if new date is already booked
@@ -199,9 +207,11 @@ export const editBookingDate = async (req, res, next) => {
     });
 
     if (existingBooking) {
-      throw createError(
-        400,
-        "A booking already exists for this date between these users"
+      return next(
+        createError(
+          400,
+          "A booking already exists for this date between these users"
+        )
       );
     }
 
@@ -230,8 +240,8 @@ export const editBookingDate = async (req, res, next) => {
 
     // Return populated booking
     const populatedBooking = await Booking.findById(id)
-      .populate("initiatedBy", "-password")
-      .populate("receivedBy", "-password");
+      .populate("initiatedBy")
+      .populate("receivedBy");
 
     res.status(200).json({
       message: "Booking date updated successfully",
@@ -256,20 +266,19 @@ export const acceptBooking = async (req, res, next) => {
     // Find the booking
     const booking = await Booking.findById(id);
     if (!booking) {
-      throw createError(404, "Booking not found");
+      return next(createError(404, "Booking not found"));
     }
 
     // Check if user is the receiver of the booking
     if (booking.receivedBy.toString() !== userId) {
-      throw createError(
-        403,
-        "Only the booking receiver can accept the request"
+      return next(
+        createError(403, "Only the booking receiver can accept the request")
       );
     }
 
     // Check if booking is still pending
     if (booking.status !== "pending") {
-      throw createError(400, "This booking is no longer pending");
+      return next(createError(400, "This booking is no longer pending"));
     }
 
     // Update booking status
@@ -297,8 +306,8 @@ export const acceptBooking = async (req, res, next) => {
 
     // Return populated booking
     const populatedBooking = await Booking.findById(id)
-      .populate("initiatedBy", "-password")
-      .populate("receivedBy", "-password");
+      .populate("initiatedBy")
+      .populate("receivedBy");
 
     res.status(200).json({
       message: "Booking accepted successfully",
@@ -323,20 +332,19 @@ export const declineBooking = async (req, res, next) => {
     // Find the booking
     const booking = await Booking.findById(id);
     if (!booking) {
-      throw createError(404, "Booking not found");
+      return next(createError(404, "Booking not found"));
     }
 
     // Check if user is the receiver of the booking
     if (booking.receivedBy.toString() !== userId) {
-      throw createError(
-        403,
-        "Only the booking receiver can decline the request"
+      return next(
+        createError(403, "Only the booking receiver can decline the request")
       );
     }
 
     // Check if booking is still pending
     if (booking.status !== "pending") {
-      throw createError(400, "This booking is no longer pending");
+      return next(createError(400, "This booking is no longer pending"));
     }
 
     // Update booking status and soft delete
@@ -365,8 +373,8 @@ export const declineBooking = async (req, res, next) => {
 
     // Return populated booking
     const populatedBooking = await Booking.findById(id)
-      .populate("initiatedBy", "-password")
-      .populate("receivedBy", "-password");
+      .populate("initiatedBy")
+      .populate("receivedBy");
 
     res.status(200).json({
       message: "Booking declined successfully",
@@ -391,7 +399,7 @@ export const cancelBooking = async (req, res, next) => {
     // Find the booking
     const booking = await Booking.findById(id);
     if (!booking) {
-      throw createError(404, "Booking not found");
+      return next(createError(404, "Booking not found"));
     }
 
     // Check if user is part of the booking
@@ -399,12 +407,14 @@ export const cancelBooking = async (req, res, next) => {
       booking.initiatedBy.toString() !== userId &&
       booking.receivedBy.toString() !== userId
     ) {
-      throw createError(403, "Access denied. You are not part of this booking");
+      return next(
+        createError(403, "Access denied. You are not part of this booking")
+      );
     }
 
     // Check if booking is accepted (can only cancel accepted bookings)
     if (booking.status !== "accepted") {
-      throw createError(400, "Only accepted bookings can be cancelled");
+      return next(createError(400, "Only accepted bookings can be cancelled"));
     }
 
     // Update booking status and soft delete
@@ -439,8 +449,8 @@ export const cancelBooking = async (req, res, next) => {
 
     // Return populated booking
     const populatedBooking = await Booking.findById(id)
-      .populate("initiatedBy", "-password")
-      .populate("receivedBy", "-password");
+      .populate("initiatedBy")
+      .populate("receivedBy");
 
     res.status(200).json({
       message: "Booking cancelled successfully",
@@ -475,8 +485,8 @@ export const getAllAcceptedBookings = async (req, res, next) => {
         },
       ],
     })
-      .populate("initiatedBy", "-password")
-      .populate("receivedBy", "-password")
+      .populate("initiatedBy")
+      .populate("receivedBy")
       .sort({ performanceDate: 1 }); // Sort by date ascending
 
     res.status(200).json({

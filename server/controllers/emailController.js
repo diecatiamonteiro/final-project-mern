@@ -17,7 +17,7 @@ export const sendEmail = async (req, res, next) => {
 
     // Validate input
     if (!bookingId || !message || !subject) {
-      throw createError(400, "Please provide all required fields");
+      return next(createError(400, "Please provide all required fields"));
     }
 
     // Find the booking and check if it exists
@@ -26,7 +26,7 @@ export const sendEmail = async (req, res, next) => {
       .populate("receivedBy", "email firstName lastName name");
 
     if (!booking) {
-      throw createError(404, "Booking not found");
+      return next(createError(404, "Booking not found"));
     }
 
     // Check if user is part of the booking
@@ -34,17 +34,15 @@ export const sendEmail = async (req, res, next) => {
       booking.initiatedBy._id.toString() !== senderId &&
       booking.receivedBy._id.toString() !== senderId
     ) {
-      throw createError(
-        403,
-        "You can only send messages for your own bookings"
+      return next(
+        createError(403, "You can only send messages for your own bookings")
       );
     }
 
     // Check if booking is accepted
     if (booking.status !== "accepted") {
-      throw createError(
-        400,
-        "You can only send messages for accepted bookings"
+      return next(
+        createError(400, "You can only send messages for accepted bookings")
       );
     }
 
