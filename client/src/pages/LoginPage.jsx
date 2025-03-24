@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Button from "../components/Button";
-import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -29,23 +29,26 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login/google`,
-        {
-          token: credentialResponse.credential,
-        },
-        { withCredentials: true }
-      );
+  const handleGoogleSuccess = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/api/auth/login/google`,
+          {
+            token: tokenResponse.access_token,
+          },
+          { withCredentials: true }
+        );
 
-      if (response.data) {
-        navigate("/dashboard");
+        if (response.data) {
+          navigate("/dashboard");
+        }
+      } catch (error) {
+        console.log(error);
+        setError(error?.response?.data?.message || "Google login failed");
       }
-    } catch (err) {
-      setError(err.response?.data?.message || "Google login failed");
-    }
-  };
+    },
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
@@ -60,7 +63,7 @@ export default function LoginPage() {
               to="/register"
               className="font-medium text-green-600 hover:text-green-500 underline"
             >
-              Sign up here
+              Register here
             </Link>
           </p>
         </div>
@@ -119,7 +122,7 @@ export default function LoginPage() {
 
           <div className="flex flex-col space-y-4">
             <Button type="submit" variant="green" fullWidth>
-              Sign in
+              Log in
             </Button>
 
             <div className="relative">
@@ -134,11 +137,17 @@ export default function LoginPage() {
             </div>
 
             <div className="flex justify-center">
-              <GoogleLogin
-                clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
-                onSuccess={handleGoogleSuccess}
-                onError={() => setError("Google login failed")}
-              />
+              <button
+                onClick={handleGoogleSuccess}
+                className="flex items-center justify-center gap-2 w-full max-w-[280px] bg-white text-gray-700 border border-gray-300 rounded-md px-4 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+              >
+                <img
+                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                  alt="Google logo"
+                  className="w-5 h-5"
+                />
+                Log in with Google
+              </button>
             </div>
           </div>
         </form>

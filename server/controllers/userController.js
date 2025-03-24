@@ -14,10 +14,10 @@ import mongoose from "mongoose";
 export const getAllVenues = async (req, res, next) => {
   try {
     // Find all users with role "venue" and exclude password field
-    const venues = await User.find({ role: "venue" }).select("-password");
+    const venues = await User.find({ role: "venue" });
 
     if (!venues || venues.length === 0) {
-      throw createError(404, "No venues found");
+      return next(createError(404, "No venues found"));
     }
 
     res.status(200).json({
@@ -39,10 +39,10 @@ export const getAllVenues = async (req, res, next) => {
 export const getAllArtists = async (req, res, next) => {
   try {
     // Find all users with role "artist" and exclude password field
-    const artists = await User.find({ role: "artist" }).select("-password");
+    const artists = await User.find({ role: "artist" });
 
     if (!artists || artists.length === 0) {
-      throw createError(404, "No artists found");
+      return next(createError(404, "No artists found"));
     }
 
     res.status(200).json({
@@ -67,17 +67,16 @@ export const getIndividualArtistOrVenue = async (req, res, next) => {
 
     // Add ObjectId validation
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw createError(400, "Invalid user ID format");
+      return next(createError(400, "Invalid user ID format"));
     }
 
     // Find user by ID and exclude password
-    const user = await User.findById(id).select("-password").populate({
+    const user = await User.findById(id).populate({
       path: "favourites",
-      select: "-password", // Exclude password from populated favourites
     });
 
     if (!user) {
-      throw createError(404, "User not found");
+      return next(createError(404, "User not found"));
     }
 
     res.status(200).json({
@@ -104,7 +103,7 @@ export const updateProfile = async (req, res, next) => {
 
     // Check if user is updating their own profile
     if (id !== userId) {
-      throw createError(403, "You can only update your own profile");
+      return next(createError(403, "You can only update your own profile"));
     }
 
     // Get update data from request body
@@ -120,11 +119,9 @@ export const updateProfile = async (req, res, next) => {
       availability,
     } = req.body;
 
-    console.log("Received images:", images); // Add this for debugging
-
     // Add validation for gallery images
     if (images && images.length > 10) {
-      throw createError(400, "Maximum 10 images allowed in gallery");
+      return next(createError(400, "Maximum 10 images allowed in gallery"));
     }
 
     // Find user and update with new data
@@ -144,12 +141,10 @@ export const updateProfile = async (req, res, next) => {
         }, // $set updates the specified fields
       },
       { new: true, runValidators: true }
-    ).select("-password");
-
-    console.log("Updated user: ", updatedUser);
+    );
 
     if (!updatedUser) {
-      throw createError(404, "User not found");
+      return next(createError(404, "User not found"));
     }
 
     res.status(200).json({
@@ -174,7 +169,9 @@ export const deleteSingleMedia = async (req, res, next) => {
 
     // Check if user is deleting from their own profile
     if (id !== userId) {
-      throw createError(403, "You can only delete media from your own profile");
+      return next(
+        createError(403, "You can only delete media from your own profile")
+      );
     }
 
     // Find user and remove the specific media item
@@ -184,10 +181,10 @@ export const deleteSingleMedia = async (req, res, next) => {
         $pull: { media: { _id: mediaId } }, // $pull removes the specified value
       },
       { new: true, runValidators: true }
-    ).select("-password");
+    );
 
     if (!updatedUser) {
-      throw createError(404, "User not found");
+      return next(createError(404, "User not found"));
     }
 
     res.status(200).json({
@@ -212,9 +209,8 @@ export const deleteSingleImage = async (req, res, next) => {
 
     // Check if user is deleting from their own profile
     if (id !== userId) {
-      throw createError(
-        403,
-        "You can only delete images from your own profile"
+      return next(
+        createError(403, "You can only delete images from your own profile")
       );
     }
 
@@ -225,10 +221,10 @@ export const deleteSingleImage = async (req, res, next) => {
         $pull: { images: imageId }, // $pull removes the specified value
       },
       { new: true, runValidators: true }
-    ).select("-password");
+    );
 
     if (!updatedUser) {
-      throw createError(404, "User not found");
+      return next(createError(404, "User not found"));
     }
 
     res.status(200).json({
@@ -255,13 +251,13 @@ export const addFavourite = async (req, res, next) => {
 
     // Check if trying to favourite self
     if (userId === favouriteId) {
-      throw createError(400, "You cannot add yourself to favourites");
+      return next(createError(400, "You cannot add yourself to favourites"));
     }
 
     // Check if user to be favourited exists
     const favouriteUser = await User.findById(favouriteId);
     if (!favouriteUser) {
-      throw createError(404, "User to be favourited not found");
+      return next(createError(404, "User to be favourited not found"));
     }
 
     // Add to favourites array if not already there
@@ -271,12 +267,9 @@ export const addFavourite = async (req, res, next) => {
         $addToSet: { favourites: favouriteId }, // $addToSet prevents duplicates
       },
       { new: true, runValidators: true }
-    )
-      .select("-password")
-      .populate({
-        path: "favourites",
-        select: "-password", // Exclude password from populated favourites
-      });
+    ).populate({
+      path: "favourites",
+    });
 
     res.status(200).json({
       message: "Added to favourites successfully",
@@ -301,7 +294,7 @@ export const removeFavourite = async (req, res, next) => {
     // Check if user to be unfavorited exists
     const favouriteUser = await User.findById(favouriteId);
     if (!favouriteUser) {
-      throw createError(404, "User to be unfavorited not found");
+      return next(createError(404, "User to be unfavorited not found"));
     }
 
     // Find user and remove from favourites array
@@ -311,15 +304,12 @@ export const removeFavourite = async (req, res, next) => {
         $pull: { favourites: favouriteId }, // $pull removes the specified value
       },
       { new: true, runValidators: true }
-    )
-      .select("-password")
-      .populate({
-        path: "favourites",
-        select: "-password", // Exclude password from populated favourites
-      });
+    ).populate({
+      path: "favourites",
+    });
 
     if (!updatedUser) {
-      throw createError(404, "User not found");
+      return next(createError(404, "User not found"));
     }
 
     res.status(200).json({
@@ -341,15 +331,13 @@ export const getAllFavourites = async (req, res, next) => {
   try {
     const userId = req.user.id; // From checkToken middleware
 
-    console.log(req.user);
-
     const user = await User.findById(userId).select("favourites").populate({
       path: "favourites",
-      select: "-password -bookingsReceived -bookingsSent", // Only exclude sensitive data
+      select: "-bookingsReceived -bookingsSent", // Only exclude sensitive data
     });
 
     if (!user) {
-      throw createError(404, "User not found");
+      return next(createError(404, "User not found"));
     }
 
     res.status(200).json({
@@ -382,7 +370,7 @@ export const getAllReceivedAndSentBookings = async (req, res, next) => {
           match: { isCancelledOrDeclined: false },
           populate: {
             path: "initiatedBy receivedBy",
-            select: "-password -bookingsReceived -bookingsSent",
+            select: " -bookingsReceived -bookingsSent",
           },
         },
         {
@@ -390,13 +378,13 @@ export const getAllReceivedAndSentBookings = async (req, res, next) => {
           match: { isCancelledOrDeclined: false },
           populate: {
             path: "initiatedBy receivedBy",
-            select: "-password -bookingsReceived -bookingsSent",
+            select: " -bookingsReceived -bookingsSent",
           },
         },
       ]);
 
     if (!user) {
-      throw createError(404, "User not found");
+      return next(createError(404, "User not found"));
     }
 
     res.status(200).json({
@@ -434,12 +422,12 @@ export const getAllReceivedBookings = async (req, res, next) => {
         match: { isCancelledOrDeclined: false },
         populate: {
           path: "initiatedBy receivedBy",
-          select: "-password -bookingsReceived -bookingsSent",
+          select: " -bookingsReceived -bookingsSent",
         },
       });
 
     if (!user) {
-      throw createError(404, "User not found");
+      return next(createError(404, "User not found"));
     }
 
     res.status(200).json({
@@ -469,12 +457,12 @@ export const getAllSentBookings = async (req, res, next) => {
         match: { isCancelledOrDeclined: false },
         populate: {
           path: "initiatedBy receivedBy",
-          select: "-password -bookingsReceived -bookingsSent",
+          select: " -bookingsReceived -bookingsSent",
         },
       });
 
     if (!user) {
-      throw createError(404, "User not found");
+      return next(createError(404, "User not found"));
     }
 
     res.status(200).json({
@@ -497,7 +485,12 @@ export const getAllSentBookings = async (req, res, next) => {
 
 export const searchForArtistOrVenue = async (req, res, next) => {
   try {
-    const { q, city, type, revenueSplit } = req.query;
+    let { q, city, type, revenueSplit } = req.query;
+
+    // Trim whitespace from search parameters if they exist
+    if (q) q = q.trim();
+    if (city) city = city.trim();
+    if (type) type = type.trim();
 
     // Build search query
     let searchQuery = {};
@@ -532,7 +525,7 @@ export const searchForArtistOrVenue = async (req, res, next) => {
     }
 
     const results = await User.find(searchQuery).select(
-      "-password -bookingsReceived -bookingsSent"
+      " -bookingsReceived -bookingsSent"
     );
 
     res.status(200).json({
