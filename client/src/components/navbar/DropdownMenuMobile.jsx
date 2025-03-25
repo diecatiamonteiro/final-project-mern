@@ -1,12 +1,14 @@
-import React from "react";
-import NavLinkFavourites from "./NavLinkFavourites";
+import React, { useContext } from "react";
+import { DataContext } from "../../contexts/Context";
 import NavLinkFindArtists from "./NavLinkFindArtists";
 import NavLinkFindVenues from "./NavLinkFindVenues";
-import NavLinkDashboard from "./NavLinkDashboard";
 import BtnLoginSignup from "./BtnLoginSignup";
 import BtnLogout from "./BtnLogout";
 
 export default function DropdownMenuMobile({ isMenuOpen, handleNavigation }) {
+  const { usersState } = useContext(DataContext);
+  const { isAuthenticated } = usersState;
+
   return (
     <div
       className={`absolute top-full left-0 w-screen h-screen bg-midnightBlack text-offwhite transform transition-all duration-500 ease-in-out flex flex-col items-center justify-center gap-20 text-center ${
@@ -21,8 +23,7 @@ export default function DropdownMenuMobile({ isMenuOpen, handleNavigation }) {
       </div>
 
       <div onClick={handleNavigation}>
-        <BtnLoginSignup />
-        <BtnLogout />
+        {isAuthenticated ? <BtnLogout /> : <BtnLoginSignup />}
       </div>
     </div>
   );

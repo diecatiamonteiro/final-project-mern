@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { DataContext } from "../../contexts/Context";
 import Logo from "./Logo";
 import BtnHamburgerMobile from "./BtnHamburgerMobile";
 import DropdownMenuMobile from "./DropdownMenuMobile";
@@ -6,6 +7,8 @@ import NavLinkFavourites from "./NavLinkFavourites";
 import NavLinkDashboard from "./NavLinkDashboard";
 
 export default function NavbarMobile() {
+  const { usersState } = useContext(DataContext);
+  const { isAuthenticated } = usersState;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [visible, setVisible] = useState(true);
   const [prevScrollPos, setPrevScrollPos] = useState(0);
@@ -41,15 +44,21 @@ export default function NavbarMobile() {
             <Logo onClick={handleNavigation} />
           </div>
           <div className="flex items-center gap-8">
-            <div className="flex items-center gap-6">
-              <NavLinkFavourites onClick={handleNavigation} />
-              <NavLinkDashboard onClick={handleNavigation} />
-            </div>
-
-            <BtnHamburgerMobile
-              setIsMenuOpen={setIsMenuOpen}
-              isMenuOpen={isMenuOpen}
-            />
+            {isAuthenticated ? (
+              <div className="flex items-center gap-6">
+                <NavLinkFavourites onClick={handleNavigation} />
+                <NavLinkDashboard onClick={handleNavigation} />
+                <BtnHamburgerMobile
+                setIsMenuOpen={setIsMenuOpen}
+                isMenuOpen={isMenuOpen}
+              />
+              </div>
+            ) : (
+              <BtnHamburgerMobile
+                setIsMenuOpen={setIsMenuOpen}
+                isMenuOpen={isMenuOpen}
+              />
+            )}
           </div>
         </div>
         <DropdownMenuMobile

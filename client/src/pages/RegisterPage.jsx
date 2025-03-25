@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import { useContext, useState } from "react";
+import { Link } from "react-router-dom";
 import Button from "../components/Button";
+import { DataContext } from "../contexts/Context";
+import { register } from "../api/usersApi";
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -11,40 +13,55 @@ export default function RegisterPage() {
     lastName: "",
     role: "artist", // Default to artist
   });
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const { usersState, usersDispatch } = useContext(DataContext);
+  const { error, isLoading } = usersState;
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`,
-        formData
-      );
-      // Show success message and redirect to login
-      navigate("/login", {
-        state: {
-          message:
-            "Please check your email to verify your account before logging in.",
-        },
-      });
-    } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
-    }
+    await register(usersDispatch, formData);
+    setIsRegistered(true);
   };
 
+  if (isRegistered) {
+    return (
+      <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+        <div className="max-w-xl w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
+          <div>
+            <h2 className="mb-10 text-center text-3xl md:text-4xl font-extrabold text-midnightBlack">
+              Check your email
+            </h2>
+            <div className="mt-4 text-center text-midnightBlack/70 text-base md:text-lg">
+              <p className="mb-6">
+                We've sent a verification email to:
+                <span className="font-semibold block mt-1">
+                  {formData.email}
+                </span>
+              </p>
+              <p>
+                Please check your inbox and click the verification link to
+                complete your registration.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl md:text-4xl font-extrabold text-gray-900">
             Create your account
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm md:text-base text-gray-600">
             Already have an account?{" "}
             <Link
               to="/login"
-              className="font-medium text-green-600 hover:text-green-500 underline"
+              className="font-medium text-green/70 hover:text-green/90 underline"
             >
               Log in here
             </Link>
@@ -53,32 +70,32 @@ export default function RegisterPage() {
 
         {error && (
           <div className="bg-red-50 border-l-4 border-red-400 p-4">
-            <p className="text-sm text-red-700">{error}</p>
+            <p className="text-sm md:text-base text-red-700">{error}</p>
           </div>
         )}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <div className="grid grid-cols-2 gap-4">
-              <Button
-                onClick={() =>
-                  setFormData((prev) => ({ ...prev, role: "artist" }))
-                }
-                variant={formData.role === "artist" ? "green" : "outlineGreen"}
-                type="button"
-              >
-                Artist
-              </Button>
-              <Button
-                onClick={() =>
-                  setFormData((prev) => ({ ...prev, role: "venue" }))
-                }
-                variant={formData.role === "venue" ? "green" : "outlineGreen"}
-                type="button"
-              >
-                Venue
-              </Button>
-            </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Button
+              onClick={() =>
+                setFormData((prev) => ({ ...prev, role: "artist" }))
+              }
+              variant={formData.role === "artist" ? "black" : "outlineBlack"}
+              type="button"
+              disabled={isLoading}
+            >
+              I'm an Artist
+            </Button>
+            <Button
+              onClick={() =>
+                setFormData((prev) => ({ ...prev, role: "venue" }))
+              }
+              variant={formData.role === "venue" ? "black" : "outlineBlack"}
+              type="button"
+              disabled={isLoading}
+            >
+             I'm a Venue
+            </Button>
           </div>
 
           <div className="rounded-md shadow-sm space-y-4">
@@ -91,7 +108,7 @@ export default function RegisterPage() {
                 name="firstName"
                 type="text"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green focus:border-green focus:z-10 text-sm md:text-base"
                 placeholder="First Name"
                 value={formData.firstName}
                 onChange={(e) =>
@@ -100,6 +117,7 @@ export default function RegisterPage() {
                     firstName: e.target.value,
                   }))
                 }
+                disabled={isLoading}
               />
             </div>
             <div>
@@ -111,12 +129,13 @@ export default function RegisterPage() {
                 name="lastName"
                 type="text"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green focus:border-green focus:z-10 text-sm md:text-base"
                 placeholder="Last Name"
                 value={formData.lastName}
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, lastName: e.target.value }))
                 }
+                disabled={isLoading}
               />
             </div>
             <div>
@@ -128,36 +147,54 @@ export default function RegisterPage() {
                 name="email"
                 type="email"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green focus:border-green focus:z-10 text-sm md:text-base"
                 placeholder="Email address"
                 value={formData.email}
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, email: e.target.value }))
                 }
+                disabled={isLoading}
               />
             </div>
-            <div>
+            <div className="relative">
               <label htmlFor="password" className="sr-only">
                 Password
               </label>
               <input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green focus:border-green focus:z-10 text-sm md:text-base"
                 placeholder="Password"
                 value={formData.password}
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, password: e.target.value }))
                 }
+                disabled={isLoading}
               />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <IoEyeOffOutline className="h-5 w-5" />
+                ) : (
+                  <IoEyeOutline className="h-5 w-5" />
+                )}
+              </button>
             </div>
           </div>
 
           <div className="flex flex-col space-y-4">
-            <Button type="submit" variant="green" fullWidth>
-              Create Account
+            <Button
+              type="submit"
+              variant="green"
+              fullWidth
+              disabled={isLoading}
+            >
+              {isLoading ? "Creating Account..." : "Create Account"}
             </Button>
           </div>
         </form>

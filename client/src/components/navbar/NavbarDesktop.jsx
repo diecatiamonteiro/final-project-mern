@@ -45,12 +45,17 @@ export default function NavbarDesktop() {
           </div>
         </div>
 
-        {/* Right side: Login/Signup & Favourites, Dashboard, Logout */}
+        {/* Right side: Login/Signup or Logout, Favourites & Dashboard */}
         <div className="flex flex-row gap-12 ml-32 items-center">
-         
-          <NavLinkFavourites />
-          <NavLinkDashboard />
-          <BtnLogout />
+          {isAuthenticated ? (
+            <>
+              <NavLinkFavourites />
+              <NavLinkDashboard />
+              <BtnLogout />
+            </>
+          ) : (
+            <BtnLoginSignup />
+          )}
         </div>
       </nav>
     </div>

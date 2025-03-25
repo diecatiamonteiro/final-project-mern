@@ -52,7 +52,7 @@ export const verifyEmail = async (usersDispatch, token, userId) => {
   usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.get(
-      `api/auth/verify-email?token=${token}&userId=${userId}`
+      `/api/auth/verify-email?token=${token}&userId=${userId}`
     );
     usersDispatch({
       type: USER_ACTIONS.VERIFY_EMAIL,
@@ -75,7 +75,7 @@ export const verifyEmail = async (usersDispatch, token, userId) => {
 export const login = async (usersDispatch, credentials) => {
   usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    const response = await axios.post("api/auth/login", credentials);
+    const response = await axios.post("/api/auth/login", credentials);
     usersDispatch({
       type: USER_ACTIONS.LOGIN,
       payload: response.data,
@@ -96,7 +96,15 @@ export const login = async (usersDispatch, credentials) => {
 export const googleLogin = async (usersDispatch, credentials) => {
   usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    const response = await axios.post("api/auth/login/google", credentials);
+    const response = await axios.post("/api/auth/login/google", {
+      token: credentials
+    }, {
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
     usersDispatch({
       type: USER_ACTIONS.LOGIN_GOOGLE,
       payload: response.data,
@@ -118,7 +126,7 @@ export const googleLogin = async (usersDispatch, credentials) => {
 export const logout = async (usersDispatch) => {
   usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    await axios.get("api/auth/logout");
+    await axios.get("/api/auth/logout");
     usersDispatch({
       type: USER_ACTIONS.LOGOUT,
     });
@@ -137,20 +145,23 @@ export const logout = async (usersDispatch) => {
 export const getUserData = async (usersDispatch) => {
   usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    const response = await axios.post("api/auth/login/google", credentials);
+    const response = await axios.get("/api/auth/user-data");
     usersDispatch({
-      type: USER_ACTIONS.LOGIN_GOOGLE,
+      type: USER_ACTIONS.GET_USER_DATA,
       payload: response.data,
     });
     return response.data;
   } catch (error) {
-    const errorMessage =
-      error.response?.data?.message || "Google login failed.";
-    usersDispatch({
-      type: USER_ACTIONS.SET_ERROR,
-      payload: errorMessage,
-    });
-    throw error; // Need to throw error to stop the function and show error message
+    // Don't dispatch error for 401 (unauthorized) status
+    if (error.response?.status !== 401) {
+      const errorMessage =
+        error.response?.data?.message || "Failed to get user data.";
+      usersDispatch({
+        type: USER_ACTIONS.SET_ERROR,
+        payload: errorMessage,
+      });
+    }
+    throw error;
   } finally {
     usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
   }
