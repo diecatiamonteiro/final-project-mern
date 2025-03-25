@@ -60,15 +60,7 @@ const UserSchema = new Schema(
   { timestamps: true }
 );
 
-// Pre-save middleware to hash password
-UserSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 10);
-  }
-  next();
-});
-
-// Pre-update middleware to hash password
+// Keep the pre-update middleware for password updates
 UserSchema.pre("findOneAndUpdate", async function (next) {
   const update = this.getUpdate();
   if (update.password) {
