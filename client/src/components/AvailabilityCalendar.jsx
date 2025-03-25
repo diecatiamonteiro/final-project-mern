@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -6,43 +6,56 @@ export default function AvailabilityCalendar({
   selectedDates = [],
   onDateSelect,
 }) {
+  // Convert string dates to Date objects when component mounts or selectedDates changes
+  const [convertedDates, setConvertedDates] = useState([]);
+
+  useEffect(() => {
+    // Convert string dates to Date objects, ensuring correct date
+    const dates = selectedDates.map((date) => {
+      if (typeof date === "string") {
+        // Create date from the UTC string and adjust for local timezone
+        const utcDate = new Date(date);
+        return new Date(
+          utcDate.getUTCFullYear(),
+          utcDate.getUTCMonth(),
+          utcDate.getUTCDate()
+        );
+      }
+      return date;
+    });
+    setConvertedDates(dates);
+  }, [selectedDates]);
+
   const handleDateSelect = (date) => {
+    // Create a new date at UTC midnight
+    const utcDate = new Date(
+      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0)
+    );
+
     // Check if date is already selected
-    const dateString = date.toISOString().split("T")[0];
-    const isSelected = selectedDates.some(
-      (d) => new Date(d).toISOString().split("T")[0] === dateString
+    const isSelected = convertedDates.some(
+      (d) => d.getTime() === utcDate.getTime()
     );
 
     if (isSelected) {
       // If date is already selected, remove it
-      const newDates = selectedDates.filter(
-        (d) => new Date(d).toISOString().split("T")[0] !== dateString
+      const newDates = convertedDates.filter(
+        (d) => d.getTime() !== utcDate.getTime()
       );
       onDateSelect(newDates);
     } else {
       // If date is not selected, add it
-      onDateSelect([...selectedDates, date]);
+      onDateSelect([...convertedDates, utcDate]);
     }
-  };
-
-  // Custom styles for different date states
-  const dayClassNames = (date) => {
-    const dateString = date.toISOString().split("T")[0];
-    const isSelected = selectedDates.some(
-      (d) => new Date(d).toISOString().split("T")[0] === dateString
-    );
-
-    return isSelected ? "bg-green text-white hover:bg-greenHover" : "";
   };
 
   return (
     <div className="availability-calendar">
       <DatePicker
-        selected={null}
+        highlightDates={convertedDates}
         onChange={handleDateSelect}
         inline
         minDate={new Date()}
-        dayClassName={dayClassNames}
         calendarClassName="!border-0 !shadow-lg"
         showPopperArrow={false}
         monthsShown={2}
@@ -67,17 +80,12 @@ export default function AvailabilityCalendar({
           border-radius: 9999px;
           background-color: #f3f4f6;
         }
-        /* Override the default selected state */
-        .availability-calendar .react-datepicker__day--keyboard-selected {
-          background-color: transparent !important;
-          color: inherit !important;
-        }
-        /* Override the clicked state */
-        .availability-calendar .react-datepicker__day--selected {
+        /* Style for highlighted dates */
+        .availability-calendar .react-datepicker__day--highlighted {
           background-color: #059669 !important;
           color: white !important;
         }
-        .availability-calendar .react-datepicker__day--selected:hover {
+        .availability-calendar .react-datepicker__day--highlighted:hover {
           background-color: #047857 !important;
         }
         .availability-calendar .react-datepicker__day--disabled {

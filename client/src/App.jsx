@@ -22,8 +22,8 @@ function App() {
         <Route path="login" element={<LoginPage />} />
         <Route path="venues" element={<AllVenuesPage />} />
         <Route path="artists" element={<AllArtistsPage />} />
-        <Route path="venue/:venueId" element={<IndividualVenuePage />} />
-        <Route path="artist/:artistId" element={<IndividualArtistPage />} />
+        <Route path="venue/:id" element={<IndividualVenuePage />} />
+        <Route path="artist/:id" element={<IndividualArtistPage />} />
         <Route path="favourites" element={<FavouritesPage />} />
         <Route path="dashboard" element={<UserDashboardPage />} />
         <Route path="verify-email" element={<VerificationPage />} />
