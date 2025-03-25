@@ -4,8 +4,9 @@
 POST {{baseUrl}}
 Content-Type: application/json
 
+
 {
-  "favouriteId":"67d9787538abedcfa89660f3"
+  "favouriteId":"67dc1052fc23ef9f183ed166"
 }
 
 ### REMOVE ARTIST/VENUE FROM FAVOURITES

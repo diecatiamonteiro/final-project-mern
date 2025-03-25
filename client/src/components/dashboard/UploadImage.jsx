@@ -87,7 +87,7 @@ export function ProfilePictureUpload({ currentImage, onImageUpload }) {
 
         {/* Edit icon overlay - only show when not uploading */}
         {!uploading && (
-          <div className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute bottom-0 right-0 bg-green rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-greenHover">
             <svg
               className="w-4 h-4 text-white"
               fill="none"
@@ -109,7 +109,7 @@ export function ProfilePictureUpload({ currentImage, onImageUpload }) {
 }
 
 // GalleryUpload component - for gallery images
-export function GalleryUpload({ onImageUpload }) {
+export function GalleryUpload({ onImageUpload, className = "" }) {
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef(null);
 
@@ -156,7 +156,7 @@ export function GalleryUpload({ onImageUpload }) {
       />
       <label
         htmlFor="gallery-upload"
-        className="inline-flex items-center space-x-2 cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:bg-gray-400"
+        className={`inline-flex items-center space-x-2 cursor-pointer bg-transparent text-green border border-green px-4 py-2 rounded-lg hover:bg-green/10 disabled:bg-gray-400 ${className}`}
       >
         {uploading ? (
           <>
