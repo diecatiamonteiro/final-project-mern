@@ -63,10 +63,22 @@ export const bookingDateUpdateEmail = (
  * @desc  Email sent to the user who initiated a booking to confirm its acceptance
  */
 
-export const bookingAcceptanceEmail = (bookingDetails) => `
-  <h1>Booking Acceptance</h1>
-  <p>Your booking has been accepted!</p>
-  <p>Go to My Gigs to see more details.</p>
+export const bookingAcceptanceEmail = (
+  senderName,
+  receiverName,
+  performanceDate
+) => `
+  <h1>Booking Request Accepted</h1>
+  <p>Hello ${receiverName},</p>
+  <p>${senderName} has accepted your booking request for ${new Date(
+  performanceDate
+).toLocaleDateString("en-US", {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+})}.</p>
+  <p>You can now communicate directly with ${senderName} through The Greenroom messaging system.</p>
   <p>Thank you for using The Greenroom!</p>
 `;
 

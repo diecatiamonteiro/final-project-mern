@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import createError from "http-errors";
 import User from "../models/User.js";
 import Booking from "../models/Booking.js";
@@ -7,49 +8,11 @@ import validator from "validator";
 import axios from "axios";
 import transporter from "../utils/emailConfig.js";
 import { verificationEmail } from "../utils/emailTemplates.js";
-
-/**
- * @desc   Generate JWT token and set it as an HTTP-only cookie
- * @param  {Object} user - The authenticated user object
- * @param  {Object} res - Express response object
- */
-const tokenizeCookie = async (user, res) => {
-  try {
-    const { JWT_SECRET, JWT_EXP } = process.env;
-
-    if (!JWT_SECRET || !JWT_EXP) {
-      throw new Error("JWT configuration is missing");
-    }
-
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, {
-      expiresIn: JWT_EXP,
-    });
-
-    res.cookie("jwtToken", token, {
-      maxAge: 24 * 60 * 60 * 1000, // 1-day expiration
-      httpOnly: true,
-      sameSite: "strict",
-    });
-  } catch (error) {
-    throw createError(500, "Error generating authentication token");
-  }
-};
-
-/**
- * @desc    Generate a JWT token for email verification
- * @returns {String} - JWT token that expires in 24 hours
- */
-const generateVerificationToken = () => {
-  try {
-    if (!process.env.JWT_SECRET) {
-      throw new Error("JWT_SECRET is missing");
-    }
-
-    return jwt.sign({}, process.env.JWT_SECRET, { expiresIn: "24h" });
-  } catch (error) {
-    throw createError(500, "Error generating verification token");
-  }
-};
+import {
+  tokenizeCookie,
+  generateVerificationToken,
+} from "../utils/authUtils.js";
+import { deleteFromCloudinary } from "../utils/cloudinaryUtils.js";
 
 /**
  * @desc    Register a new user
@@ -63,12 +26,12 @@ export const register = async (req, res, next) => {
 
     // Check if all required fields are provided
     if (!firstName || !lastName || !email || !password || !role) {
-      throw createError(400, "All fields are required");
+      return next(createError(400, "All fields are required"));
     }
 
     // Validate email format
     if (!validator.isEmail(email)) {
-      throw createError(400, "Invalid email format");
+      return next(createError(400, "Invalid email format"));
     }
 
     // Validate password strength
@@ -81,9 +44,11 @@ export const register = async (req, res, next) => {
         minSymbols: 1,
       })
     ) {
-      throw createError(
-        400,
-        "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+      return next(
+        createError(
+          400,
+          "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+        )
       );
     }
 
@@ -95,7 +60,7 @@ export const register = async (req, res, next) => {
     // Check if user already exists
     const existingUser = await User.findOne({ email: sanitizedEmail });
     if (existingUser) {
-      throw createError(400, "User already exists");
+      return next(createError(400, "User already exists"));
     }
 
     // Hash the password before saving
@@ -147,14 +112,14 @@ export const verifyEmail = async (req, res, next) => {
     const { token, userId } = req.query;
 
     if (!token || !userId) {
-      throw createError(400, "Missing verification information");
+      return next(createError(400, "Missing verification information"));
     }
 
     // Verify the token
     try {
       jwt.verify(token, process.env.JWT_SECRET);
     } catch (error) {
-      throw createError(400, "Invalid or expired verification link");
+      return next(createError(400, "Invalid or expired verification link"));
     }
 
     // Find and update user
@@ -165,7 +130,7 @@ export const verifyEmail = async (req, res, next) => {
     );
 
     if (!user) {
-      throw createError(404, "User not found");
+      return next(createError(404, "User not found"));
     }
 
     res.status(200).json({
@@ -189,12 +154,12 @@ export const login = async (req, res, next) => {
 
     // Check if fields are provided
     if (!email || !password) {
-      throw createError(400, "Email and password are required");
+      return next(createError(400, "Email and password are required"));
     }
 
     // Validate email format
     if (!validator.isEmail(email)) {
-      throw createError(400, "Invalid email format");
+      return next(createError(400, "Invalid email format"));
     }
 
     // Sanitize email
@@ -204,19 +169,21 @@ export const login = async (req, res, next) => {
     const user = await User.findOne({ email: sanitizedEmail });
     if (!user) {
       // Using a generic message for security
-      throw createError(401, "Invalid credentials");
+      return next(createError(401, "Invalid credentials"));
     }
 
     // Check email verification status
     if (!user.isConfirmed) {
-      throw createError(401, "Please verify your email before logging in");
+      return next(
+        createError(401, "Please verify your email before logging in")
+      );
     }
 
     // Compare provided password with stored hash
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       // Using a generic message for security
-      throw createError(401, "Invalid credentials");
+      return next(createError(401, "Invalid credentials"));
     }
 
     // Set token as a cookie after successful login
@@ -246,7 +213,7 @@ export const googleLogin = async (req, res, next) => {
     const { token } = req.body;
 
     if (!token) {
-      throw createError(400, "Access token is required");
+      return next(createError(400, "Access token is required"));
     }
 
     // Fetch user info from Google using the access token
@@ -257,31 +224,25 @@ export const googleLogin = async (req, res, next) => {
       }
     );
 
-    const { email, given_name, family_name } = response.data;
+    let { email } = response.data;
+    email = validator.normalizeEmail(email);
 
     if (!email) {
-      throw createError(400, "Failed to retrieve user email from Google");
+      return next(
+        createError(400, "Failed to retrieve user email from Google")
+      );
     }
 
     // Check if user exists
     let user = await User.findOne({ email });
 
     if (!user) {
-      // Create random password and hash it
-      const randomPassword = Math.random().toString(36).slice(-8); // Creates random 8-character string
-      const hashedPassword = await bcrypt.hash(randomPassword, 10);
-
-      // Create new user if they don't exist
-      const newUser = new User({
-        email,
-        firstName: given_name,
-        lastName: family_name,
-        password: hashedPassword,
-        isConfirmed: true, // Google accounts are pre-verified
-        role: req.body.role, // Get role from frontend
-      });
-
-      user = await newUser.save();
+      return next(
+        createError(
+          401,
+          "This account does not exist in our database. Please register."
+        )
+      );
     }
 
     // Set JWT token as cookie
@@ -292,7 +253,7 @@ export const googleLogin = async (req, res, next) => {
       data: user,
     });
   } catch (error) {
-    next(createError(500, "Error during Google authentication"));
+    return next(createError(500, error.message));
   }
 };
 
@@ -306,12 +267,13 @@ export const logout = async (req, res, next) => {
   try {
     res.clearCookie("jwtToken", {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "none",
+      secure: true,
     });
     res.send({ message: "User successfully logged out" });
   } catch (error) {
     console.error("Logout error: ", error);
-    next(createError(500, "Something went wrong during logout"));
+    return next(createError(500, "Something went wrong during logout"));
   }
 };
 
@@ -327,10 +289,10 @@ export const getUserData = async (req, res, next) => {
     const userId = req.user.id;
 
     // Find user and exclude password from response
-    const user = await User.findById(userId).select("-password");
+    const user = await User.findById(userId);
 
     if (!user) {
-      throw createError(404, "User not found");
+      return next(createError(404, "User not found"));
     }
 
     res.status(200).json({
@@ -356,12 +318,12 @@ export const updateAccount = async (req, res, next) => {
     // Validate email if it's being updated
     if (email) {
       if (!validator.isEmail(email)) {
-        throw createError(400, "Invalid email format");
+        return next(createError(400, "Invalid email format"));
       }
       // Check if email is already in use
       const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        throw createError(400, "Email already in use");
+      if (existingUser && existingUser._id.toString() !== userId) {
+        return next(createError(400, "Email already in use"));
       }
     }
 
@@ -369,10 +331,10 @@ export const updateAccount = async (req, res, next) => {
       userId,
       { $set: { firstName, lastName, email } },
       { new: true, runValidators: true }
-    ).select("-password");
+    );
 
     if (!updatedUser) {
-      throw createError(404, "User not found");
+      return next(createError(404, "User not found"));
     }
 
     res
@@ -395,15 +357,19 @@ export const changePassword = async (req, res, next) => {
     const userId = req.user.id; // From checkToken middleware
 
     if (!currentPassword || !newPassword) {
-      throw createError(400, "All fields are required");
+      return next(createError(400, "All fields are required"));
     }
 
     const user = await User.findById(userId);
-    if (!user) throw createError(404, "User not found");
+    if (!user) {
+      return next(createError(404, "User not found"));
+    }
 
     // Verify current password
     const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) throw createError(401, "Invalid current password");
+    if (!isMatch) {
+      return next(createError(401, "Invalid current password"));
+    }
 
     // Hash and update new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -424,24 +390,65 @@ export const changePassword = async (req, res, next) => {
 
 export const deleteAccount = async (req, res, next) => {
   try {
-    const userId = req.user.id; // From checkToken middleware
+    const userId = req.user.id;
 
-    // Delete all bookings associated with the user
-    await Booking.deleteMany({
-      $or: [{ initiatedBy: userId }, { receivedBy: userId }],
-    });
+    // Start a transaction
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-    // Delete the user account
-    const deletedUser = await User.findByIdAndDelete(userId);
-    if (!deletedUser) throw createError(404, "User not found");
+    try {
+      // Get user data first (for Cloudinary cleanup)
+      const user = await User.findById(userId);
+      if (!user) {
+        return next(createError(404, "User not found"));
+      }
 
-    // Clear authentication cookie
-    res.clearCookie("jwtToken", {
-      httpOnly: true,
-      sameSite: "strict",
-    });
+      // Delete Cloudinary images
+      if (user.profilePicture && !user.profilePicture.includes("default")) {
+        await deleteFromCloudinary(user.profilePicture);
+      }
+      if (user.images?.length > 0) {
+        for (const image of user.images) {
+          await deleteFromCloudinary(image);
+        }
+      }
 
-    res.status(200).json({ message: "User account deleted successfully" });
+      // Delete bookings with transaction
+      await Booking.deleteMany(
+        {
+          $or: [{ initiatedBy: userId }, { receivedBy: userId }],
+        },
+        { session }
+      );
+
+      // Remove from favorites lists with transaction
+      await User.updateMany(
+        { favourites: userId },
+        { $pull: { favourites: userId } },
+        { session }
+      );
+
+      // Delete user with transaction
+      await User.findByIdAndDelete(userId).session(session);
+
+      // If everything succeeded, commit the transaction
+      await session.commitTransaction();
+
+      // Clear auth cookie
+      res.clearCookie("jwtToken", {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+      });
+
+      res.status(200).json({ message: "User account deleted successfully" });
+    } catch (error) {
+      // If anything failed, rollback all database changes
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
   } catch (error) {
     next(error);
   }

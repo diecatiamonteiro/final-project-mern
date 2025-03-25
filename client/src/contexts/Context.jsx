@@ -4,6 +4,7 @@ import {
   bookingsReducer,
   bookingsInitialState,
 } from "../reducers/bookingsReducer";
+import { getUserData } from "../api/usersApi";
 
 export const DataContext = createContext();
 
@@ -18,7 +19,9 @@ export const DataProvider = ({ children }) => {
     bookingsInitialState
   );
 
-  useEffect(() => {}, []); // ADD getUserData = Gets the user data allowing the user to be logged in, even if page is refreshed. Executes once when the component mounts.
+  useEffect(() => {
+    getUserData(usersDispatch);
+  }, []); // Gets the user data allowing the user to be logged in, even if page is refreshed. Executes once when the component mounts.
 
   return (
     <DataContext.Provider

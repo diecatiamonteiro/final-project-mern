@@ -5,7 +5,7 @@ import createError from "http-errors";
  */
 
 export const routeNotFound = () => {
-  throw createError(404, "Page was not found");
+  return next(createError(404, "Page was not found"));
 };
 
 /**

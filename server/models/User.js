@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 //! User Schema contains auth and profile data together
 
@@ -58,5 +59,28 @@ const UserSchema = new Schema(
   },
   { timestamps: true }
 );
+
+// Keep the pre-update middleware for password updates
+UserSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate();
+  if (update.password) {
+    update.password = await bcrypt.hash(update.password, 10);
+  }
+  next();
+});
+
+// Method to compare passwords
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Remove sensitive data when converting to JSON
+UserSchema.set("toJSON", {
+  transform: (doc, ret) => {
+    delete ret.password;
+    delete ret.__v;
+    return ret;
+  },
+});
 
 export default model("User", UserSchema);
