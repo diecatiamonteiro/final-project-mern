@@ -224,7 +224,8 @@ export const googleLogin = async (req, res, next) => {
       }
     );
 
-    const { email } = response.data;
+    let { email } = response.data;
+    email = validator.normalizeEmail(email);
 
     if (!email) {
       return next(
