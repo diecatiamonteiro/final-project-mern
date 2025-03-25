@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { ProfilePictureUpload, GalleryUpload } from "./UploadImage";
+import AvailabilityCalendar from "../AvailabilityCalendar";
 
 export default function UpdateProfileForm({ user = {}, onUpdate }) {
   const [formData, setFormData] = useState({
@@ -86,6 +87,15 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
     setHasUnsavedChanges(true);
   };
 
+  // Handler for availability updates
+  const handleDateSelect = (dates) => {
+    setFormData((prev) => ({
+      ...prev,
+      availability: dates,
+    }));
+    setHasUnsavedChanges(true);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus({ loading: true, error: null, success: false });
@@ -119,17 +129,20 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
     <div className="relative">
       <form onSubmit={handleSubmit} className="max-w-7xl mx-auto space-y-8">
         {/* Profile Header Section */}
-        <div className="flex items-start space-x-8 mb-12">
-          <div className="flex-shrink-0">
-            <h3 className="text-lg font-semibold mb-4">Profile Picture</h3>
+        <div className="flex flex-col md:flex-row md:items-start md:space-x-8 mb-12">
+          {/* Center profile picture section on mobile */}
+          <div className="flex-shrink-0 mb-8 md:mb-0 flex flex-col items-center md:items-start">
+            <h3 className="text-lg font-semibold mb-4 text-center md:text-left">
+              Profile Picture
+            </h3>
             <ProfilePictureUpload
               currentImage={formData.profilePicture}
               onImageUpload={handleProfilePicture}
             />
           </div>
 
-          {/* Basic Info next to profile picture */}
-          <div className="flex-grow">
+          {/* Basic Info stacks below profile picture on mobile */}
+          <div className="flex-grow w-full">
             <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
             <div className="space-y-4">
               <input
@@ -186,7 +199,10 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
                 ))}
                 {formData.images.length < 10 && (
                   <div className="flex items-center justify-center aspect-square bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                    <GalleryUpload onImageUpload={handleGalleryImage} />
+                    <GalleryUpload
+                      onImageUpload={handleGalleryImage}
+                      className="text-xs sm:text-base"
+                    />
                   </div>
                 )}
               </div>
@@ -196,9 +212,12 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
           {/* Media Links */}
           <div>
             <h3 className="text-lg font-semibold mb-6">Media Links</h3>
-            <div className="space-y-4">
+            <div className="space-y-4 overflow-hidden">
               {["YouTube", "Spotify", "SoundCloud"].map((platform) => (
-                <div key={platform} className="flex items-center space-x-3">
+                <div
+                  key={platform}
+                  className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-2 sm:space-y-0"
+                >
                   <div className="w-24 flex-shrink-0 text-gray-600">
                     {platform}:
                   </div>
@@ -210,10 +229,29 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
                     }
                     onChange={(e) => handleMediaLink(e, platform)}
                     placeholder={`${platform} URL`}
-                    className="flex-grow p-2 border rounded-lg"
+                    className="w-full p-2 border rounded-lg"
                   />
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Availability Calendar Section */}
+        <div>
+          <h3 className="text-lg font-semibold mb-6 text-center md:text-left">
+            Set Your Availability
+          </h3>
+          <div className="bg-white rounded-lg p-6 border border-gray-200">
+            <p className="text-gray-600 mb-4 text-center md:text-left">
+              Select dates when you're available for bookings. Click a date to
+              mark it as available.
+            </p>
+            <div className="flex justify-center md:justify-start">
+              <AvailabilityCalendar
+                selectedDates={formData.availability}
+                onDateSelect={handleDateSelect}
+              />
             </div>
           </div>
         </div>
@@ -222,14 +260,14 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
         <div className="sticky bottom-0 bg-white p-4 shadow-lg mt-8 -mx-4">
           <div className="flex items-center justify-between max-w-7xl mx-auto">
             {hasUnsavedChanges && (
-              <span className="text-amber-600">
+              <span className="text-amber-600 text-xs sm:text-base">
                 ⚠️ You have unsaved changes
               </span>
             )}
             <button
               type="submit"
               disabled={status.loading || !hasUnsavedChanges}
-              className="bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 disabled:bg-gray-400"
+              className="bg-green text-white px-4 sm:px-8 py-2 sm:py-3 rounded-lg hover:bg-greenHover disabled:bg-gray-400 text-xs sm:text-base"
             >
               {status.loading ? "Saving..." : "Save Changes"}
             </button>
