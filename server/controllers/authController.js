@@ -240,7 +240,7 @@ export const googleLogin = async (req, res, next) => {
       return next(
         createError(
           401,
-          "This account does not exist in our database. Please register."
+          "This account does not exist. Please register."
         )
       );
     }
