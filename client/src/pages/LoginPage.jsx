@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Button from "../components/Button";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -16,17 +16,43 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const { isLoading } = usersState;
   const [showPassword, setShowPassword] = useState(false);
+  const [isUserRegistered, setIsUserRegistered] = useState(true);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(usersDispatch, formData);
-    navigate("/dashboard");
+    try {
+      await login(usersDispatch, formData);
+      navigate("/dashboard");
+    } catch (error) {
+      if (error.response?.data?.message === "User not registered") {
+        setIsUserRegistered(false);
+        setError("User not registered. Please register first.");
+      } else if (error.response?.data?.message === "Invalid credentials") {
+        setError("Invalid email or password");
+      } else {
+        setError(error.response?.data?.message || "An error occurred");
+      }
+    }
   };
+
+  // Clear error messages when component mounts or refreshes
+  useEffect(() => {
+    setError("");
+    setIsUserRegistered(true);
+  }, []);
 
   const handleGoogleSuccess = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      await googleLogin(usersDispatch, tokenResponse.access_token);
-      navigate("/dashboard");
+      try {
+        await googleLogin(usersDispatch, tokenResponse.access_token);
+        navigate("/dashboard");
+      } catch (error) {
+        if (error.response?.data?.message === "User not registered") {
+          setIsUserRegistered(false);
+        } else {
+          setError(error.response?.data?.message || "An error occurred");
+        }
+      }
     },
   });
 

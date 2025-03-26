@@ -5,7 +5,7 @@ import Button from "../Button";
 
 export default function HeroSection() {
   return (
-    <div className="relative h-screen mt-[-50px]">
+    <div className="relative h-screen mt-[-110px]">
       <div className="full-width-section">
         <img
           src={heroImage}
