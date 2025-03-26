@@ -35,7 +35,7 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
     success: false,
   });
 
-  console.log(formData.availability);
+  console.log(formData);
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 

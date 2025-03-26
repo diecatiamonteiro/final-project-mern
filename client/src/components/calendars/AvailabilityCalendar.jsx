@@ -10,8 +10,6 @@ export default function AvailabilityCalendar({
   const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
-    console.log("Selected dates from props:", selectedDates);
-
     const dates = selectedDates.map((date) => {
       if (typeof date === "string") {
         const utcDate = new Date(date);
@@ -24,7 +22,6 @@ export default function AvailabilityCalendar({
       return date;
     });
 
-    console.log("Converted dates:", dates);
     setConvertedDates(dates);
   }, [selectedDates]);
 

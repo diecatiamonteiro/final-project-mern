@@ -12,6 +12,7 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaTimes,
+  FaGlobe,
 } from "react-icons/fa";
 
 export default function IndividualArtistPage() {
@@ -49,7 +50,8 @@ export default function IndividualArtistPage() {
     if (url.includes("youtube")) return <FaYoutube size={24} />;
     if (url.includes("spotify")) return <FaSpotify size={24} />;
     if (url.includes("soundcloud")) return <FaSoundcloud size={24} />;
-    return null;
+    // Add website icon as default
+    return <FaGlobe size={24} />;
   };
 
   // Photo gallery modal with carousel

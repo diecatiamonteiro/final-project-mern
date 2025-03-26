@@ -14,6 +14,7 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaTimes,
+  FaGlobe,
 } from "react-icons/fa";
 
 export default function IndividualVenuePage() {
@@ -287,12 +288,37 @@ export default function IndividualVenuePage() {
 
           {/* Media Section */}
           <div className="space-y-8">
-            {venue.media?.map((item, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-lg p-4">
-                <p className="text-green">{item.platform}</p>
-                <p className="truncate">{item.url}</p>
-              </div>
-            ))}
+            {venue.media
+              ?.sort((a, b) => {
+                // Sort YouTube items first
+                if (a.platform === "YouTube" && b.platform !== "YouTube")
+                  return -1;
+                if (a.platform !== "YouTube" && b.platform === "YouTube")
+                  return 1;
+                return 0;
+              })
+              .map((item, index) => (
+                <div key={index}>
+                  {item.platform === "YouTube" ? (
+                    <div>
+                      <div className="aspect-video">
+                        <iframe
+                          src={`https://www.youtube.com/embed/${getYouTubeId(
+                            item.url
+                          )}`}
+                          className="w-full h-full rounded-lg shadow-lg"
+                          allowFullScreen
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-white rounded-lg shadow-lg p-4">
+                      <p className="text-green">{item.platform}</p>
+                      <p className="truncate">{item.url}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
           </div>
         </div>
 
@@ -321,11 +347,19 @@ export default function IndividualVenuePage() {
   );
 }
 
-// Helper function to determine social media icon (same as artist page)
+// Helper function to determine social media icon
 const getSocialIcon = (url) => {
   if (url.includes("facebook")) return <FaFacebook size={24} />;
   if (url.includes("instagram")) return <FaInstagram size={24} />;
   if (url.includes("twitter")) return <FaTwitter size={24} />;
   if (url.includes("youtube")) return <FaYoutube size={24} />;
-  return null;
+  // Add website icon as default
+  return <FaGlobe size={24} />;
+};
+
+// Add the YouTube helper function (same as artist page)
+const getYouTubeId = (url) => {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return match && match[2].length === 11 ? match[2] : null;
 };
