@@ -166,7 +166,9 @@ export const login = async (req, res, next) => {
     const sanitizedEmail = validator.normalizeEmail(email);
 
     // Check if user exists (using sanitized email)
-    const user = await User.findOne({ email: sanitizedEmail });
+    const user = await User.findOne({ email: sanitizedEmail }).populate(
+      "favourites"
+    );
     if (!user) {
       // Using a generic message for security
       return next(createError(401, "Invalid credentials"));
@@ -234,7 +236,7 @@ export const googleLogin = async (req, res, next) => {
     }
 
     // Check if user exists
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ email }).populate("favourites");
 
     if (!user) {
       return next(

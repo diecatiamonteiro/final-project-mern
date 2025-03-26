@@ -68,12 +68,21 @@ export const usersReducer = (state, action) => {
 
     case USER_ACTIONS.LOGIN:
     case USER_ACTIONS.LOGIN_GOOGLE:
-    case USER_ACTIONS.GET_USER_DATA:
     case USER_ACTIONS.UPDATE_ACCOUNT:
       return {
         ...state,
         isAuthenticated: true,
         user: action.payload.data,
+        favourites: action.payload.data?.favourites || [],
+        error: null,
+      };
+
+    case USER_ACTIONS.GET_USER_DATA:
+      return {
+        ...state,
+        isAuthenticated: true,
+        user: action.payload.data,
+        favourites: action.payload.data?.favourites || [],
         error: null,
       };
 
@@ -121,6 +130,12 @@ export const usersReducer = (state, action) => {
     case USER_ACTIONS.UPDATE_PROFILE:
     case USER_ACTIONS.DELETE_SINGLE_MEDIA:
     case USER_ACTIONS.DELETE_SINGLE_IMAGE:
+      return {
+        ...state,
+        user: action.payload.data,
+        error: null,
+      };
+
     case USER_ACTIONS.ADD_FAVOURITE:
     case USER_ACTIONS.REMOVE_FAVOURITE:
       return {
