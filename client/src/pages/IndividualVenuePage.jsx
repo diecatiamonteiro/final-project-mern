@@ -299,7 +299,7 @@ export default function IndividualVenuePage() {
         {/* Right Column - Calendar */}
         <div className="relative">
           <div className="sticky top-24">
-            <div className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center max-w-[500px]">
+            <div className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center w-full">
               <BookingRequestCalendar
                 availableDates={venue.availability}
                 bookedDates={venue.bookedDates}
