@@ -293,7 +293,7 @@ export default function IndividualArtistPage() {
         {/* Right Column - Calendar */}
         <div className="relative">
           <div className="sticky top-24">
-            <div className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center max-w-[280px]">
+            <div className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center max-w-[500px]">
               <BookingRequestCalendar
                 availableDates={artist.availability}
                 bookedDates={artist.bookedDates}

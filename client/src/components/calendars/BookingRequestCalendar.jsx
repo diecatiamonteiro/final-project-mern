@@ -99,6 +99,10 @@ export default function BookingRequestCalendar({
             border-radius: 9999px;
             transition: all 0.2s;
             position: relative;
+            margin: 0.2rem;
+            width: 2.5rem;
+            height: 2rem;
+            line-height: 2rem;
           }
           .booking-calendar .react-datepicker__day:hover:not(.react-datepicker__day--disabled) {
             border-radius: 9999px;
