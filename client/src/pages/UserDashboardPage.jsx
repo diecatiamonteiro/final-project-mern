@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import UpdateProfileForm from "../components/dashboard/UpdateProfileForm";
+import UpdateProfileForm from "../components/dashboard/profile/UpdateProfileForm";
 
 export default function UserDashboardPage() {
   const [activeTab, setActiveTab] = useState("account");
