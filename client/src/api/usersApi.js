@@ -80,6 +80,7 @@ export const login = async (usersDispatch, credentials) => {
       type: USER_ACTIONS.LOGIN,
       payload: response.data,
     });
+
     return response.data;
   } catch (error) {
     const errorMessage = error.response?.data?.message || "Login failed.";
@@ -96,15 +97,19 @@ export const login = async (usersDispatch, credentials) => {
 export const googleLogin = async (usersDispatch, credentials) => {
   usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    const response = await axios.post("/api/auth/login/google", {
-      token: credentials
-    }, {
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json'
+    const response = await axios.post(
+      "/api/auth/login/google",
+      {
+        token: credentials,
+      },
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    });
-    
+    );
+
     usersDispatch({
       type: USER_ACTIONS.LOGIN_GOOGLE,
       payload: response.data,
@@ -146,6 +151,13 @@ export const getUserData = async (usersDispatch) => {
   usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.get("/api/auth/user-data");
+
+    // If we have a user, populate their favorites
+    if (response.data.data) {
+      const favouritesResponse = await axios.get("/api/users/favourites");
+      response.data.data.favourites = favouritesResponse.data.data;
+    }
+
     usersDispatch({
       type: USER_ACTIONS.GET_USER_DATA,
       payload: response.data,
@@ -369,7 +381,6 @@ export const deleteSingleImage = async (usersDispatch, userId, imageId) => {
 };
 
 export const addFavourite = async (usersDispatch, favouriteId) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.post("/api/users/favourites", { favouriteId });
     usersDispatch({
@@ -385,13 +396,10 @@ export const addFavourite = async (usersDispatch, favouriteId) => {
       payload: errorMessage,
     });
     throw error;
-  } finally {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
   }
 };
 
 export const removeFavourite = async (usersDispatch, favouriteId) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.delete(`/api/users/favourites/${favouriteId}`);
     usersDispatch({
@@ -407,8 +415,6 @@ export const removeFavourite = async (usersDispatch, favouriteId) => {
       payload: errorMessage,
     });
     throw error;
-  } finally {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
   }
 };
 

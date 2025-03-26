@@ -54,7 +54,9 @@ export default function NavbarDesktop() {
               <BtnLogout />
             </>
           ) : (
-            <BtnLoginSignup />
+            <>
+              <BtnLoginSignup />
+            </>
           )}
         </div>
       </nav>
