@@ -159,6 +159,18 @@ export default function IndividualArtistPage() {
     );
   }
 
+  // First, let's group media items by platform type
+  const groupedMedia = artist.media?.reduce((acc, item) => {
+    if (item.platform === "YouTube") {
+      acc.youtube = [...(acc.youtube || []), item];
+    } else if (["Spotify", "SoundCloud"].includes(item.platform)) {
+      acc.audio = [...(acc.audio || []), item];
+    } else {
+      acc.other = [...(acc.other || []), item];
+    }
+    return acc;
+  }, {});
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Photo Grid Section */}
@@ -256,39 +268,68 @@ export default function IndividualArtistPage() {
           {/* Divider */}
           <hr className="border-gray-200 mb-6" />
 
-          {/* YouTube Videos */}
+          {/* Media Section */}
           <div className="space-y-8">
-            {artist.media
-              ?.sort((a, b) => {
-                // Sort YouTube items first
-                if (a.platform === "YouTube" && b.platform !== "YouTube")
-                  return -1;
-                if (a.platform !== "YouTube" && b.platform === "YouTube")
-                  return 1;
-                return 0;
-              })
-              .map((item, index) => (
-                <div key={index}>
-                  {item.platform === "YouTube" ? (
-                    <div>
-                      <div className="aspect-video">
-                        <iframe
-                          src={`https://www.youtube.com/embed/${getYouTubeId(
-                            item.url
-                          )}`}
-                          className="w-full h-full rounded-lg shadow-lg"
-                          allowFullScreen
-                        />
+            {/* Video and Audio Players Grid */}
+            {(groupedMedia?.youtube?.length > 0 ||
+              groupedMedia?.audio?.length > 0) && (
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                {/* YouTube Video - Takes up 3 columns */}
+                {groupedMedia?.youtube?.map((item, index) => (
+                  <div key={index} className="md:col-span-3 aspect-video">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${getYouTubeId(
+                        item.url
+                      )}`}
+                      className="w-full h-full rounded-lg shadow-lg"
+                      allowFullScreen
+                    />
+                  </div>
+                ))}
+
+                {/* Audio Players Stack - Takes up 2 columns */}
+                {groupedMedia?.audio && (
+                  <div className="md:col-span-2 space-y-4">
+                    {groupedMedia.audio.map((item, index) => (
+                      <div key={index}>
+                        {item.platform === "Spotify" ? (
+                          <div className="bg-white rounded-lg shadow-lg">
+                            <iframe
+                              style={{ borderRadius: "12px" }}
+                              src={`https://open.spotify.com/embed/track/${getSpotifyId(
+                                item.url
+                              )}?utm_source=generator&theme=0`}
+                              width="100%"
+                              height="152"
+                              frameBorder="0"
+                              allowFullScreen=""
+                              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                              className="shadow-lg"
+                            />
+                          </div>
+                        ) : item.platform === "SoundCloud" ? (
+                          <div className="bg-white rounded-lg shadow-lg h-[152px] overflow-hidden">
+                            <iframe
+                              src={`https://w.soundcloud.com/player/?url=${item.url}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false&buying=false&sharing=false&download=false&show_playcount=false`}
+                              className="w-full h-full rounded-lg"
+                              frameBorder="0"
+                            />
+                          </div>
+                        ) : null}
                       </div>
-                    </div>
-                  ) : (
-                    <div className="bg-white rounded-lg shadow-lg p-4">
-                      <p className="text-green">{item.platform}</p>
-                      <p className="truncate">{item.url}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Other Media */}
+            {groupedMedia?.other?.map((item, index) => (
+              <div key={index} className="bg-white rounded-lg shadow-lg p-4">
+                <p className="text-green">{item.platform}</p>
+                <p className="truncate">{item.url}</p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -322,4 +363,10 @@ const getYouTubeId = (url) => {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
   return match && match[2].length === 11 ? match[2] : null;
+};
+
+// Add this helper function next to getYouTubeId
+const getSpotifyId = (url) => {
+  const trackId = url.split("/track/")[1]?.split("?")[0];
+  return trackId || null;
 };
