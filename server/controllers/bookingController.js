@@ -18,11 +18,13 @@ import {
 
 export const requestArtistOrVenue = async (req, res, next) => {
   try {
-    const { receiverId, performanceDate } = req.body;
+    const { receivedBy, performanceDate } = req.body;
     const senderId = req.user.id; // From checkToken middleware
 
+    console.log(req.body);
+
     // Validate input
-    if (!receiverId || !performanceDate) {
+    if (!receivedBy || !performanceDate) {
       return next(createError(400, "Please provide all required fields"));
     }
 
@@ -35,7 +37,7 @@ export const requestArtistOrVenue = async (req, res, next) => {
     // Get both users
     const [sender, receiver] = await Promise.all([
       User.findById(senderId),
-      User.findById(receiverId),
+      User.findById(receivedBy),
     ]);
 
     // Validate users exist
@@ -53,8 +55,8 @@ export const requestArtistOrVenue = async (req, res, next) => {
     // Check if booking already exists for this date and users
     const existingBooking = await Booking.findOne({
       $or: [
-        { initiatedBy: senderId, receivedBy: receiverId },
-        { initiatedBy: receiverId, receivedBy: senderId },
+        { initiatedBy: senderId, receivedBy },
+        { initiatedBy: receivedBy, receivedBy: senderId },
       ],
       performanceDate: bookingDate,
       isCancelledOrDeclined: false,
@@ -72,7 +74,7 @@ export const requestArtistOrVenue = async (req, res, next) => {
     // Create new booking
     const newBooking = await Booking.create({
       initiatedBy: senderId,
-      receivedBy: receiverId,
+      receivedBy,
       performanceDate: bookingDate,
     });
 
@@ -81,7 +83,7 @@ export const requestArtistOrVenue = async (req, res, next) => {
       User.findByIdAndUpdate(senderId, {
         $push: { bookingsSent: newBooking._id },
       }),
-      User.findByIdAndUpdate(receiverId, {
+      User.findByIdAndUpdate(receivedBy, {
         $push: { bookingsReceived: newBooking._id },
       }),
     ]);

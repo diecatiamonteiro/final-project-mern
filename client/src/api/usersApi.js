@@ -293,6 +293,8 @@ export const getIndividualArtistOrVenue = async (usersDispatch, userId) => {
       type: USER_ACTIONS.GET_INDIVIDUAL_ARTIST_OR_VENUE,
       payload: response.data,
     });
+
+    console.log(response.data);
     return response.data;
   } catch (error) {
     const errorMessage =

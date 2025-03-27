@@ -1,6 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useContext } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { DataContext } from "../../contexts/Context";
+import Button from "../../components/Button";
+import { useParams } from "react-router-dom";
+import { requestArtistOrVenue } from "../../api/bookingsApi";
 
 // For the artist/venue page - shows availability and allows booking requests
 export default function BookingRequestCalendar({
@@ -9,6 +13,10 @@ export default function BookingRequestCalendar({
   onRequestBooking,
 }) {
   const [selectedDate, setSelectedDate] = useState(null);
+  const { bookingsDispatch, usersState } = useContext(DataContext);
+  const { id } = useParams();
+
+  console.log(selectedDate);
 
   // Convert dates once when props change
   const convertedAvailableDates = useMemo(
@@ -26,24 +34,14 @@ export default function BookingRequestCalendar({
       Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0)
     );
 
-    // Check if date is available (not booked)
-    const isAvailable = convertedAvailableDates.some(
-      (d) => d.getTime() === utcDate.getTime()
-    );
-    const isBooked = convertedBookedDates.some(
-      (d) => d.getTime() === utcDate.getTime()
-    );
+    setSelectedDate(utcDate); // Temporarily show green highlight
 
-    if (isAvailable && !isBooked) {
-      setSelectedDate(utcDate); // Temporarily show green highlight
+    // Remove highlight after animation
+    // setTimeout(() => {
+    //   setSelectedDate(null);
+    // }, 300);
 
-      // Remove highlight after animation
-      setTimeout(() => {
-        setSelectedDate(null);
-      }, 300);
-
-      onRequestBooking(utcDate);
-    }
+    onRequestBooking(utcDate);
   };
 
   const dayClassName = (date) => {
@@ -66,6 +64,46 @@ export default function BookingRequestCalendar({
     }
 
     return "date-unavailable";
+  };
+
+  const handleBookingRequest = () => {
+    if (!selectedDate) {
+      alert("Please select a date first");
+      return;
+    }
+
+    if (!usersState?.user?._id) {
+      alert("User information is missing");
+      return;
+    }
+
+    if (!id) {
+      alert("Recipient information is missing");
+      return;
+    }
+
+    const utcPerformanceDate = new Date(
+      Date.UTC(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate()
+      )
+    );
+
+    const bookingData = {
+      initiatedBy: usersState.user._id,
+      receivedBy: id,
+      performanceDate: utcPerformanceDate.toISOString(),
+    };
+
+    // Debug logs
+    console.log("Booking request data:", {
+      initiatedBy: bookingData.initiatedBy,
+      receivedBy: bookingData.receivedBy,
+      performanceDate: bookingData.performanceDate,
+    });
+
+    requestArtistOrVenue(bookingsDispatch, bookingData);
   };
 
   return (
@@ -127,6 +165,13 @@ export default function BookingRequestCalendar({
           }
         `}
       </style>
+      <Button
+        variant="green"
+        className="mt-2 px-6 py-2 w-full"
+        onClick={handleBookingRequest}
+      >
+        Request Booking
+      </Button>
     </div>
   );
 }

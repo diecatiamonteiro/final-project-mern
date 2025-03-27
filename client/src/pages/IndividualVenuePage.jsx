@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import BookingRequestCalendar from "../components/calendars/BookingRequestCalendar";
-import Button from "../components/Button";
 import {
   FaFacebook,
   FaInstagram,
@@ -16,45 +15,57 @@ import {
   FaTimes,
   FaGlobe,
 } from "react-icons/fa";
+import { getIndividualArtistOrVenue } from "../api/usersApi";
+import { DataContext } from "../contexts/Context";
 
 export default function IndividualVenuePage() {
   const { id } = useParams();
-  const [venue, setVenue] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const { usersDispatch, usersState } = useContext(DataContext);
+
+  const { user } = usersState;
+  console.log("USER from usersState: ", user);
+  console.log("usersState: ", usersState);
 
   useEffect(() => {
-    const fetchVenue = async () => {
-      try {
-        const response = await fetch(`http://localhost:8000/api/users/${id}`);
-        if (!response.ok) {
-          throw new Error("Venue not found");
-        }
-        const data = await response.json();
-        console.log("Venue data:", data);
-        setVenue(data.data);
-      } catch (err) {
-        console.error("Error:", err);
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchVenue();
+    // const fetchVenue = async () => {
+    //   try {
+    //     const response = await fetch(`http://localhost:8000/api/users/${id}`);
+    //     if (!response.ok) {
+    //       throw new Error("Venue not found");
+    //     }
+    //     const data = await response.json();
+    //     console.log("Venue data:", data);
+    //     setVenue(data.data);
+    //   } catch (err) {
+    //     console.error("Error:", err);
+    //     setError(err.message);
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
+    // };
+    // fetchVenue();
+    getIndividualArtistOrVenue(usersDispatch, id);
   }, [id]);
 
   // Photo gallery modal with carousel (same as artist page)
   const PhotoGalleryModal = () => {
-    const allPhotos = [venue.profilePicture, ...(venue.images || [])];
+    const allPhotos = [user.profilePicture, ...(user.images || [])];
 
     const handleClose = () => {
       setShowAllPhotos(false);
       setSelectedPhoto(null);
     };
 
+    if (usersState.isLoading)
+      return (
+        <div className="flex justify-center items-center min-h-screen">
+          Loading...
+        </div>
+      );
     return (
       <div className="fixed inset-0 bg-black/90 z-50 overflow-hidden">
         {selectedPhoto !== null ? (
@@ -115,7 +126,7 @@ export default function IndividualVenuePage() {
                 >
                   <img
                     src={image}
-                    alt={`${venue.name} photo ${index + 1}`}
+                    alt={`${user.name} photo ${index + 1}`}
                     className="w-full h-48 object-cover rounded-lg"
                   />
                 </div>
@@ -128,11 +139,12 @@ export default function IndividualVenuePage() {
   };
 
   // Format address from additionalInfo
-  const formattedAddress = venue?.additionalInfo?.address
-    ? `${venue.additionalInfo.address.streetName} ${venue.additionalInfo.address.number}, ${venue.additionalInfo.address.zipCode} ${venue.additionalInfo.address.city}`
-    : "Address not available";
+  const formattedAddress =
+    user && user.additionalInfo?.address
+      ? `${user.additionalInfo.address.streetName} ${user.additionalInfo.address.number}, ${user.additionalInfo.address.zipCode} ${user.additionalInfo.address.city}`
+      : "Address not available";
 
-  if (isLoading)
+  if (usersState.isLoading)
     return (
       <div className="flex justify-center items-center min-h-screen">
         Loading...
@@ -144,10 +156,10 @@ export default function IndividualVenuePage() {
         {error}
       </div>
     );
-  if (!venue)
+  if (!usersState)
     return (
       <div className="flex justify-center items-center min-h-screen">
-        Venue not found
+        {user.role} not found
       </div>
     );
 
@@ -163,12 +175,12 @@ export default function IndividualVenuePage() {
           }}
         >
           <img
-            src={venue.profilePicture}
-            alt={venue.name}
+            src={user.profilePicture}
+            alt={user.name}
             className="w-full h-[400px] object-cover rounded-lg hover:opacity-95 transition-opacity"
           />
         </div>
-        {venue.images?.slice(0, 4).map((image, index) => (
+        {user.images?.slice(0, 4).map((image, index) => (
           <div
             key={index}
             className="cursor-pointer relative"
@@ -179,11 +191,11 @@ export default function IndividualVenuePage() {
           >
             <img
               src={image}
-              alt={`${venue.name} photo ${index + 1}`}
+              alt={`${user.name} photo ${index + 1}`}
               className="w-full h-[198px] object-cover rounded-lg hover:opacity-95 transition-opacity"
             />
             {/* Show overlay button only on the last image if there are more photos */}
-            {index === 3 && venue.images.length > 4 && (
+            {index === 3 && user.images.length > 4 && (
               <div
                 onClick={(e) => {
                   e.stopPropagation();
@@ -192,7 +204,7 @@ export default function IndividualVenuePage() {
                 className="absolute inset-0 bg-black/30 rounded-lg flex items-center justify-center cursor-pointer hover:bg-black/40 transition-colors"
               >
                 <span className="text-white font-semibold">
-                  +{venue.images.length - 4} more photos
+                  +{user.images.length - 4} more photos
                 </span>
               </div>
             )}
@@ -202,7 +214,7 @@ export default function IndividualVenuePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
         <div className="md:col-span-2">
-          <h1 className="text-4xl font-bold mb-4">{venue.name}</h1>
+          <h1 className="text-4xl font-bold mb-4">{user.name}</h1>
 
           {/* Location */}
           <div className="flex items-center gap-2 text-gray-600 mb-4">
@@ -212,7 +224,7 @@ export default function IndividualVenuePage() {
 
           {/* Venue Type Tags */}
           <div className="flex flex-wrap gap-2 mb-6">
-            {venue.type?.map((type) => (
+            {user.type?.map((type) => (
               <span
                 key={type}
                 className="bg-green/10 text-green px-3 py-1 rounded-full text-sm"
@@ -222,14 +234,14 @@ export default function IndividualVenuePage() {
             ))}
           </div>
 
-          <p className="text-gray-600 mb-8">{venue.description}</p>
+          <p className="text-gray-600 mb-8">{user.description}</p>
 
           {/* Divider */}
           <hr className="border-gray-200 mb-6" />
 
           {/* Social Links */}
           <div className="flex gap-6 mb-6">
-            {venue.socialLinks?.map((link, index) => (
+            {user.socialLinks?.map((link, index) => (
               <a
                 key={index}
                 href={link}
@@ -253,7 +265,7 @@ export default function IndividualVenuePage() {
                 <FaClock className="text-green" />
                 <h3 className="font-semibold">Opening Hours</h3>
               </div>
-              {venue.additionalInfo?.openingTimes?.map((time, index) => (
+              {user.additionalInfo?.openingTimes?.map((time, index) => (
                 <div key={index} className="flex justify-between text-sm">
                   <span>{time}</span>
                 </div>
@@ -266,7 +278,7 @@ export default function IndividualVenuePage() {
                 <FaMusic className="text-green" />
                 <h3 className="font-semibold">Performance Times</h3>
               </div>
-              {venue.additionalInfo?.performingTimes?.map((time, index) => (
+              {user.additionalInfo?.performingTimes?.map((time, index) => (
                 <div key={index} className="flex justify-between text-sm">
                   <span>{time}</span>
                 </div>
@@ -280,7 +292,7 @@ export default function IndividualVenuePage() {
                 <h3 className="font-semibold">Revenue Split</h3>
               </div>
               <p className="text-sm">
-                {venue.additionalInfo?.revenueSplit ||
+                {user.additionalInfo?.revenueSplit ||
                   "Revenue split information not available"}
               </p>
             </div>
@@ -288,7 +300,7 @@ export default function IndividualVenuePage() {
 
           {/* Media Section */}
           <div className="space-y-8">
-            {venue.media
+            {user.media
               ?.sort((a, b) => {
                 // Sort YouTube items first
                 if (a.platform === "YouTube" && b.platform !== "YouTube")
@@ -327,15 +339,12 @@ export default function IndividualVenuePage() {
           <div className="sticky top-24">
             <div className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center w-full">
               <BookingRequestCalendar
-                availableDates={venue.availability}
-                bookedDates={venue.bookedDates}
+                availableDates={user.availability}
+                bookedDates={user.bookedDates}
                 onRequestBooking={(date) => {
                   // Handle booking request
                 }}
               />
-              <Button variant="green" className="mt-2 px-6 py-2 w-full">
-                Request Booking
-              </Button>
             </div>
           </div>
         </div>
