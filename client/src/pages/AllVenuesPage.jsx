@@ -18,32 +18,31 @@ export default function AllVenuesPage() {
     }
   }, []);
 
-  // Fetch favorites when user is logged in
+  // Only fetch favourites when user logs in (not when user favourites a venue, avoiding unnecessary re-renders)
   useEffect(() => {
-    if (user) {
+    if (user && !user.favourites) {
       getAllFavourites(usersDispatch);
     }
-  }, [user]);
+  }, [user]); // Only depend on user, not user.favourites
 
-  // Add isFavourited flag to venue object if it exists in user's favourites array
+  // Add isFavourited flag only when venues change or user changes (not when favourites change)
   useEffect(() => {
-    const updatedVenues =
-      user &&
-      venues &&
-      venues.map((venue) => {
-        const matchingFavourite = user?.favourites?.find(
-          (favourite) => favourite._id === venue._id
-        );
+    const updatedVenues = venues?.map((venue) => {
+      if (!user || !user.favourites) return venue; // If there's no user, or no favourites, just return the venue as is
 
-        if (matchingFavourite) {
-          return { ...matchingFavourite, isFavourited: true };
-        } else {
-          return venue;
-        }
-      });
+      const matchingFavourite = user.favourites.find(
+        (favourite) => favourite._id === venue._id
+      ); // Find the matching favourite venue object in the user's favourites array
+
+      if (matchingFavourite) {
+        return { ...matchingFavourite, isFavourited: true }; // Add isFavourited:true flag to venue object if it exists in user's favourites array
+      } else {
+        return { ...venue, isFavourited: false }; // Add isFavourited:false flag to venue object if it doesn't exist in user's favourites array
+      }
+    });
 
     setVenuesWithFavouriteStatus(updatedVenues);
-  }, [venues, user?.favourites]); // Only re-run when venues or user favourites change
+  }, [venues, user]); // Only re-run when venues or user change
 
   if (isLoading) {
     return <LoadingSpinner />;
