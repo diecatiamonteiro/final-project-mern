@@ -520,11 +520,14 @@ export const searchForArtistOrVenue = async (usersDispatch, searchParams) => {
     });
     return response.data;
   } catch (error) {
-    const errorMessage = error.response?.data?.message || "Search failed.";
-    usersDispatch({
-      type: USER_ACTIONS.SET_ERROR,
-      payload: errorMessage,
-    });
+    // Don't dispatch error for 401 (unauthorized) status
+    if (error.response?.status !== 401) {
+      const errorMessage = error.response?.data?.message || "Search failed.";
+      usersDispatch({
+        type: USER_ACTIONS.SET_ERROR,
+        payload: errorMessage,
+      });
+    }
     throw error;
   } finally {
     usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });

@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import Button from "./Button";
-import { DataContext } from "../contexts/Context";
-import { addFavourite, removeFavourite } from "../api/usersApi";
+import Button from "../Button";
+import { DataContext } from "../../contexts/Context";
+import { addFavourite, removeFavourite } from "../../api/usersApi";
 import { IoLocationOutline } from "react-icons/io5";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 
@@ -54,8 +54,8 @@ export default function VenueCardVenuesPage({ venue }) {
         {/* Revenue Split Badge */}
         <div className="absolute top-4 left-4 p-2 bg-midnightBlack/70 rounded-lg shadow-lg">
           <p className="text-sm font-semibold text-white">
-            Split: {venue.additionalInfo.revenueSplit.split("/")[0]}% artist /{" "}
-            {venue.additionalInfo.revenueSplit.split("/")[1]}% venue
+            Split: {venue.additionalInfo?.revenueSplit?.split("/")[0]}% artist /{" "}
+            {venue.additionalInfo?.revenueSplit?.split("/")[1]}% venue
           </p>
         </div>
 
@@ -83,7 +83,7 @@ export default function VenueCardVenuesPage({ venue }) {
             <span className="inline-block mr-2">
               <IoLocationOutline />
             </span>
-            {venue.additionalInfo.address.city}
+            {venue.additionalInfo?.address?.city}
           </p>
 
           <p className="text-midnightBlack/80 mb-4 flex flex-wrap gap-2">

@@ -41,6 +41,7 @@ export const USER_ACTIONS = {
   GET_ALL_RECEIVED_BOOKINGS: "GET_ALL_RECEIVED_BOOKINGS",
   GET_ALL_SENT_BOOKINGS: "GET_ALL_SENT_BOOKINGS",
   SEARCH_FOR_ARTIST_OR_VENUE: "SEARCH_FOR_ARTIST_OR_VENUE",
+  CLEAR_SEARCH: "CLEAR_SEARCH",
 };
 
 export const usersReducer = (state, action) => {
@@ -177,6 +178,13 @@ export const usersReducer = (state, action) => {
       return {
         ...state,
         searchResults: action.payload.data, // .data & .count
+        error: null,
+      };
+
+    case USER_ACTIONS.CLEAR_SEARCH:
+      return {
+        ...state,
+        searchResults: [],
         error: null,
       };
 

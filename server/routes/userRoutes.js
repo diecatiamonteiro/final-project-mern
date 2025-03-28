@@ -30,7 +30,7 @@ userRouter
   // Static routes first. Display venues/artists. Get, add and remove favourites. Search function.
   .get("/venues", getAllVenues)
   .get("/artists", getAllArtists)
-  .get("/search", checkToken, searchForArtistOrVenue)
+  .get("/search", searchForArtistOrVenue)
   .get("/favourites", checkToken, getAllFavourites)
   .post("/favourites", checkToken, addFavourite)
   .delete("/favourites/:id", checkToken, removeFavourite)
