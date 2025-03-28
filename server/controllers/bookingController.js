@@ -52,22 +52,37 @@ export const requestArtistOrVenue = async (req, res, next) => {
       );
     }
 
-    // Check if booking already exists for this date and users
-    const existingBooking = await Booking.findOne({
+    // First check if there's an accepted booking for this date
+    const existingAcceptedBooking = await Booking.findOne({
       $or: [
         { initiatedBy: senderId, receivedBy },
         { initiatedBy: receivedBy, receivedBy: senderId },
       ],
       performanceDate: bookingDate,
+      status: "accepted",
       isCancelledOrDeclined: false,
     });
 
-    if (existingBooking) {
+    if (existingAcceptedBooking) {
       return next(
-        createError(
-          400,
-          "A booking already exists for this date between these users"
-        )
+        createError(400, "You already have a confirmed booking for this date")
+      );
+    }
+
+    // Then check for pending requests
+    const existingPendingBooking = await Booking.findOne({
+      $or: [
+        { initiatedBy: senderId, receivedBy },
+        { initiatedBy: receivedBy, receivedBy: senderId },
+      ],
+      performanceDate: bookingDate,
+      status: "pending",
+      isCancelledOrDeclined: false,
+    });
+
+    if (existingPendingBooking) {
+      return next(
+        createError(400, "A booking request already exists for this date")
       );
     }
 

@@ -35,21 +35,32 @@ export default function BookingRequestCalendar({
   );
 
   const handleDateSelect = (date) => {
+    // Check if the date is today or in the past
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (date <= today) {
+      toast.error("Please select a future date");
+      return;
+    }
+
     const utcDate = new Date(
       Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0)
     );
 
-    setSelectedDate(utcDate); // Temporarily show green highlight
-
-    // Remove highlight after animation
-    // setTimeout(() => {
-    //   setSelectedDate(null);
-    // }, 300);
-
+    setSelectedDate(utcDate);
     onRequestBooking(utcDate);
   };
 
   const dayClassName = (date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // First check if date is today or in the past
+    if (date <= today) {
+      return "date-unavailable";
+    }
+
     const utcDate = new Date(
       Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0)
     );
@@ -96,7 +107,6 @@ export default function BookingRequestCalendar({
       await requestArtistOrVenue(bookingsDispatch, bookingData);
       setIsSuccess(true);
 
-      // Reset everything after 3 seconds
       setTimeout(() => {
         setShowModal(false);
         setSelectedDate(null);
@@ -105,17 +115,13 @@ export default function BookingRequestCalendar({
     } catch (error) {
       console.error("Error making booking request:", error);
 
-      // Check for specific error message or status
-      if (
-        error.response?.data?.message?.includes("already exists") ||
-        error.message?.includes("already exists")
-      ) {
-        toast.error("You've already requested a booking for this date");
+      const errorMessage = error.response?.data?.message;
+      if (errorMessage) {
+        toast.error(errorMessage);
       } else {
         toast.error("Failed to make booking request. Please try again.");
       }
 
-      // Close the modal after error
       setShowModal(false);
       setSelectedDate(null);
     }
