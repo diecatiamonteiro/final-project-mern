@@ -480,7 +480,7 @@ export const getAllSentBookings = async (req, res, next) => {
 /**
  * @desc    Search artists/venues by name, type & location
  * @route   GET /api/users/search?q=searchTerm
- * @access  Private (logged in user)
+ * @access  Public (guest)
  */
 
 export const searchForArtistOrVenue = async (req, res, next) => {
@@ -516,7 +516,7 @@ export const searchForArtistOrVenue = async (req, res, next) => {
 
     // Filter by type (performance type for artists or venue type)
     if (type) {
-      searchQuery.type = { $regex: type, $options: "i" };
+      searchQuery.type = type;  // Because type is an array in the schema
     }
 
     // Filter by revenue split (for venues)
