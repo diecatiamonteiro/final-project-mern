@@ -8,6 +8,7 @@ import { requestArtistOrVenue } from "../../api/bookingsApi";
 import { format } from "date-fns";
 import { FaCheckCircle, FaTimes } from "react-icons/fa";
 import { toast } from "react-toastify";
+import Modal from "../Modal";
 
 // For the artist/venue page - shows availability and allows booking requests
 export default function BookingRequestCalendar({
@@ -127,67 +128,48 @@ export default function BookingRequestCalendar({
     }
   };
 
-  const BookingModal = () => (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-        {!isSuccess ? (
-          <>
-            <h2 className="text-xl font-semibold mb-4">
-              Confirm Booking Request
-            </h2>
+  const SuccessContent = () => (
+    <div className="text-center py-6">
+      <FaCheckCircle className="text-green text-5xl mx-auto mb-4" />
+      <h2 className="text-xl font-semibold mb-2">Request Sent!</h2>
+      <p className="text-gray-600">
+        Go to My Bookings in My Greenroom to see your booking.
+      </p>
+    </div>
+  );
 
-            <div className="space-y-4 mb-6">
-              <div>
-                <p className="text-gray-600 mb-1">Selected Date:</p>
-                <p className="font-medium">{format(selectedDate, "PPPP")}</p>
-              </div>
+  const ConfirmationContent = () => (
+    <div className="p-6">
+      <div className="space-y-4 mb-6">
+        <div>
+          <p className="text-gray-600 mb-1">Selected Date:</p>
+          <p className="font-medium">{format(selectedDate, "PPPP")}</p>
+        </div>
 
-              <div>
-                <p className="text-gray-600 mb-1">Note:</p>
-                <p className="text-sm text-gray-500">
-                  This will send a booking request. The artist/venue will need
-                  to confirm the booking before it's finalized.
-                </p>
-              </div>
-            </div>
+        <div>
+          <p className="text-gray-600 mb-1">Note:</p>
+          <p className="text-sm text-gray-500">
+            This will send a booking request. The artist/venue will need to
+            confirm the booking before it's finalized.
+          </p>
+        </div>
+      </div>
 
-            <div className="flex gap-3">
-              <Button
-                variant="green"
-                className="flex-1"
-                onClick={handleBookingRequest}
-              >
-                Request Booking
-              </Button>
-              <Button
-                variant="white"
-                className="flex-1"
-                onClick={() => setShowModal(false)}
-              >
-                Cancel
-              </Button>
-            </div>
-          </>
-        ) : (
-          <div className="text-center py-6 relative">
-            <button
-              onClick={() => {
-                setShowModal(false);
-                setSelectedDate(null);
-                setIsSuccess(false);
-              }}
-              className="absolute top-0 right-0 p-1 text-gray-400 hover:text-gray-600"
-            >
-              <FaTimes size={20} />
-            </button>
-
-            <FaCheckCircle className="text-green text-5xl mx-auto mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Request Sent!</h2>
-            <p className="text-gray-600">
-              Go to My Bookings in My Greenroom to see your booking.
-            </p>
-          </div>
-        )}
+      <div className="flex gap-3">
+        <Button
+          variant="green"
+          className="flex-1"
+          onClick={handleBookingRequest}
+        >
+          Request Booking
+        </Button>
+        <Button
+          variant="white"
+          className="flex-1"
+          onClick={() => setShowModal(false)}
+        >
+          Cancel
+        </Button>
       </div>
     </div>
   );
@@ -260,7 +242,20 @@ export default function BookingRequestCalendar({
         Request Booking
       </Button>
 
-      {showModal && <BookingModal />}
+      {showModal && (
+        <Modal
+          title={isSuccess ? "" : "Confirm Booking Request"}
+          onClose={() => {
+            setShowModal(false);
+            if (isSuccess) {
+              setSelectedDate(null);
+              setIsSuccess(false);
+            }
+          }}
+        >
+          {isSuccess ? <SuccessContent /> : <ConfirmationContent />}
+        </Modal>
+      )}
     </div>
   );
 }

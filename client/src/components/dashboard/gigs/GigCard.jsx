@@ -3,8 +3,9 @@ import { format } from "date-fns";
 import { DataContext } from "../../../contexts/Context";
 import { cancelBooking } from "../../../api/bookingsApi";
 import Button from "../../Button";
-import { FaCheckCircle, FaTimes } from "react-icons/fa";
+import { FaCheckCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
+import Modal from "../../Modal";
 
 export default function GigCard({ gig }) {
   const { usersState, bookingsDispatch } = useContext(DataContext);
@@ -18,7 +19,6 @@ export default function GigCard({ gig }) {
       await cancelBooking(bookingsDispatch, gig._id);
       setIsSuccess(true);
 
-      // Reset everything after 3 seconds
       setTimeout(() => {
         setShowModal(false);
         setIsSuccess(false);
@@ -31,65 +31,41 @@ export default function GigCard({ gig }) {
     }
   };
 
-  const CancelModal = () => (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-        {!isSuccess ? (
-          <>
-            <h2 className="text-xl font-semibold mb-4">
-              Cancel Gig Confirmation
-            </h2>
+  const CancelContent = () => (
+    <div className="p-6">
+      <div className="space-y-4 mb-6">
+        <div>
+          <p className="text-gray-600 mb-1">Gig Date:</p>
+          <p className="font-medium">{formattedDate}</p>
+        </div>
 
-            <div className="space-y-4 mb-6">
-              <div>
-                <p className="text-gray-600 mb-1">Gig Date:</p>
-                <p className="font-medium">{formattedDate}</p>
-              </div>
-
-              <div>
-                <p className="text-sm text-gray-500">
-                  Are you sure you want to cancel this gig?
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <Button
-                variant="danger"
-                className="flex-1"
-                onClick={handleCancel}
-              >
-                Cancel Gig
-              </Button>
-              <Button
-                variant="white"
-                className="flex-1"
-                onClick={() => setShowModal(false)}
-              >
-                Return to My Gigs
-              </Button>
-            </div>
-          </>
-        ) : (
-          <div className="text-center py-6 relative">
-            <button
-              onClick={() => {
-                setShowModal(false);
-                setIsSuccess(false);
-              }}
-              className="absolute top-0 right-0 p-1 text-gray-400 hover:text-gray-600"
-            >
-              <FaTimes size={20} />
-            </button>
-
-            <FaCheckCircle className="text-green text-5xl mx-auto mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Gig Cancelled!</h2>
-            <p className="text-gray-600">
-              The gig has been successfully cancelled.
-            </p>
-          </div>
-        )}
+        <div>
+          <p className="text-sm text-gray-500">
+            Are you sure you want to cancel this gig?
+          </p>
+        </div>
       </div>
+
+      <div className="flex gap-3">
+        <Button variant="danger" className="flex-1" onClick={handleCancel}>
+          Cancel Gig
+        </Button>
+        <Button
+          variant="white"
+          className="flex-1"
+          onClick={() => setShowModal(false)}
+        >
+          Return to My Gigs
+        </Button>
+      </div>
+    </div>
+  );
+
+  const SuccessContent = () => (
+    <div className="text-center py-6">
+      <FaCheckCircle className="text-green text-5xl mx-auto mb-4" />
+      <h2 className="text-xl font-semibold mb-2">Gig Cancelled!</h2>
+      <p className="text-gray-600">The gig has been successfully cancelled.</p>
     </div>
   );
 
@@ -123,7 +99,19 @@ export default function GigCard({ gig }) {
         </Button>
       </div>
 
-      {showModal && <CancelModal />}
+      {showModal && (
+        <Modal
+          title={isSuccess ? "" : "Cancel Gig Confirmation"}
+          onClose={() => {
+            setShowModal(false);
+            if (isSuccess) {
+              setIsSuccess(false);
+            }
+          }}
+        >
+          {isSuccess ? <SuccessContent /> : <CancelContent />}
+        </Modal>
+      )}
     </div>
   );
 }
