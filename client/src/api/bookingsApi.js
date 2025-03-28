@@ -1,5 +1,6 @@
 import axios from "axios";
 import { BOOKING_ACTIONS } from "../reducers/bookingsReducer";
+import { toast } from "react-toastify";
 
 /* All the 7 API calls for the bookings page:
     - requestArtistOrVenue()
@@ -155,9 +156,13 @@ export const cancelBooking = async (
       `api/bookings/${bookingId}/cancel`,
       bookingData
     );
+
     bookingsDispatch({
       type: BOOKING_ACTIONS.CANCEL_BOOKING,
-      payload: response.data,
+      payload: {
+        data: response.data,
+        cancelledId: bookingId,
+      },
     });
     return response.data;
   } catch (error) {

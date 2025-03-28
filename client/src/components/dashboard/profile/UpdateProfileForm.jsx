@@ -3,24 +3,97 @@ import axios from "axios";
 import { ProfilePictureUpload, GalleryUpload } from "./UploadImage";
 import AvailabilityCalendar from "../../calendars/AvailabilityCalendar";
 
+// Update these constants to include all existing options
+const ARTIST_PERFORMANCE_TYPES = [
+  "Band",
+  "Duo",
+  "Solo Artist",
+  "Singer-Songwriter",
+  "Rapper",
+  "DJ",
+  "Orchestra",
+  "Ensemble",
+];
+
+const ARTIST_GENRES = [
+  "Rock",
+  "Pop",
+  "Jazz",
+  "Classical",
+  "Electronic",
+  "Hip Hop",
+  "R&B",
+  "Folk",
+  "Folk Rock",
+  "Country",
+  "Blues",
+  "Dream Pop",
+  "Disco",
+  "Metal",
+  "Indie",
+  "Indie Rock",
+  "Indie Pop",
+  "Alternative",
+  "Art Pop",
+  "Experimental",
+  "Psychedelic Rock",
+  "Garage Rock",
+  "Soul",
+  "Funk",
+  "Punk",
+  "World Music",
+  "Reggae",
+  "Latin",
+  "EDM",
+  "Other",
+];
+
+const VENUE_TYPES = [
+  "Bar",
+  "Club",
+  "Restaurant",
+  "Nightclub",
+  "Concert Hall",
+  "Theater",
+  "Outdoor Venue",
+  "Cultural Center",
+  "Cafe",
+  "Hotel",
+  "Arena",
+  "Festival Grounds",
+  "Art Gallery",
+  "Community Center",
+  "Event Space",
+];
+
+const REVENUE_SPLIT_OPTIONS = [
+  "100/0",
+  "90/10",
+  "80/20",
+  "70/30",
+  "60/40",
+  "50/50",
+];
+
 export default function UpdateProfileForm({ user = {}, onUpdate }) {
   const [formData, setFormData] = useState({
     name: user?.name || "",
     description: user?.description || "",
     type: user?.type || [],
-    additionalInfo: user?.additionalInfo || {
-      // Venue specific fields
+    additionalInfo: {
+      ...user?.additionalInfo,
+      // Ensure genre array exists and is initialized with user's existing genres
+      genre: user?.additionalInfo?.genre || [],
+      // Venue specific fields - initialize with existing data or defaults
       address: {
-        streetName: "",
-        number: "",
-        zipCode: "",
-        city: "",
+        streetName: user?.additionalInfo?.address?.streetName || "",
+        number: user?.additionalInfo?.address?.number || "",
+        zipCode: user?.additionalInfo?.address?.zipCode || "",
+        city: user?.additionalInfo?.address?.city || "",
       },
-      revenueSplit: "",
-      openingTimes: [],
-      performingTimes: [],
-      // Artist specific fields
-      genre: [],
+      revenueSplit: user?.additionalInfo?.revenueSplit || "",
+      openingTimes: user?.additionalInfo?.openingTimes || [],
+      performingTimes: user?.additionalInfo?.performingTimes || [],
     },
     profilePicture: user?.profilePicture || "",
     media: user?.media || [],
@@ -161,6 +234,63 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
     setHasUnsavedChanges(true);
   };
 
+  // Add these handlers for tag management
+  const handleTagToggle = (category, tag) => {
+    setFormData((prev) => {
+      if (category === "genre") {
+        const genres = prev.additionalInfo.genre || [];
+        const updatedGenres = genres.includes(tag)
+          ? genres.filter((g) => g !== tag)
+          : [...genres, tag];
+
+        return {
+          ...prev,
+          additionalInfo: {
+            ...prev.additionalInfo,
+            genre: updatedGenres,
+          },
+        };
+      } else {
+        // type
+        const types = prev.type || [];
+        const updatedTypes = types.includes(tag)
+          ? types.filter((t) => t !== tag)
+          : [...types, tag];
+
+        return {
+          ...prev,
+          type: updatedTypes,
+        };
+      }
+    });
+    setHasUnsavedChanges(true);
+  };
+
+  // Add this component for rendering tag bubbles
+  const TagSelector = ({ title, tags, selectedTags, onToggle }) => (
+    <div className="space-y-4">
+      <h4 className="text-md font-medium">{title}</h4>
+      <div className="flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <button
+            key={tag}
+            type="button"
+            onClick={() => onToggle(tag)}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
+              ${
+                selectedTags.includes(tag)
+                  ? "bg-green text-white hover:bg-greenHover"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+          >
+            {selectedTags.includes(tag) && <span className="mr-1">✓</span>}
+            {tag}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus({ loading: true, error: null, success: false });
@@ -227,6 +357,39 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
               />
             </div>
           </div>
+        </div>
+
+        {/* Tags Selection Section */}
+        <div className="space-y-8">
+          <h3 className="text-lg font-semibold mb-6">
+            {user.role === "artist" ? "Artist Categories" : "Venue Categories"}
+          </h3>
+
+          {user.role === "artist" ? (
+            // Artist-specific tags
+            <div className="space-y-8">
+              <TagSelector
+                title="Performance Type"
+                tags={ARTIST_PERFORMANCE_TYPES}
+                selectedTags={formData.type}
+                onToggle={(tag) => handleTagToggle("type", tag)}
+              />
+              <TagSelector
+                title="Genre"
+                tags={ARTIST_GENRES}
+                selectedTags={formData.additionalInfo.genre || []}
+                onToggle={(tag) => handleTagToggle("genre", tag)}
+              />
+            </div>
+          ) : (
+            // Venue-specific tags
+            <TagSelector
+              title="Venue Type"
+              tags={VENUE_TYPES}
+              selectedTags={formData.type}
+              onToggle={(tag) => handleTagToggle("type", tag)}
+            />
+          )}
         </div>
 
         {/* Venue-specific fields */}
@@ -302,8 +465,7 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Revenue Split
                       </label>
-                      <input
-                        type="text"
+                      <select
                         name="revenueSplit"
                         value={formData.additionalInfo.revenueSplit}
                         onChange={(e) => {
@@ -316,9 +478,15 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
                           }));
                           setHasUnsavedChanges(true);
                         }}
-                        className="w-full p-2 border rounded-lg"
-                        placeholder="e.g., 70/30 split"
-                      />
+                        className="w-full p-2 border rounded-lg bg-white"
+                      >
+                        <option value="">Select a revenue split</option>
+                        {REVENUE_SPLIT_OPTIONS.map((split) => (
+                          <option key={split} value={split}>
+                            {split} (Artist/Venue)
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
                     {/* Times Arrays */}

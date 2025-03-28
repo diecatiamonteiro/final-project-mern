@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import BookingRequestCalendar from "../components/calendars/BookingRequestCalendar";
+import LoadingSpinner from "../components/LoadingSpinner";
 import {
   FaFacebook,
   FaInstagram,
@@ -125,7 +126,7 @@ export default function IndividualArtistPage() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        Loading...
+        <LoadingSpinner />
       </div>
     );
   }

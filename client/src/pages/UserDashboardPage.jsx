@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import UpdateProfileForm from "../components/dashboard/profile/UpdateProfileForm";
+import MyBookings from "../components/dashboard/bookings/MyBookings";
+import MyGigs from "../components/dashboard/gigs/MyGigs";
 
 export default function UserDashboardPage() {
   const [activeTab, setActiveTab] = useState("account");
@@ -116,14 +118,14 @@ export default function UserDashboardPage() {
         {activeTab === "bookings" && (
           <div className="p-6">
             <h2 className="text-xl font-semibold mb-4">My Bookings</h2>
-            <p className="text-gray-500">Bookings component will go here</p>
+            <MyBookings />
           </div>
         )}
 
         {activeTab === "gigs" && (
           <div className="p-6">
             <h2 className="text-xl font-semibold mb-4">My Gigs</h2>
-            <p className="text-gray-500">Gigs component will go here</p>
+            <MyGigs />
           </div>
         )}
       </div>

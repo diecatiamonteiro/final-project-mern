@@ -15,6 +15,7 @@ import {
   FaTimes,
   FaGlobe,
 } from "react-icons/fa";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function IndividualVenuePage() {
   const { id } = useParams();
@@ -134,7 +135,7 @@ export default function IndividualVenuePage() {
   if (isLoading)
     return (
       <div className="flex justify-center items-center min-h-screen">
-        Loading...
+        <LoadingSpinner />
       </div>
     );
   if (error)
