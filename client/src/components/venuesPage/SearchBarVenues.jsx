@@ -71,6 +71,12 @@ export default function SearchBar({ className, onSearch }) {
     }
     searchForArtistOrVenue(usersDispatch, searchParams);
     onSearch(true, searchParams); // Tell parent component (AllVenuesPage) that a search was triggered and pass the search params as second argument (needed for the no results message in AllVenuesPage)
+    setSearchParams({
+      q: "",
+      city: "",
+      type: "",
+      revenueSplit: "",
+    }); // Reset search parameters after search
   };
 
   return (

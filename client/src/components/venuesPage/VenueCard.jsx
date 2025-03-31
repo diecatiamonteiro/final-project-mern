@@ -42,7 +42,7 @@ export default function VenueCardVenuesPage({ venue }) {
   };
 
   return (
-    <div className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden flex flex-col transform transition-transform hover:scale-[1.02]">
+    <div className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer flex flex-col transform transition-transform hover:scale-[1.02]" onClick={() => navigate(`/venue/${venue._id}`)}>
       {/* Image Section */}
       <div className="relative w-full">
         <img
@@ -90,7 +90,7 @@ export default function VenueCardVenuesPage({ venue }) {
             {venue.type.map((type) => (
               <span
                 key={type}
-                className="bg-midnightBlack/10 px-2 py-1 rounded-xl text-sm"
+                className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full"
               >
                 {type}
               </span>
@@ -104,6 +104,7 @@ export default function VenueCardVenuesPage({ venue }) {
           onClick={() => navigate(`/venue/${venue._id}`)}
           variant="green"
           size="small"
+          className="md:hidden"
         >
           View Venue Profile
         </Button>
