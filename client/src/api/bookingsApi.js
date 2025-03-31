@@ -1,5 +1,6 @@
 import axios from "axios";
 import { BOOKING_ACTIONS } from "../reducers/bookingsReducer";
+import { toast } from "react-toastify";
 
 /* All the 7 API calls for the bookings page:
     - requestArtistOrVenue()
@@ -12,13 +13,15 @@ import { BOOKING_ACTIONS } from "../reducers/bookingsReducer";
 */
 
 export const requestArtistOrVenue = async (bookingsDispatch, bookingData) => {
+  console.log(bookingData);
   bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
-    const response = await axios.post("api/bookings", bookingData);
+    const response = await axios.post("/api/bookings", bookingData);
     bookingsDispatch({
       type: BOOKING_ACTIONS.REQUEST_ARTIST_OR_VENUE,
       payload: response.data,
     });
+    console.log("Booking response: ", response.data);
     return response.data;
   } catch (error) {
     const errorMessage =
@@ -153,9 +156,13 @@ export const cancelBooking = async (
       `api/bookings/${bookingId}/cancel`,
       bookingData
     );
+
     bookingsDispatch({
       type: BOOKING_ACTIONS.CANCEL_BOOKING,
-      payload: response.data,
+      payload: {
+        data: response.data,
+        cancelledId: bookingId,
+      },
     });
     return response.data;
   } catch (error) {

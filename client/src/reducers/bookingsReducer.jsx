@@ -44,6 +44,9 @@ export const bookingsReducer = (state, action) => {
       return {
         ...state,
         booking: action.payload.data,
+        allAcceptedBookings: state.allAcceptedBookings.filter(
+          (booking) => booking._id !== action.payload.cancelledId
+        ),
         error: null,
       };
 
