@@ -64,10 +64,9 @@ export default function Button({
       e.preventDefault();
       return;
     }
-    // If it's a navigation button, scroll to top
-    if (to) {
-      window.scrollTo(0, 0);
-    }
+    // Always scroll to top first
+    window.scrollTo(0, 0);
+
     // Call the original onClick if it exists
     if (onClick) {
       onClick(e);

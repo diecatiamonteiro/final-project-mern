@@ -18,7 +18,7 @@ export default function AllVenuesPage() {
     []
   );
   const [searchTriggered, setSearchTriggered] = useState(false); // flags when a search was triggered in the SearchBarVenues component so we can display a message of no results found
-  const [currentSearchParams, setCurrentSearchParams] = useState({}); // params are needed for the no results message and are passed from the SearchBarVenues component (see line 96 on this file)
+  const [currentSearchParams, setCurrentSearchParams] = useState({}); // params are needed for the no results message and are passed from the SearchBarVenues component
   const [showScrollButton, setShowScrollButton] = useState(false);
   const navigate = useNavigate();
 
@@ -143,7 +143,7 @@ export default function AllVenuesPage() {
         <div className="absolute top-0 left-0 right-0 px-4 lg:px-6 2xl:px-0 mt-16">
           <div className="max-width-content flex flex-col justify-start">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-offwhite">
-              The Greenroom Venues
+              The Greenroom <span className="text-emerald-400">Venues</span>
             </h1>
             <h2 className="text-xl w-full md:w-2/3 lg:w-1/2 md:text-2xl font-medium text-offwhite/80">
               Your next gig is just a click away. Browse through our list of
