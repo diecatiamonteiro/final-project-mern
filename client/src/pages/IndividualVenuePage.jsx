@@ -279,10 +279,17 @@ export default function IndividualVenuePage() {
                 <FaMoneyBillWave className="text-green" />
                 <h3 className="font-semibold">Revenue Split</h3>
               </div>
-              <p className="text-sm">
-                {venue.additionalInfo?.revenueSplit ||
-                  "Revenue split information not available"}
-              </p>
+              {venue.additionalInfo?.revenueSplit ? (
+                <p className="text-sm">
+                  {venue.additionalInfo.revenueSplit.split("/")[0]}% artist
+                  {" / "}
+                  {venue.additionalInfo.revenueSplit.split("/")[1]}% venue
+                </p>
+              ) : (
+                <p className="text-sm text-gray-500">
+                  Revenue split information not available
+                </p>
+              )}
             </div>
           </div>
 

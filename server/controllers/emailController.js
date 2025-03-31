@@ -15,6 +15,8 @@ export const sendEmail = async (req, res, next) => {
     const { bookingId, message, subject } = req.body;
     const senderId = req.user.id; // From checkToken middleware
 
+    console.log(req.body);
+
     // Validate input
     if (!bookingId || !message || !subject) {
       return next(createError(400, "Please provide all required fields"));

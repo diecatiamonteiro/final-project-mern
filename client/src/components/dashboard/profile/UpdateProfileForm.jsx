@@ -463,7 +463,7 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
                   <div className="space-y-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Revenue Split
+                        Revenue Split %
                       </label>
                       <select
                         name="revenueSplit"

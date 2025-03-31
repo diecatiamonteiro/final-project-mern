@@ -72,7 +72,7 @@ export const getIndividualArtistOrVenue = async (req, res, next) => {
 
     // Find user by ID and exclude password
     const user = await User.findById(id).populate({
-      path: "favourites",
+      path: "favourites bookingsReceived bookingsSent",
     });
 
     if (!user) {
@@ -516,7 +516,7 @@ export const searchForArtistOrVenue = async (req, res, next) => {
 
     // Filter by type (performance type for artists or venue type)
     if (type) {
-      searchQuery.type = type;  // Because type is an array in the schema
+      searchQuery.type = type; // Because type is an array in the schema
     }
 
     // Filter by revenue split (for venues)
