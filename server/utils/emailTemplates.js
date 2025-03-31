@@ -78,7 +78,7 @@ export const bookingAcceptanceEmail = (
   month: "long",
   day: "numeric",
 })}.</p>
-  <p>You can now communicate directly with ${senderName} through The Greenroom messaging system.</p>
+  <p>Please log in to The Greenroom and go to My Gigs to see your confirmed gig.</p>
   <p>Thank you for using The Greenroom!</p>
 `;
 

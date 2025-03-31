@@ -7,7 +7,7 @@ import { addFavourite, removeFavourite } from "../../api/usersApi";
 import { IoLocationOutline } from "react-icons/io5";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 
-export default function VenueCardVenuesPage({ venue }) {
+export default function ArtistCardArtistsPage({ artist }) {
   const navigate = useNavigate();
   const { usersState, usersDispatch } = useContext(DataContext);
 
@@ -21,19 +21,19 @@ export default function VenueCardVenuesPage({ venue }) {
     }
 
     // Prevent self-favouriting
-    if (venue._id === usersState.user._id) {
+    if (artist._id === usersState.user._id) {
       toast.error("You cannot add yourself to favourites.");
       return;
     }
 
     // Update favourites
     try {
-      if (venue.isFavourited) {
-        await removeFavourite(usersDispatch, venue._id);
-        toast.success("Venue removed from favourites.");
+      if (artist.isFavourited) {
+        await removeFavourite(usersDispatch, artist._id);
+        toast.success("Artist removed from favourites.");
       } else {
-        await addFavourite(usersDispatch, venue._id);
-        toast.success("Venue added to favourites.");
+        await addFavourite(usersDispatch, artist._id);
+        toast.success("Artist added to favourites.");
       }
     } catch (error) {
       console.error("Failed to update favourites:", error);
@@ -42,29 +42,24 @@ export default function VenueCardVenuesPage({ venue }) {
   };
 
   return (
-    <div className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer flex flex-col transform transition-transform hover:scale-[1.02]" onClick={() => navigate(`/venue/${venue._id}`)}>
+    <div
+      className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer flex flex-col transform transition-transform hover:scale-[1.02]"
+      onClick={() => navigate(`/artist/${artist._id}`)}
+    >
       {/* Image Section */}
       <div className="relative w-full">
         <img
-          src={venue.profilePicture}
-          alt={venue.name}
+          src={artist.profilePicture}
+          alt={artist.name}
           className="w-full h-52 object-cover"
         />
-
-        {/* Revenue Split Badge */}
-        <div className="absolute top-4 left-4 p-2 bg-midnightBlack/70 rounded-lg shadow-lg">
-          <p className="text-sm font-semibold text-white">
-            Split: {venue.additionalInfo?.revenueSplit?.split("/")[0]}% artist /{" "}
-            {venue.additionalInfo?.revenueSplit?.split("/")[1]}% venue
-          </p>
-        </div>
 
         {/* Favourite Button */}
         <button
           onClick={handleFavouriteClick}
           className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg border border-midnightBlack/30 shadow-midnightBlack/10 hover:scale-[1.05] duration-300 cursor-pointer"
         >
-          {venue.isFavourited ? (
+          {artist.isFavourited ? (
             <FaHeart className="text-xl text-red-500" />
           ) : (
             <FaRegHeart className="text-xl text-midnightBlack" />
@@ -75,19 +70,12 @@ export default function VenueCardVenuesPage({ venue }) {
       {/* Content Section */}
       <div className="p-6 flex flex-col justify-between flex-grow">
         <div>
-          <h3 className="font-semibold text-xl md:text-2xl mb-1">
-            {venue.name}
+          <h3 className="font-semibold text-xl md:text-2xl mb-4">
+            {artist.name}
           </h3>
 
-          <p className="mb-4 flex items-center">
-            <span className="inline-block mr-2">
-              <IoLocationOutline />
-            </span>
-            {venue.additionalInfo?.address?.city}
-          </p>
-
-          <p className="text-midnightBlack/80 mb-4 flex flex-wrap gap-2">
-            {venue.type.map((type) => (
+          <p className="text-midnightBlack/80 mb-2 flex flex-wrap gap-2">
+            {artist.type?.map((type) => (
               <span
                 key={type}
                 className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full"
@@ -97,16 +85,27 @@ export default function VenueCardVenuesPage({ venue }) {
             ))}
           </p>
 
-          <p className="mb-8 line-clamp-2 leading-snug">{venue.description}</p>
+          <p className="text-midnightBlack/80 mb-4 flex flex-wrap gap-2">
+            {artist.additionalInfo?.genre.map((genre) => (
+              <span
+                key={genre}
+                className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full"
+              >
+                {genre}
+              </span>
+            ))}
+          </p>
+
+          <p className="mb-8 line-clamp-3 leading-snug">{artist.description}</p>
         </div>
 
         <Button
-          onClick={() => navigate(`/venue/${venue._id}`)}
+          onClick={() => navigate(`/artist/${artist._id}`)}
           variant="green"
           size="small"
           className="md:hidden"
         >
-          View Venue Profile
+          View Artist Profile
         </Button>
       </div>
     </div>

@@ -1,6 +1,5 @@
 import React from "react";
 import heroImage from "../../assets/homepage/homepage-heroImage.jpg";
-import SearchBar from "../SearchBar";
 import Button from "../Button";
 
 export default function HeroSection() {

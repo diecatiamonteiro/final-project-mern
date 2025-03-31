@@ -7,7 +7,7 @@ export const usersInitialState = {
   bookingsSent: [],
   searchResults: [],
   isAuthenticated: false,
-  isLoading: false,
+  isLoading: true,
   error: null,
 };
 
