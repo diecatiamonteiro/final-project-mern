@@ -10,6 +10,7 @@ export default function Button({
   disabled = false,
   fullWidth = false,
   className = "",
+  ...props
 }) {
   // Base classes
   const baseClasses =
@@ -63,13 +64,20 @@ export default function Button({
       e.preventDefault();
       return;
     }
-    if (onClick) onClick(e);
+    // If it's a navigation button, scroll to top
+    if (to) {
+      window.scrollTo(0, 0);
+    }
+    // Call the original onClick if it exists
+    if (onClick) {
+      onClick(e);
+    }
   };
 
   // If we have a 'to' prop and not disabled, it's a navigation button
   if (to && !disabled) {
     return (
-      <Link to={to} className={buttonClasses}>
+      <Link to={to} onClick={handleClick} className={buttonClasses} {...props}>
         {children}
       </Link>
     );
@@ -77,7 +85,12 @@ export default function Button({
 
   // Otherwise it's an action button
   return (
-    <button onClick={handleClick} disabled={disabled} className={buttonClasses}>
+    <button
+      onClick={handleClick}
+      disabled={disabled}
+      className={buttonClasses}
+      {...props}
+    >
       {children}
     </button>
   );

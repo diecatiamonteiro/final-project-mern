@@ -7,16 +7,20 @@ import heroImage from "../assets/venuesPage/venuesPage-heroImage.jpg";
 import SearchBar from "../components/venuesPage/SearchBarVenues";
 import Button from "../components/Button";
 import { USER_ACTIONS } from "../reducers/usersReducer";
+import { FaArrowUpLong } from "react-icons/fa6";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 export default function AllVenuesPage() {
   const { usersState, usersDispatch } = useContext(DataContext);
   const { isLoading, error, venues, searchResults, user } = usersState;
+  const [searchParams] = useSearchParams();
   const [venuesWithFavouriteStatus, setVenuesWithFavouriteStatus] = useState(
     []
   );
   const [searchTriggered, setSearchTriggered] = useState(false); // flags when a search was triggered in the SearchBarVenues component so we can display a message of no results found
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // params are needed for the no results message and are passed from the SearchBarVenues component (see line 96 on this file)
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const navigate = useNavigate();
 
   // Show button "To Top" after scrolling 300px
   useEffect(() => {
@@ -27,6 +31,8 @@ export default function AllVenuesPage() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // ************************************
 
   // Fetch all venues when the page is loaded
   useEffect(() => {
@@ -41,6 +47,31 @@ export default function AllVenuesPage() {
       getAllFavourites(usersDispatch);
     }
   }, [user]);
+
+  // ************************************
+
+  // Handle initial city parameter from PopularCities in homepage
+  useEffect(() => {
+    const city = searchParams.get("city");
+
+    // Only filter by city if no other search has been triggered
+    if (city && venues.length > 0 && !searchTriggered) {
+      usersDispatch({
+        type: USER_ACTIONS.SEARCH_FOR_ARTIST_OR_VENUE,
+        payload: {
+          data: venues.filter(
+            (venue) =>
+              venue.additionalInfo?.address?.city?.toLowerCase() ===
+              city.toLowerCase()
+          ),
+        },
+      });
+      setSearchTriggered(true);
+      setCurrentSearchParams({ city });
+    }
+  }, [searchParams, venues, usersDispatch, searchTriggered]);
+
+  // ************************************
 
   // Update the list of venues with 'isFavourited' status for each venue
   useEffect(() => {
@@ -69,9 +100,19 @@ export default function AllVenuesPage() {
   }, [venues, user, searchResults]);
   // This effect runs every time: the full venue list changes, the logged-in user or their favourites change, or the search results change
 
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
+  // Update this function
+  const handleClearSearch = () => {
+    // Clear all states and search results
+    usersDispatch({ type: USER_ACTIONS.CLEAR_SEARCH });
+
+    // Clear the search params
+    setCurrentSearchParams({});
+
+    // Clear URL parameters
+    if (searchParams.get("city")) {
+      navigate("/venues", { replace: true });
+    }
+  };
 
   if (error) {
     return (
@@ -114,67 +155,97 @@ export default function AllVenuesPage() {
               onSearch={(triggered, params) => {
                 setSearchTriggered(triggered);
                 setCurrentSearchParams(params);
+                // If there's a city in the URL but user makes a new search, we can optionally clear the URL parameter
+                if (triggered && searchParams.get("city")) {
+                  window.history.replaceState({}, "", "/venues");
+                }
               }}
+              initialCity={searchParams.get("city")} // Pass initial city to SearchBar
             />
           </div>
         </div>
       </div>
 
-      {/* Venues Cards Section */}
-      <div className="max-w-7xl mx-auto px-4 mt-8 md:mt-16">
-        {/* No Results Message */}
-        {searchTriggered && searchResults.length === 0 && (
-          <div className="text-center">
-            <p className="text-base md:text-lg lg:text-2xl bg-white rounded-lg p-4 shadow-lg">
-              No venues found
-              {currentSearchParams.q && ` matching "${currentSearchParams.q}"`}
-              {currentSearchParams.type &&
-                ` in type "${currentSearchParams.type}"`}
-              {currentSearchParams.city && ` in ${currentSearchParams.city}`}
-              {currentSearchParams.revenueSplit &&
-                ` with ${currentSearchParams.revenueSplit} revenue split`}
-              .
-            </p>
-          </div>
-        )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <div className="max-w-7xl mx-auto px-4 mt-8 md:mt-16">
+          {/* No Results Message */}
+          {searchTriggered &&
+            searchResults.length === 0 &&
+            Object.keys(currentSearchParams).length > 0 && (
+              <div className="text-center">
+                <p className="text-base md:text-lg lg:text-2xl bg-white rounded-lg p-4 shadow-lg">
+                  No venues found
+                  {currentSearchParams.q &&
+                    ` matching "${currentSearchParams.q}"`}
+                  {currentSearchParams.type &&
+                    ` in type "${currentSearchParams.type}"`}
+                  {currentSearchParams.city &&
+                    ` in ${
+                      currentSearchParams.city.charAt(0).toUpperCase() +
+                      currentSearchParams.city.slice(1)
+                    }`}
+                  {currentSearchParams.revenueSplit &&
+                    ` with ${currentSearchParams.revenueSplit} revenue split`}
+                  .
+                </p>
+              </div>
+            )}
 
-        {/* Search Results Message */}
-        {searchResults.length > 0 ? (
-          <div className="flex flex-wrap items-center gap-8 my-8 md:my-16">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold">
-              Your Search Results ({searchResults.length})
-            </h2>
-            <Button
-              variant="black"
-              size="small"
-              onClick={() => {
-                usersDispatch({ type: USER_ACTIONS.CLEAR_SEARCH });
-                setSearchTriggered(false);
-              }}
-            >
-              Clear Search
-            </Button>
-          </div>
-        ) : (
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold my-8 md:my-16">
-            All Venues
-          </h2>
-        )}
-
-        {/* All Venues Cards - not filtered by search results */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-32">
-          {Array.isArray(venues) && venues.length > 0 ? (
-            venuesWithFavouriteStatus &&
-            venuesWithFavouriteStatus.map((venue) => (
-              <VenueCard key={venue._id} venue={venue} />
-            ))
-          ) : (
-            <div className="text-base md:text-lg text-midnightBlack/70">
-              No venues found
+          {/* Search Results Message */}
+          {searchResults.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-8 my-8 md:my-16">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold">
+                {searchResults.length > 0
+                  ? `Venues ${
+                      currentSearchParams.q
+                        ? `matching "${currentSearchParams.q}"`
+                        : ""
+                    }${
+                      currentSearchParams.type
+                        ? `in type "${currentSearchParams.type}"`
+                        : ""
+                    }${
+                      currentSearchParams.city
+                        ? ` in ${
+                            currentSearchParams.city.charAt(0).toUpperCase() +
+                            currentSearchParams.city.slice(1)
+                          }`
+                        : ""
+                    }${
+                      currentSearchParams.revenueSplit
+                        ? ` with ${currentSearchParams.revenueSplit} revenue split`
+                        : ""
+                    } (${searchResults.length})`
+                  : "All Venues"}
+              </h2>
+              <Button variant="black" size="small" onClick={handleClearSearch}>
+                Clear Search
+              </Button>
             </div>
+          ) : (
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold my-8 md:my-16">
+              All Venues
+            </h2>
           )}
+
+          {/* All Venues Cards - not filtered by search results */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-32">
+            {Array.isArray(venues) && venues.length > 0 ? (
+              venuesWithFavouriteStatus &&
+              venuesWithFavouriteStatus.map((venue) => (
+                <VenueCard key={venue._id} venue={venue} />
+              ))
+            ) : (
+              <div className="text-base md:text-lg text-midnightBlack/70">
+                No venues found
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
+      {/* DIV END */}
 
       {/* To top button - only shown when scrolling down after 300px */}
       {showScrollButton && (
@@ -182,11 +253,12 @@ export default function AllVenuesPage() {
           <Button
             variant="black"
             size="small"
+            className="flex flex-row items-center gap-1"
             onClick={() => {
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           >
-            To Top
+            <FaArrowUpLong /> To Top
           </Button>
         </div>
       )}

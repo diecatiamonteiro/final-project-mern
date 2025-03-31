@@ -1,58 +1,65 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { fetchCityImage } from "../../utils/unsplashApi";
 import Button from "../Button";
-
-//! Temporary mock data - will be replaced by data from UsersReducer later
-const MOCK_CITIES = [
-  { id: 1, name: "Berlin", venueCount: 24 },
-  { id: 2, name: "Hamburg", venueCount: 18 },
-  { id: 3, name: "Munich", venueCount: 15 },
-  { id: 4, name: "Cologne", venueCount: 12 },
-  { id: 5, name: "Frankfurt", venueCount: 10 },
-  { id: 6, name: "Stuttgart", venueCount: 8 },
-  { id: 7, name: "Dresden", venueCount: 6 },
-  { id: 8, name: "Leipzig", venueCount: 5 },
-];
+import { FaArrowRightLong } from "react-icons/fa6";
+import LoadingSpinner from "../LoadingSpinner";
+import { DataContext } from "../../contexts/Context";
 
 export default function PopularCitiesSection() {
+  const { usersDispatch, usersState } = useContext(DataContext);
+  const { venues, isLoading } = usersState;
   const [cities, setCities] = useState([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCityImages = async () => {
+    const processCities = async () => {
       try {
-        //! Later this will be replaced with:
-        // 1. Get all venues from UsersReducer
-        // 2. Group them by city and count
-        // 3. Sort by count to get most popular
-        // 4. Take top 8 cities
+        // Process venues to get cities with counts
+        const cityCount = venues.reduce((acc, venue) => {
+          const city = venue.additionalInfo?.address?.city;
+          if (city) {
+            acc[city] = (acc[city] || 0) + 1;
+          }
+          return acc;
+        }, {});
+
+        // Convert to array and sort by count
+        const processedCities = Object.entries(cityCount)
+          .map(([name, venueCount], index) => ({
+            id: index + 1,
+            name,
+            venueCount,
+          }))
+          .sort((a, b) => b.venueCount - a.venueCount)
+          .slice(0, 8);
+
+        // Add images to cities
         const citiesWithImages = await Promise.all(
-          MOCK_CITIES.map(async (city) => {
+          processedCities.map(async (city) => {
             const imageUrl = await fetchCityImage(city.name);
             return { ...city, imageUrl };
           })
         );
+
         setCities(citiesWithImages);
       } catch (error) {
-        console.error("Error fetching city images:", error);
-      } finally {
-        setLoading(false);
+        console.error("Error processing cities:", error);
       }
     };
 
-    fetchCityImages();
-  }, []);
+    if (venues.length > 0) {
+      processCities();
+    }
+  }, [venues]);
 
   const handleCityClick = (cityName) => {
-    //! This will work with the venues filter later
+    window.scrollTo(0, 0);
     navigate(`/venues?city=${encodeURIComponent(cityName)}`);
   };
 
-  //! Add a loading state and spinner
-  if (loading) {
+  if (isLoading) {
     return (
       <section className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
@@ -60,7 +67,7 @@ export default function PopularCitiesSection() {
             Popular Cities
           </h2>
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+            <LoadingSpinner />
           </div>
         </div>
       </section>
@@ -80,17 +87,16 @@ export default function PopularCitiesSection() {
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8">
             Your Next Stage is Here
           </h2>
-          <h3 className="text-xl md:text-2xl   mb-8">
+          <h3 className="text-xl md:text-2xl mb-8">
             Find where our registered venues are located and book a stage to
             perform.
           </h3>
           <Button
             to="/venues"
-            variant="outlineBlack"
-            size="small"
-            className="w-fit mx-auto lg:mx-0 lg:text-left"
+            variant="black"
+            className="w-fit mx-auto lg:mx-0 lg:text-left flex flex-row items-center gap-2"
           >
-            See all Stages
+            View all Stages <FaArrowRightLong />
           </Button>
         </motion.div>
         <motion.div
@@ -122,9 +128,6 @@ export default function PopularCitiesSection() {
             </div>
           ))}
         </motion.div>
-        {/* <div className="text-xs text-gray-500 text-center mt-4">
-          Photos by various photographers on <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" className="underline">Unsplash</a>
-        </div> */}
       </div>
     </section>
   );

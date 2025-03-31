@@ -9,6 +9,7 @@ import PopularCitiesSection from "../components/homepage/PopularCitiesSection";
 import FeaturedArtistsAndVenues from "../components/homepage/FeaturedArtistsAndVenues";
 import FinalSection from "../components/homepage/FinalSection";
 import Button from "../components/Button";
+import { FaArrowUpLong } from "react-icons/fa6";
 
 export default function Homepage() {
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -38,11 +39,12 @@ export default function Homepage() {
           <Button
             variant="black"
             size="small"
+            className="flex flex-row items-center gap-1"
             onClick={() => {
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           >
-            To Top
+            <FaArrowUpLong /> To Top
           </Button>
         </div>
       )}
