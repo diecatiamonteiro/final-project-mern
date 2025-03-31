@@ -3,16 +3,24 @@ import { format } from "date-fns";
 import { DataContext } from "../../../contexts/Context";
 import { cancelBooking } from "../../../api/bookingsApi";
 import Button from "../../Button";
-import { FaCheckCircle } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaCalendar,
+  FaEuroSign,
+  FaCircle,
+  FaEnvelope,
+} from "react-icons/fa";
 import { toast } from "react-toastify";
 import Modal from "../../Modal";
 import { Link } from "react-router-dom";
+import MessageForm from "./MessageForm";
 
 export default function GigCard({ gig }) {
   const { usersState, bookingsDispatch } = useContext(DataContext);
   const { user } = usersState;
   const [showModal, setShowModal] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showMessageModal, setShowMessageModal] = useState(false);
   const formattedDate = format(new Date(gig.performanceDate), "PPP");
 
   const handleCancel = async () => {
@@ -74,6 +82,12 @@ export default function GigCard({ gig }) {
   const otherParty =
     gig.initiatedBy._id === user._id ? gig.receivedBy : gig.initiatedBy;
 
+  // Get the venue's revenue split
+  const venueRevenueSplit =
+    gig.initiatedBy.role === "venue"
+      ? gig.initiatedBy.additionalInfo?.revenueSplit
+      : gig.receivedBy.additionalInfo?.revenueSplit;
+
   // Make sure we have both user and gig data before rendering
   if (!user || !gig) return null;
 
@@ -82,7 +96,7 @@ export default function GigCard({ gig }) {
       <div className="mb-4">
         <Link
           to={`/${otherParty.role}/${otherParty._id}`}
-          className="flex items-center gap-4 mb-2 hover:opacity-75 transition-opacity"
+          className="flex items-center gap-4 mb-3 hover:opacity-75 transition-opacity"
         >
           <img
             src={otherParty.profilePicture || "/default-avatar.png"}
@@ -91,20 +105,37 @@ export default function GigCard({ gig }) {
           />
           <h3 className="text-lg font-semibold">{otherParty.name}</h3>
         </Link>
-        <p className="text-gray-600 text-sm mb-2">
-          Performance Date: {formattedDate}
-        </p>
-        <p className="text-sm mb-2">
-          Status: <span className="font-medium text-green">Confirmed</span>
-        </p>
+        <div className="border-t border-gray-200 pt-4 space-y-2">
+          <p className="text-gray-600 text-sm flex items-center gap-2">
+            <FaCalendar className="text-gray-400" />
+            Performance Date: {formattedDate}
+          </p>
+          <p className="text-sm flex items-center gap-2">
+            <FaEuroSign className="text-gray-400" />
+            Revenue Split: {venueRevenueSplit}
+          </p>
+          <p className="text-sm flex items-center gap-2">
+            <FaCircle className="text-xs text-gray-400" />
+            Status: <span className="font-bold">Confirmed</span>
+          </p>
+        </div>
       </div>
 
       <div className="flex gap-2 mt-4">
         <Button
+          onClick={() => setShowMessageModal(true)}
+          variant="outlineBlack"
+          size="small"
+          className="flex-1 flex items-center justify-center"
+        >
+          <FaEnvelope className="mr-2" />
+          Message
+        </Button>
+        <Button
           onClick={() => setShowModal(true)}
           variant="danger"
           size="small"
-          className="w-full"
+          className="flex-1"
         >
           Cancel Gig
         </Button>
@@ -121,6 +152,15 @@ export default function GigCard({ gig }) {
           }}
         >
           {isSuccess ? <SuccessContent /> : <CancelContent />}
+        </Modal>
+      )}
+
+      {showMessageModal && (
+        <Modal title="Send Message" onClose={() => setShowMessageModal(false)}>
+          <MessageForm
+            bookingId={gig._id}
+            onClose={() => setShowMessageModal(false)}
+          />
         </Modal>
       )}
     </div>

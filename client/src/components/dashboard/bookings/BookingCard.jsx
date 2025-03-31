@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { FaCalendar, FaEuroSign, FaCircle } from "react-icons/fa";
 import Button from "../../Button";
 import Modal from "../../Modal";
 import { useState } from "react";
@@ -19,6 +20,12 @@ export default function BookingCard({
   const otherParty =
     type === "received" ? booking.initiatedBy : booking.receivedBy;
 
+  // Get the venue's revenue split
+  const venueRevenueSplit =
+    booking.initiatedBy.role === "venue"
+      ? booking.initiatedBy.additionalInfo?.revenueSplit
+      : booking.receivedBy.additionalInfo?.revenueSplit;
+
   const handleDeclineClick = () => {
     setShowDeclineModal(true);
   };
@@ -34,7 +41,7 @@ export default function BookingCard({
         <div className="mb-4">
           <Link
             to={`/${otherParty.role}/${otherParty._id}`}
-            className="flex items-center gap-4 mb-2 hover:opacity-75 transition-opacity"
+            className="flex items-center gap-4 mb-3 hover:opacity-75 transition-opacity"
           >
             <img
               src={otherParty.profilePicture || "/default-avatar.png"}
@@ -43,23 +50,24 @@ export default function BookingCard({
             />
             <h3 className="text-lg font-semibold">{otherParty.name}</h3>
           </Link>
-          <p className="text-gray-600 text-sm mb-2">
-            Performance Date: {formattedDate}
-          </p>
-          <p className="text-sm mb-2">
-            Status:{" "}
-            <span
-              className={`font-medium ${
-                booking.status === "pending"
-                  ? "text-amber-500"
-                  : booking.status === "accepted"
-                  ? "text-green"
-                  : "text-red-500"
-              }`}
-            >
-              {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-            </span>
-          </p>
+          <div className="border-t border-gray-200 pt-4 space-y-2">
+            <p className="text-gray-600 text-sm flex items-center gap-2">
+              <FaCalendar className="text-gray-400" />
+              Performance Date: {formattedDate}
+            </p>
+            <p className="text-sm flex items-center gap-2">
+              <FaEuroSign className="text-gray-400" />
+              Revenue Split: {venueRevenueSplit}
+            </p>
+            <p className="text-sm flex items-center gap-2">
+              <FaCircle className={"text-xs text-gray-400"} />
+              Status:{" "}
+              <span className={`font-bold`}>
+                {booking.status.charAt(0).toUpperCase() +
+                  booking.status.slice(1)}
+              </span>
+            </p>
+          </div>
         </div>
 
         {/* Action Buttons */}
@@ -76,7 +84,7 @@ export default function BookingCard({
               </Button>
               <Button
                 onClick={handleDeclineClick}
-                variant="outline"
+                variant="outlineGreen"
                 size="small"
                 className="flex-1"
               >
@@ -87,9 +95,9 @@ export default function BookingCard({
           {type === "sent" && isPending && (
             <Button
               onClick={onEdit}
-              variant="warning"
+              variant="outlineBlack"
               size="small"
-              className="w-full"
+              className="w-sm"
             >
               Edit Date
             </Button>
@@ -110,14 +118,14 @@ export default function BookingCard({
               for <span className="font-semibold">{formattedDate}</span>?
             </p>
             <div className="flex gap-4 justify-center">
+              <Button variant="danger" onClick={handleConfirmDecline}>
+                Decline Booking
+              </Button>
               <Button
                 variant="outline"
                 onClick={() => setShowDeclineModal(false)}
               >
                 Cancel
-              </Button>
-              <Button variant="danger" onClick={handleConfirmDecline}>
-                Decline Booking
               </Button>
             </div>
           </div>

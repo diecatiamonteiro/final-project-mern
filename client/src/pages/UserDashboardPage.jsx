@@ -3,6 +3,7 @@ import axios from "axios";
 import UpdateProfileForm from "../components/dashboard/profile/UpdateProfileForm";
 import MyBookings from "../components/dashboard/bookings/MyBookings";
 import MyGigs from "../components/dashboard/gigs/MyGigs";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function UserDashboardPage() {
   const [activeTab, setActiveTab] = useState("account");
@@ -41,7 +42,9 @@ export default function UserDashboardPage() {
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="text-center text-gray-500">Loading...</div>
+        <div className="text-center text-gray-500">
+          <LoadingSpinner />
+        </div>
       </div>
     );
   }
@@ -72,8 +75,8 @@ export default function UserDashboardPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">User Dashboard</h1>
+    <div className="max-w-7xl mx-auto px-4 pb-8">
+      <h1 className="text-3xl font-bold mb-8">My Greenroom</h1>
 
       {/* Tab Navigation */}
       <div className="border-b border-gray-200 mb-8">
@@ -101,7 +104,11 @@ export default function UserDashboardPage() {
       <div className="bg-white rounded-lg shadow">
         {activeTab === "account" && (
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Account Settings</h2>
+            <h2 className="text-xl font-semibold mb-2">Account Settings</h2>
+            <p className="text-gray-500 mb-10">
+              Manage your account settings, change your password, and delete
+              profile.
+            </p>
             <p className="text-gray-500">
               Account settings component will go here
             </p>
@@ -110,21 +117,33 @@ export default function UserDashboardPage() {
 
         {activeTab === "profile" && (
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Profile Settings</h2>
+            <h2 className="text-xl font-semibold mb-2">Profile Settings</h2>
+            <p className="text-gray-500 mb-10">
+              Customize your profile and set your availability. Keep your
+              information up to date to attract more bookings.
+            </p>
             <UpdateProfileForm user={user} onUpdate={handleProfileUpdate} />
           </div>
         )}
 
         {activeTab === "bookings" && (
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4">My Bookings</h2>
+            <h2 className="text-xl font-semibold mb-2">My Bookings</h2>
+            <p className="text-gray-500 mb-10">
+              View and manage your pending booking requests. Accept or decline
+              received bookings, and track the status of bookings you've sent.
+            </p>
             <MyBookings />
           </div>
         )}
 
         {activeTab === "gigs" && (
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4">My Gigs</h2>
+            <h2 className="text-xl font-semibold mb-2">My Gigs</h2>
+            <p className="text-gray-500 mb-10">
+              See all your confirmed bookings. Send an email to the other party
+              or cancel upcoming performances.
+            </p>
             <MyGigs />
           </div>
         )}
