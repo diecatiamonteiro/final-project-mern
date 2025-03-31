@@ -42,6 +42,10 @@ export default function IndividualArtistPage() {
     fetchArtist();
   }, [id]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Photo gallery modal with carousel
   const PhotoGalleryModal = () => {
     const allPhotos = [artist.profilePicture, ...(artist.images || [])];

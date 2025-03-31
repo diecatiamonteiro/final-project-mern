@@ -46,6 +46,10 @@ export default function IndividualVenuePage() {
     fetchVenue();
   }, [id]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []); // Empty dependency array ensures this runs once when component mounts
+
   // Photo gallery modal with carousel (same as artist page)
   const PhotoGalleryModal = () => {
     const allPhotos = [venue.profilePicture, ...(venue.images || [])];

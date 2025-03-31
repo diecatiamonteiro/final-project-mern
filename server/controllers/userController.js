@@ -485,15 +485,30 @@ export const getAllSentBookings = async (req, res, next) => {
 
 export const searchForArtistOrVenue = async (req, res, next) => {
   try {
-    let { q, city, type, revenueSplit } = req.query;
+    let { q, city, type, performanceType, genre, revenueSplit } = req.query;
+
+    // Determine search type based on parameters present
+    // If artist-specific parameters are present, it's an artist search
+    // If venue-specific parameters are present, it's a venue search
+    // If neither, check the endpoint or path to determine the type
+    const isArtistSearch = performanceType !== undefined || genre !== undefined;
+    const isVenueSearch = type !== undefined || revenueSplit !== undefined;
+
+    // Default to artist if performanceType/genre params exist, venue if type/revenueSplit exist
+    // If only 'q' exists, use venue (maintaining backward compatibility)
+    const searchRole = isArtistSearch ? "artist" : "venue";
 
     // Trim whitespace from search parameters if they exist
     if (q) q = q.trim();
     if (city) city = city.trim();
     if (type) type = type.trim();
+    if (performanceType) performanceType = performanceType.trim();
+    if (genre) genre = genre.trim();
 
     // Build search query
-    let searchQuery = {};
+    let searchQuery = {
+      role: searchRole,
+    };
 
     // Text search on name, description, type, city, and genre
     if (q) {
@@ -514,9 +529,14 @@ export const searchForArtistOrVenue = async (req, res, next) => {
       };
     }
 
-    // Filter by type (performance type for artists or venue type)
-    if (type) {
-      searchQuery.type = type; // Because type is an array in the schema
+    // Filter by type (for venues) OR performance type (for artists)
+    if (type || performanceType) {
+      searchQuery.type = type || performanceType;
+    }
+
+    // Filter by genre (for artists)
+    if (genre) {
+      searchQuery["additionalInfo.genre"] = genre;
     }
 
     // Filter by revenue split (for venues)
