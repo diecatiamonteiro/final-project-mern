@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import Button from "./Button";
 
 export default function Modal({ title, children, onClose }) {
   // Close modal on escape key press
@@ -29,9 +30,11 @@ export default function Modal({ title, children, onClose }) {
       >
         <div className="flex justify-between items-center border-b p-4">
           <h2 className="text-xl font-semibold">{title}</h2>
-          <button
+          <Button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            variant="white"
+            size="small"
+            className="!p-1.5 !shadow-none"
           >
             <svg
               className="w-6 h-6"
@@ -44,7 +47,7 @@ export default function Modal({ title, children, onClose }) {
             >
               <path d="M6 18L18 6M6 6l12 12"></path>
             </svg>
-          </button>
+          </Button>
         </div>
         {children}
       </div>

@@ -698,26 +698,47 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
             <div>
               <h3 className="text-lg font-semibold mb-6">Media Links</h3>
               <div className="space-y-4">
-                {["YouTube", "Spotify", "SoundCloud"].map((platform) => (
-                  <div
-                    key={platform}
-                    className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-2 sm:space-y-0"
-                  >
-                    <div className="w-24 flex-shrink-0 text-gray-600">
-                      {platform}:
-                    </div>
-                    <input
-                      type="url"
-                      value={
-                        formData.media.find((m) => m.platform === platform)
-                          ?.url || ""
-                      }
-                      onChange={(e) => handleMediaLink(e, platform)}
-                      placeholder={`${platform} URL`}
-                      className="w-full p-2 border rounded-lg"
-                    />
-                  </div>
-                ))}
+                {user.role === "artist"
+                  ? ["YouTube", "Spotify", "SoundCloud"].map((platform) => (
+                      <div
+                        key={platform}
+                        className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-2 sm:space-y-0"
+                      >
+                        <div className="w-24 flex-shrink-0 text-gray-600">
+                          {platform}:
+                        </div>
+                        <input
+                          type="url"
+                          value={
+                            formData.media.find((m) => m.platform === platform)
+                              ?.url || ""
+                          }
+                          onChange={(e) => handleMediaLink(e, platform)}
+                          placeholder={`${platform} URL`}
+                          className="w-full p-2 border rounded-lg"
+                        />
+                      </div>
+                    ))
+                  : ["YouTube"].map((platform) => (
+                      <div
+                        key={platform}
+                        className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-2 sm:space-y-0"
+                      >
+                        <div className="w-24 flex-shrink-0 text-gray-600">
+                          {platform}:
+                        </div>
+                        <input
+                          type="url"
+                          value={
+                            formData.media.find((m) => m.platform === platform)
+                              ?.url || ""
+                          }
+                          onChange={(e) => handleMediaLink(e, platform)}
+                          placeholder={`${platform} URL`}
+                          className="w-full p-2 border rounded-lg"
+                        />
+                      </div>
+                    ))}
               </div>
             </div>
           </div>

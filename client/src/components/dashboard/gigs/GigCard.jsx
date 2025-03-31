@@ -6,6 +6,7 @@ import Button from "../../Button";
 import { FaCheckCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
 import Modal from "../../Modal";
+import { Link } from "react-router-dom";
 
 export default function GigCard({ gig }) {
   const { usersState, bookingsDispatch } = useContext(DataContext);
@@ -69,17 +70,27 @@ export default function GigCard({ gig }) {
     </div>
   );
 
+  // Get the other party's info
+  const otherParty =
+    gig.initiatedBy._id === user._id ? gig.receivedBy : gig.initiatedBy;
+
   // Make sure we have both user and gig data before rendering
   if (!user || !gig) return null;
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
       <div className="mb-4">
-        <h3 className="text-lg font-semibold mb-2">
-          {gig.initiatedBy._id === user._id
-            ? gig.receivedBy.name
-            : gig.initiatedBy.name}
-        </h3>
+        <Link
+          to={`/${otherParty.role}/${otherParty._id}`}
+          className="flex items-center gap-4 mb-2 hover:opacity-75 transition-opacity"
+        >
+          <img
+            src={otherParty.profilePicture || "/default-avatar.png"}
+            alt={otherParty.name}
+            className="w-12 h-12 rounded-full object-cover"
+          />
+          <h3 className="text-lg font-semibold">{otherParty.name}</h3>
+        </Link>
         <p className="text-gray-600 text-sm mb-2">
           Performance Date: {formattedDate}
         </p>

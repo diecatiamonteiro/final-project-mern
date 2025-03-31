@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import Button from "../../Button";
 import Modal from "../../Modal";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function BookingCard({
   booking,
@@ -13,6 +14,10 @@ export default function BookingCard({
   const [showDeclineModal, setShowDeclineModal] = useState(false);
   const formattedDate = format(new Date(booking.performanceDate), "PPP");
   const isPending = booking.status === "pending";
+
+  // Get the other party's info
+  const otherParty =
+    type === "received" ? booking.initiatedBy : booking.receivedBy;
 
   const handleDeclineClick = () => {
     setShowDeclineModal(true);
@@ -27,11 +32,17 @@ export default function BookingCard({
     <>
       <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
         <div className="mb-4">
-          <h3 className="text-lg font-semibold mb-2">
-            {type === "received"
-              ? booking.initiatedBy.name
-              : booking.receivedBy.name}
-          </h3>
+          <Link
+            to={`/${otherParty.role}/${otherParty._id}`}
+            className="flex items-center gap-4 mb-2 hover:opacity-75 transition-opacity"
+          >
+            <img
+              src={otherParty.profilePicture || "/default-avatar.png"}
+              alt={otherParty.name}
+              className="w-12 h-12 rounded-full object-cover"
+            />
+            <h3 className="text-lg font-semibold">{otherParty.name}</h3>
+          </Link>
           <p className="text-gray-600 text-sm mb-2">
             Performance Date: {formattedDate}
           </p>
@@ -98,7 +109,7 @@ export default function BookingCard({
               <span className="font-semibold">{booking.initiatedBy.name}</span>{" "}
               for <span className="font-semibold">{formattedDate}</span>?
             </p>
-            <div className="flex gap-4 justify-end">
+            <div className="flex gap-4 justify-center">
               <Button
                 variant="outline"
                 onClick={() => setShowDeclineModal(false)}

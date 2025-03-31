@@ -102,7 +102,7 @@ export default function IndividualArtistPage() {
                 <FaTimes size={24} />
               </button>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 container mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 container mx-auto">
               {allPhotos.map((image, index) => (
                 <div
                   key={index}
@@ -162,7 +162,7 @@ export default function IndividualArtistPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Photo Grid Section */}
-      <div className="grid grid-cols-4 gap-4 mb-8 relative h-[400px]">
+      <div className="grid grid-cols-1 gap-4 mb-8 relative h-[400px]">
         <div
           className="col-span-2 row-span-2 cursor-pointer"
           onClick={() => {

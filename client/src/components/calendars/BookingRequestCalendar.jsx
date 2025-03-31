@@ -175,14 +175,14 @@ export default function BookingRequestCalendar({
   );
 
   return (
-    <div className="booking-calendar">
+    <div className="booking-calendar flex flex-col items-center">
       <DatePicker
         selected={selectedDate}
         onChange={handleDateSelect}
         inline
         minDate={new Date()}
-        includeDates={convertedAvailableDates} // Only allow selecting available dates
-        excludeDates={convertedBookedDates} // Exclude booked dates
+        includeDates={convertedAvailableDates}
+        excludeDates={convertedBookedDates}
         calendarClassName="!border-0 !shadow-lg"
         showPopperArrow={false}
         monthsShown={1}
@@ -206,7 +206,7 @@ export default function BookingRequestCalendar({
             transition: all 0.2s;
             position: relative;
             margin: 0.2rem;
-            width: 2.5rem;
+            width: 2rem;
             height: 2rem;
             line-height: 2rem;
           }
@@ -235,7 +235,8 @@ export default function BookingRequestCalendar({
       </style>
       <Button
         variant="green"
-        className="mt-2 px-6 py-2 w-full"
+        className="mt-2 px-6 py-2 w-full max-w-[320px]"
+        size="small"
         onClick={() => setShowModal(true)}
         disabled={!selectedDate}
       >

@@ -8,6 +8,7 @@ import {
 import { getAllReceivedBookings } from "../../../api/usersApi";
 import BookingCard from "./BookingCard";
 import { toast } from "react-toastify";
+import LoadingSpinner from "../../LoadingSpinner";
 
 export default function ReceivedBookings() {
   const { usersState, usersDispatch, bookingsDispatch } =
@@ -49,7 +50,11 @@ export default function ReceivedBookings() {
   );
 
   if (isLoading) {
-    return <div className="text-center py-4">Loading bookings...</div>;
+    return (
+      <div className="text-center py-4">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (error) {

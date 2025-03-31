@@ -6,80 +6,64 @@ import BookingCard from "./BookingCard";
 import BookingRequestCalendar from "../../calendars/BookingRequestCalendar";
 import Button from "../../Button";
 import { toast } from "react-toastify";
+import Modal from "../../Modal";
+import LoadingSpinner from "../../LoadingSpinner";
+import EditBookingCalendar from "../../calendars/EditBookingCalendar";
 
 export default function SentBookings() {
   const { usersState, usersDispatch, bookingsDispatch } =
     useContext(DataContext);
   const { bookingsSent, isLoading, error } = usersState;
   const [showCalendar, setShowCalendar] = useState(false);
-  const [editingBookingId, setEditingBookingId] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [editingBooking, setEditingBooking] = useState(null);
 
-  const handleEditClick = (bookingId) => {
-    setEditingBookingId(bookingId);
+  const handleEditClick = (booking) => {
+    setEditingBooking(booking);
     setShowCalendar(true);
   };
 
-  const handleDateSelect = (date) => {
-    setSelectedDate(date);
-  };
-
-  const handleEdit = async () => {
-    if (!selectedDate) return;
-
+  const handleConfirm = async (date) => {
     try {
-      await editBookingDate(bookingsDispatch, editingBookingId, {
-        performanceDate: selectedDate.toISOString(),
+      await editBookingDate(bookingsDispatch, editingBooking._id, {
+        performanceDate: date.toISOString(),
       });
 
-      // Refresh the bookings list after editing
       if (usersState.user?._id) {
         getAllSentBookings(usersDispatch, usersState.user._id);
       }
 
-      // Reset states and show success message
       setShowCalendar(false);
-      setSelectedDate(null);
-      setEditingBookingId(null);
+      setEditingBooking(null);
       toast.success("Booking date updated successfully");
     } catch (error) {
       console.error("Error editing booking:", error);
-      toast.error("Failed to update booking date. Please try again.");
+
+      // Display specific error message from the API if available
+      const errorMessage = error.response?.data?.message;
+      if (errorMessage) {
+        toast.error(errorMessage);
+      } else {
+        toast.error("Failed to update booking date. Please try again.");
+      }
     }
   };
 
+  const handleCancel = () => {
+    setShowCalendar(false);
+    setEditingBooking(null);
+  };
+
   const EditDateModal = () => (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-        <h2 className="text-xl font-semibold mb-4">Edit Booking Date</h2>
-        <BookingRequestCalendar
-          availableDates={[]} // You'll need to pass the available dates
-          bookedDates={[]} // You'll need to pass the booked dates
-          onRequestBooking={handleDateSelect}
+    <Modal title="Edit Booking Date" onClose={handleCancel}>
+      <div className="p-6 max-w-[350px] mx-auto w-full">
+        <EditBookingCalendar
+          availableDates={editingBooking?.receivedBy?.availability || []}
+          bookedDates={editingBooking?.receivedBy?.bookedDates || []}
+          onConfirm={handleConfirm}
+          onCancel={handleCancel}
         />
-        <div className="flex gap-3 mt-4">
-          <Button
-            variant="green"
-            className="flex-1"
-            onClick={handleEdit}
-            disabled={!selectedDate}
-          >
-            Confirm
-          </Button>
-          <Button
-            variant="white"
-            className="flex-1"
-            onClick={() => {
-              setShowCalendar(false);
-              setSelectedDate(null);
-              setEditingBookingId(null);
-            }}
-          >
-            Cancel
-          </Button>
-        </div>
       </div>
-    </div>
+    </Modal>
   );
 
   // Filter out accepted bookings as they should appear in My Gigs
@@ -88,7 +72,11 @@ export default function SentBookings() {
   );
 
   if (isLoading) {
-    return <div className="text-center py-4">Loading bookings...</div>;
+    return (
+      <div className="text-center py-4">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (error) {
@@ -111,7 +99,7 @@ export default function SentBookings() {
             key={booking._id}
             booking={booking}
             type="sent"
-            onEdit={() => handleEditClick(booking._id)}
+            onEdit={() => handleEditClick(booking)}
           />
         ))}
       </div>
