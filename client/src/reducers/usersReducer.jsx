@@ -42,6 +42,8 @@ export const USER_ACTIONS = {
   GET_ALL_SENT_BOOKINGS: "GET_ALL_SENT_BOOKINGS",
   SEARCH_FOR_ARTIST_OR_VENUE: "SEARCH_FOR_ARTIST_OR_VENUE",
   CLEAR_SEARCH: "CLEAR_SEARCH",
+  FORGOT_PASSWORD: "FORGOT_PASSWORD",
+  RESET_PASSWORD: "RESET_PASSWORD",
 };
 
 export const usersReducer = (state, action) => {
@@ -185,6 +187,13 @@ export const usersReducer = (state, action) => {
       return {
         ...state,
         searchResults: [],
+        error: null,
+      };
+
+    case USER_ACTIONS.FORGOT_PASSWORD:
+    case USER_ACTIONS.RESET_PASSWORD:
+      return {
+        ...state,
         error: null,
       };
 
