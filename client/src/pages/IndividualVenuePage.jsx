@@ -25,6 +25,23 @@ export default function IndividualVenuePage() {
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
+  const acceptedSentBookings =
+    venue &&
+    venue.bookingsSent
+      .filter((sentBooking) => sentBooking.status === "accepted")
+      .map((item) => (item = item.performanceDate));
+
+  const acceptedReceivedBookings =
+    venue &&
+    venue.bookingsReceived
+      .filter((receivedBooking) => receivedBooking.status === "accepted")
+      .map((item) => (item = item.performanceDate));
+
+  const allAcceptedBookings = venue && [
+    ...acceptedReceivedBookings,
+    ...acceptedSentBookings,
+  ];
+
   useEffect(() => {
     const fetchVenue = async () => {
       try {
@@ -339,10 +356,7 @@ export default function IndividualVenuePage() {
             <div className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center w-full">
               <BookingRequestCalendar
                 availableDates={venue.availability}
-                bookedDates={venue.bookedDates}
-                onRequestBooking={(date) => {
-                  // Handle booking request
-                }}
+                bookedDates={allAcceptedBookings}
               />
             </div>
           </div>

@@ -7,6 +7,8 @@ export default function MyGigs() {
   const { bookingsState, bookingsDispatch } = useContext(DataContext);
   const { allAcceptedBookings, isLoading, error } = bookingsState;
 
+  console.log("allacceptedbookings: ", allAcceptedBookings);
+
   useEffect(() => {
     getAllAcceptedBookings(bookingsDispatch);
   }, []);

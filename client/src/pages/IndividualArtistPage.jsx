@@ -23,6 +23,23 @@ export default function IndividualArtistPage() {
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
+  const acceptedSentBookings =
+    artist &&
+    artist.bookingsSent
+      .filter((sentBooking) => sentBooking.status === "accepted")
+      .map((item) => (item = item.performanceDate));
+
+  const acceptedReceivedBookings =
+    artist &&
+    artist.bookingsReceived
+      .filter((receivedBooking) => receivedBooking.status === "accepted")
+      .map((item) => (item = item.performanceDate));
+
+  const allAcceptedBookings = artist && [
+    ...acceptedReceivedBookings,
+    ...acceptedSentBookings,
+  ];
+
   useEffect(() => {
     const fetchArtist = async () => {
       try {
@@ -331,10 +348,7 @@ export default function IndividualArtistPage() {
             <div className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center w-full">
               <BookingRequestCalendar
                 availableDates={artist.availability}
-                bookedDates={artist.bookedDates}
-                onRequestBooking={(date) => {
-                  // Handle booking request
-                }}
+                bookedDates={allAcceptedBookings}
               />
             </div>
           </div>

@@ -22,8 +22,6 @@ export default function BookingRequestCalendar({
   const { bookingsDispatch, usersState } = useContext(DataContext);
   const { id } = useParams();
 
-  console.log(selectedDate);
-
   // Convert dates once when props change
   const convertedAvailableDates = useMemo(
     () => availableDates.map((date) => new Date(date)),
