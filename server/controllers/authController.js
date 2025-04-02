@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 import validator from "validator";
 import axios from "axios";
 import transporter from "../utils/emailConfig.js";
-import { verificationEmail } from "../utils/emailTemplates.js";
+import { verificationEmail, passwordResetEmail } from "../utils/emailTemplates.js";
 import {
   tokenizeCookie,
   generateVerificationToken,
@@ -493,12 +493,7 @@ export const forgotPassword = async (req, res, next) => {
       from: process.env.EMAIL_USER,
       to: user.email,
       subject: "Reset your password - The Greenroom",
-      html: `
-        <h1>Reset Your Password</h1>
-        <p>Click the link below to reset your password. This link will expire in 24 hours.</p>
-        <a href="${resetLink}">Reset Password</a>
-        <p>If you didn't request this, please ignore this email.</p>
-      `,
+      html: passwordResetEmail(resetLink),
     });
 
     res.status(200).json({

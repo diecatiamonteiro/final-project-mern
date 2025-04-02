@@ -32,7 +32,7 @@ export default function ForgotPasswordPage() {
                 We've sent a password reset link to:
                 <span className="font-semibold block mt-1">{email}</span>
               </p>
-              <p>Please check your inbox and click the link to reset your password.</p>
+              <p>Please check your <span className="font-bold">inbox</span> or <span className="font-bold">spam</span> to reset your password.</p>
             </div>
           </div>
         </div>
