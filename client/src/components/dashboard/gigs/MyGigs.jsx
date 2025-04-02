@@ -2,19 +2,22 @@ import { useEffect, useContext } from "react";
 import { DataContext } from "../../../contexts/Context";
 import { getAllAcceptedBookings } from "../../../api/bookingsApi";
 import GigCard from "./GigCard";
+import LoadingSpinner from "../../LoadingSpinner";
 
 export default function MyGigs() {
   const { bookingsState, bookingsDispatch } = useContext(DataContext);
   const { allAcceptedBookings, isLoading, error } = bookingsState;
-
-  console.log("allacceptedbookings: ", allAcceptedBookings);
 
   useEffect(() => {
     getAllAcceptedBookings(bookingsDispatch);
   }, []);
 
   if (isLoading) {
-    return <div className="text-center py-4">Loading gigs...</div>;
+    return (
+      <div className="text-center py-4">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (error) {

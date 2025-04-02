@@ -28,14 +28,14 @@ export default function IndividualVenuePage() {
   const acceptedSentBookings =
     venue &&
     venue.bookingsSent
-      .filter((sentBooking) => sentBooking.status === "accepted")
-      .map((item) => (item = item.performanceDate));
+      .filter((booking) => booking.status === "accepted")
+      .map((booking) => (booking = booking.performanceDate));
 
   const acceptedReceivedBookings =
     venue &&
     venue.bookingsReceived
-      .filter((receivedBooking) => receivedBooking.status === "accepted")
-      .map((item) => (item = item.performanceDate));
+      .filter((booking) => booking.status === "accepted")
+      .map((booking) => (booking = booking.performanceDate));
 
   const allAcceptedBookings = venue && [
     ...acceptedReceivedBookings,

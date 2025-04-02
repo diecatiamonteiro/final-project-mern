@@ -102,13 +102,28 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
     availability: user?.availability || [],
   });
 
+  const acceptedSentBookings =
+    user &&
+    user.bookingsSent
+      .filter((booking) => booking.status === "accepted")
+      .map((booking) => (booking = booking.performanceDate));
+
+  const acceptedReceivedBookings =
+    user &&
+    user.bookingsReceived
+      .filter((booking) => booking.status === "accepted")
+      .filter((booking) => (booking = booking.performanceDate));
+
+  const allAcceptedBookings = user && [
+    ...acceptedSentBookings,
+    ...acceptedReceivedBookings,
+  ];
+
   const [status, setStatus] = useState({
     loading: false,
     error: null,
     success: false,
   });
-
-  console.log(formData);
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
@@ -757,6 +772,7 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
             <div className="flex justify-center md:justify-start">
               <AvailabilityCalendar
                 selectedDates={formData.availability}
+                bookedDates={allAcceptedBookings}
                 onDateSelect={handleDateSelect}
               />
             </div>

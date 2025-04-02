@@ -1,31 +1,56 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 export default function AvailabilityCalendar({
   selectedDates = [],
+  bookedDates = [],
   onDateSelect,
 }) {
-  const [convertedDates, setConvertedDates] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
 
-  useEffect(() => {
-    const dates = selectedDates.map((date) => {
-      if (typeof date === "string") {
-        const utcDate = new Date(date);
-        return new Date(
-          utcDate.getFullYear(),
-          utcDate.getMonth(),
-          utcDate.getDate()
-        );
-      }
-      return date;
-    });
+  const convertedDates = useMemo(
+    () =>
+      selectedDates.map((date) => {
+        if (typeof date === "string") {
+          const utcDate = new Date(date);
+          return new Date(
+            utcDate.getFullYear(),
+            utcDate.getMonth(),
+            utcDate.getDate()
+          );
+        }
+        return date;
+      }),
+    [selectedDates]
+  );
 
-    setConvertedDates(dates);
-  }, [selectedDates]);
+  const convertedBookedDates = useMemo(
+    () =>
+      bookedDates.map((date) => {
+        if (typeof date === "string") {
+          const utcDate = new Date(date);
+          return new Date(
+            utcDate.getFullYear(),
+            utcDate.getMonth(),
+            utcDate.getDate()
+          );
+        }
+        return date;
+      }),
+    [bookedDates]
+  );
+
+  console.log("Incoming bookedDates:", bookedDates);
+  console.log("Converted booked dates:", convertedBookedDates);
 
   const handleDateSelect = (date) => {
+    // Don't allow selection of booked dates
+    const isBooked = convertedBookedDates.some(
+      (d) => d.getTime() === date.getTime()
+    );
+    if (isBooked) return;
+
     const utcDate = new Date(
       Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0)
     );
@@ -52,12 +77,21 @@ export default function AvailabilityCalendar({
   };
 
   const dayClassName = (date) => {
-    // Create a date object without time component for comparison
     const currentDate = new Date(
       date.getFullYear(),
       date.getMonth(),
       date.getDate()
     ).getTime();
+
+    // Check for booked dates first
+    const isBooked = convertedBookedDates.some(
+      (d) => new Date(d).setHours(0, 0, 0, 0) === currentDate
+    );
+    console.log("Checking date:", new Date(currentDate), "isBooked:", isBooked);
+
+    if (isBooked) {
+      return "date-booked";
+    }
 
     if (selectedDate?.getTime() === currentDate) {
       return "date-selected";
@@ -135,6 +169,16 @@ export default function AvailabilityCalendar({
           .availability-calendar .react-datepicker__day--disabled {
             color: #ccc;
             cursor: default;
+          }
+          .availability-calendar .date-booked {
+            border: 2px solid #111827;
+            background-color: white;
+            color: #111827;
+            cursor: not-allowed !important;
+          }
+          .availability-calendar .date-booked:hover {
+            background-color: white !important;
+            color: #111827 !important;
           }
         `}
       </style>

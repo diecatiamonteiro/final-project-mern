@@ -3,12 +3,11 @@ import { DataContext } from "../../../contexts/Context";
 import { editBookingDate } from "../../../api/bookingsApi";
 import { getAllSentBookings } from "../../../api/usersApi";
 import BookingCard from "./BookingCard";
-import BookingRequestCalendar from "../../calendars/BookingRequestCalendar";
-import Button from "../../Button";
 import { toast } from "react-toastify";
 import Modal from "../../Modal";
 import LoadingSpinner from "../../LoadingSpinner";
 import EditBookingCalendar from "../../calendars/EditBookingCalendar";
+import axios from "axios";
 
 export default function SentBookings() {
   const { usersState, usersDispatch, bookingsDispatch } =
@@ -17,9 +16,47 @@ export default function SentBookings() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [editingBooking, setEditingBooking] = useState(null);
 
+  console.log(editingBooking);
+
   const handleEditClick = (booking) => {
     setEditingBooking(booking);
     setShowCalendar(true);
+
+    // Get all accepted bookings from the receiver (venue/artist)
+    const getReceiverAcceptedGigs = async () => {
+      try {
+        const { data } = await axios.get(
+          `http://localhost:8000/api/users/${booking.receivedBy._id}`
+        );
+
+        const acceptedSentBookings = data.data.bookingsSent
+          .filter((booking) => booking.status === "accepted")
+          .map((booking) => booking.performanceDate);
+
+        const acceptedReceivedBookings = data.data.bookingsReceived
+          .filter((booking) => booking.status === "accepted")
+          .map((booking) => booking.performanceDate);
+
+        const allAcceptedBookings = [
+          ...acceptedSentBookings,
+          ...acceptedReceivedBookings,
+        ].filter((date) => date !== booking.performanceDate); // Exclude current booking's date
+
+        // Update the editingBooking with the accepted bookings
+        setEditingBooking((prev) => ({
+          ...prev,
+          receivedBy: {
+            ...prev.receivedBy,
+            bookedDates: allAcceptedBookings,
+          },
+        }));
+      } catch (error) {
+        console.error("Error fetching receiver's bookings:", error);
+        toast.error("Failed to fetch availability");
+      }
+    };
+
+    getReceiverAcceptedGigs();
   };
 
   const handleConfirm = async (date) => {
