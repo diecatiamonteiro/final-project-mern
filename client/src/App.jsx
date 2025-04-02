@@ -1,4 +1,3 @@
-
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import Layout from "./pages/Layout";
@@ -13,6 +12,8 @@ import FavouritesPage from "./pages/FavouritesPage";
 import UserDashboardPage from "./pages/UserDashboardPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import VerificationPage from "./pages/VerificationPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -31,6 +32,8 @@ function App() {
           <Route path="favourites" element={<FavouritesPage />} />
           <Route path="dashboard" element={<UserDashboardPage />} />
           <Route path="verify-email" element={<VerificationPage />} />
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="reset-password" element={<ResetPasswordPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

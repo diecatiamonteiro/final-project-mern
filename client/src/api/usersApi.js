@@ -533,3 +533,49 @@ export const searchForArtistOrVenue = async (usersDispatch, searchParams) => {
     usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
   }
 };
+
+export const forgotPassword = async (usersDispatch, { email }) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
+  try {
+    const response = await axios.post("/api/auth/forgot-password", { email });
+    usersDispatch({
+      type: USER_ACTIONS.FORGOT_PASSWORD,
+      payload: response.data,
+    });
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || "Failed to send reset link.";
+    usersDispatch({
+      type: USER_ACTIONS.SET_ERROR,
+      payload: errorMessage,
+    });
+    throw error;
+  } finally {
+    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
+  }
+};
+
+export const resetPassword = async (usersDispatch, { token, userId, newPassword }) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
+  try {
+    const response = await axios.post("/api/auth/reset-password", {
+      token,
+      userId,
+      newPassword,
+    });
+    usersDispatch({
+      type: USER_ACTIONS.RESET_PASSWORD,
+      payload: response.data,
+    });
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || "Failed to reset password.";
+    usersDispatch({
+      type: USER_ACTIONS.SET_ERROR,
+      payload: errorMessage,
+    });
+    throw error;
+  } finally {
+    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
+  }
+};
