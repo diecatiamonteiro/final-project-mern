@@ -40,7 +40,7 @@ export default function RegisterPage() {
                 </span>
               </p>
               <p>
-                Please check your inbox and click the verification link to
+                Please check your <span className="font-bold">inbox</span> or <span className="font-bold">spam</span> and click the verification link to
                 complete your registration.
               </p>
             </div>
