@@ -1,17 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
+import { DataContext } from "../contexts/Context";
+import {
+  getIndividualArtistOrVenue,
+  addFavourite,
+  removeFavourite,
+} from "../api/usersApi";
 import BookingRequestCalendar from "../components/calendars/BookingRequestCalendar";
+import PhotoGalleryModal from "../components/individualPages/PhotoGalleryModal";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { SocialIcons } from "../components/SocialIcons";
-import { FaChevronLeft, FaChevronRight, FaTimes } from "react-icons/fa";
+import {
+  FaChevronLeft,
+  FaChevronRight,
+  FaTimes,
+  FaHeart,
+} from "react-icons/fa";
+import { toast } from "react-toastify";
 
 export default function IndividualArtistPage() {
   const { id } = useParams();
-  const [artist, setArtist] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { usersState, usersDispatch } = useContext(DataContext);
+  const { isLoading, error } = usersState;
+  const artist = usersState.currentProfile;
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [currentArtist, setCurrentArtist] = useState(null);
 
   const acceptedSentBookings =
     artist &&
@@ -33,105 +47,61 @@ export default function IndividualArtistPage() {
   useEffect(() => {
     const fetchArtist = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/users/${id}`);
-        if (!response.ok) {
-          throw new Error("Artist not found");
-        }
-        const data = await response.json();
-        setArtist(data.data);
+        await getIndividualArtistOrVenue(usersDispatch, id);
       } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
+        console.error("Error fetching artist:", err);
       }
     };
 
     fetchArtist();
-  }, [id]);
+  }, [usersDispatch, id]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Photo gallery modal with carousel
-  const PhotoGalleryModal = () => {
-    const allPhotos = [artist.profilePicture, ...(artist.images || [])];
+  useEffect(() => {
+    if (artist && usersState.user?.favourites) {
+      const isFavourited = usersState.user.favourites.some(
+        (favourite) => favourite._id === artist._id
+      );
+      setCurrentArtist({ ...artist, isFavourited: isFavourited });
+    } else if (artist) {
+      setCurrentArtist({ ...artist, isFavourited: false });
+    }
+  }, [artist, usersState.user?.favourites]); // this effect is triggered when the artist or the user favourites change and it does the following:
+  // 1. Check if the artist is in the user's favourites
+  // 2. If it is, set the isFavourited state to true
+  // 3. If it is not, set the isFavourited state to false
 
-    const handleClose = () => {
-      setShowAllPhotos(false);
-      setSelectedPhoto(null);
-    };
+  const handleFavouriteClick = async (e) => {
+    e.preventDefault();
+    e.stopPropagation(); // this prevents the click event from bubbling up to the parent elements, ie it doesn't trigger the click event of the parent element
 
-    return (
-      <div className="fixed inset-0 bg-black/90 z-50 overflow-hidden">
-        {selectedPhoto !== null ? (
-          // Carousel View
-          <div className="fixed inset-0 flex items-center justify-center p-8">
-            <button
-              onClick={handleClose}
-              className="absolute top-4 right-4 text-white hover:text-gray-300"
-            >
-              <FaTimes size={24} />
-            </button>
+    if (!usersState.user) {
+      toast.error("Please login to favourite items.");
+      return;
+    }
 
-            <button
-              onClick={() =>
-                setSelectedPhoto((prev) =>
-                  prev > 0 ? prev - 1 : allPhotos.length - 1
-                )
-              }
-              className="absolute left-4 text-white hover:text-gray-300"
-            >
-              <FaChevronLeft size={24} />
-            </button>
+    if (currentArtist._id === usersState.user._id) {
+      toast.error("You cannot add yourself to favourites.");
+      return;
+    }
 
-            <img
-              src={allPhotos[selectedPhoto]}
-              alt={`Photo ${selectedPhoto + 1}`}
-              className="max-h-[80vh] max-w-[80vw] object-contain"
-            />
-
-            <button
-              onClick={() =>
-                setSelectedPhoto((prev) =>
-                  prev < allPhotos.length - 1 ? prev + 1 : 0
-                )
-              }
-              className="absolute right-4 text-white hover:text-gray-300"
-            >
-              <FaChevronRight size={24} />
-            </button>
-          </div>
-        ) : (
-          // Grid View
-          <div className="p-4">
-            <div className="flex justify-end mb-4">
-              <button
-                onClick={handleClose}
-                className="text-white hover:text-gray-300"
-              >
-                <FaTimes size={24} />
-              </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 container mx-auto">
-              {allPhotos.map((image, index) => (
-                <div
-                  key={index}
-                  onClick={() => setSelectedPhoto(index)}
-                  className="cursor-pointer hover:opacity-90 transition-opacity"
-                >
-                  <img
-                    src={image}
-                    alt={`${artist.name} photo ${index + 1}`}
-                    className="w-full h-48 object-cover rounded-lg"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    );
+    try {
+      if (currentArtist.isFavourited) {
+        await removeFavourite(usersDispatch, currentArtist._id);
+        setCurrentArtist({ ...currentArtist, isFavourited: false });
+        toast.success("Artist removed from favourites.");
+      } else {
+        await addFavourite(usersDispatch, currentArtist._id);
+        setCurrentArtist({ ...currentArtist, isFavourited: true });
+        toast.success("Artist added to favourites.");
+      }
+    } catch (error) {
+      console.error("Failed to update favourites:", error);
+      toast.error("Failed to update favourites.");
+    }
   };
 
   if (isLoading) {
@@ -158,7 +128,7 @@ export default function IndividualArtistPage() {
     );
   }
 
-  // First, let's group media items by platform type
+  // Group media items by platform type
   const groupedMedia = artist.media?.reduce((acc, item) => {
     if (item.platform === "YouTube") {
       acc.youtube = [...(acc.youtube || []), item];
@@ -171,11 +141,11 @@ export default function IndividualArtistPage() {
   }, {});
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 mb-24">
       {/* Photo Grid Section */}
-      <div className="grid grid-cols-4 gap-4 mb-8 relative h-[400px]">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-1 mb-8">
         <div
-          className="col-span-2 row-span-2 cursor-pointer"
+          className="col-span-2 row-span-2 cursor-pointer h-[200px] md:h-[400px]"
           onClick={() => {
             setShowAllPhotos(true);
             setSelectedPhoto(0);
@@ -184,13 +154,13 @@ export default function IndividualArtistPage() {
           <img
             src={artist.profilePicture}
             alt={artist.name}
-            className="w-full h-[400px] object-cover rounded-lg hover:opacity-95 transition-opacity"
+            className="w-full h-full object-cover rounded-lg hover:opacity-95 transition-opacity"
           />
         </div>
         {artist.images?.slice(0, 4).map((image, index) => (
           <div
             key={index}
-            className="cursor-pointer relative"
+            className="cursor-pointer relative h-[100px] md:h-[198px]"
             onClick={() => {
               setShowAllPhotos(true);
               setSelectedPhoto(index + 1);
@@ -199,7 +169,7 @@ export default function IndividualArtistPage() {
             <img
               src={image}
               alt={`${artist.name} performance ${index + 1}`}
-              className="w-full h-[198px] object-cover rounded-lg hover:opacity-95 transition-opacity"
+              className="w-full h-full object-cover rounded-lg hover:opacity-95 transition-opacity"
             />
             {/* Show overlay button only on the last image if there are more photos */}
             {index === 3 && artist.images.length > 4 && (
@@ -218,33 +188,57 @@ export default function IndividualArtistPage() {
           </div>
         ))}
       </div>
+      {/* End of Photo Grid Section */}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+      {/* Main Content Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Left Column - Artist Info */}
         <div className="md:col-span-2">
-          <h1 className="text-4xl font-bold mb-4">{artist.name}</h1>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-4xl font-bold">{artist.name}</h1>
+            <button
+              onClick={handleFavouriteClick}
+              className={`p-2 rounded-full transition-colors ${
+                currentArtist?.isFavourited
+                  ? "text-red-500 hover:text-red-600"
+                  : "text-gray-400 hover:text-red-500"
+              }`}
+            >
+              <FaHeart size={24} />
+            </button>
+          </div>
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-6">
+            {/* Tags Type */}
             {artist.type?.map((type) => (
               <span
                 key={type}
-                className="bg-green/10 text-green px-3 py-1 rounded-full text-sm"
+                className="group relative bg-green/10 text-green px-3 py-1 rounded-full text-sm cursor-pointer"
               >
                 {type}
+                {/* Tooltip */}
+                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-max px-3 py-1 bg-gray-800 text-white text-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                  Type
+                </span>
               </span>
             ))}
+            {/* Tags Genre */}
             {artist.additionalInfo?.genre?.map((genre) => (
               <span
                 key={genre}
-                className="bg-midnightBlack/10 text-midnightBlack px-3 py-1 rounded-full text-sm"
+                className="group relative bg-midnightBlack/10 text-midnightBlack px-3 py-1 rounded-full text-sm cursor-pointer"
               >
                 {genre}
+                {/* Tooltip */}
+                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-max px-3 py-1 bg-gray-800 text-white text-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                  Genre
+                </span>
               </span>
             ))}
           </div>
 
-          <p className="text-gray-600 mb-8">{artist.description}</p>
+          <p className="text-base md:text-lg mb-8">{artist.description}</p>
 
           {/* Divider */}
           <hr className="border-gray-200 mb-6" />
@@ -265,7 +259,7 @@ export default function IndividualArtistPage() {
           </div>
 
           {/* Divider */}
-          <hr className="border-gray-200 mb-6" />
+          <hr className="border-gray-200 mb-12" />
 
           {/* Media Section */}
           <div className="space-y-8">
@@ -275,7 +269,10 @@ export default function IndividualArtistPage() {
               <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 {/* YouTube Video - Takes up 3 columns */}
                 {groupedMedia?.youtube?.map((item, index) => (
-                  <div key={index} className="md:col-span-3 aspect-video">
+                  <div
+                    key={index}
+                    className="md:col-span-3 h-[320px] lg:h-[320px]"
+                  >
                     <iframe
                       src={`https://www.youtube.com/embed/${getYouTubeId(
                         item.url
@@ -344,9 +341,20 @@ export default function IndividualArtistPage() {
           </div>
         </div>
       </div>
+      {/* End of Main Content Section */}
 
       {/* Photo Gallery Modal */}
-      {showAllPhotos && <PhotoGalleryModal />}
+      {showAllPhotos && (
+        <PhotoGalleryModal
+          showAllPhotos={showAllPhotos}
+          selectedPhoto={selectedPhoto}
+          setShowAllPhotos={setShowAllPhotos}
+          setSelectedPhoto={setSelectedPhoto}
+          profilePicture={artist.profilePicture}
+          images={artist.images}
+          name={artist.name}
+        />
+      )}
     </div>
   );
 }

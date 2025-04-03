@@ -1,5 +1,6 @@
 export const usersInitialState = {
   user: null, // Logged in user data object
+  currentProfile: null, // Individual artist/venue being viewed
   venues: [],
   artists: [],
   favourites: [],
@@ -126,7 +127,7 @@ export const usersReducer = (state, action) => {
     case USER_ACTIONS.GET_INDIVIDUAL_ARTIST_OR_VENUE:
       return {
         ...state,
-        user: action.payload.data,
+        currentProfile: action.payload.data,
         error: null,
       };
 
@@ -201,3 +202,5 @@ export const usersReducer = (state, action) => {
       return state;
   }
 };
+
+

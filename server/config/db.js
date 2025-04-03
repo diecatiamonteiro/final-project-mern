@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 export default function connectDB() {
   try {
     // Log a message when successfully connected to the database
+
     mongoose.connection.on("connected", () =>
       console.log(
         `Successfully connected to the database: ${mongoose.connection.name}`
       )
     );
-
     // Log an error message if there is a connection error
     mongoose.connection.on("error", (error) => console.log("DB Error", error));
 

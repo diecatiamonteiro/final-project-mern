@@ -1,6 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
+import { DataContext } from "../contexts/Context";
+import {
+  addFavourite,
+  getIndividualArtistOrVenue,
+  removeFavourite,
+} from "../api/usersApi";
 import BookingRequestCalendar from "../components/calendars/BookingRequestCalendar";
+import PhotoGalleryModal from "../components/individualPages/PhotoGalleryModal";
 import {
   FaMapMarkerAlt,
   FaClock,
@@ -9,145 +16,83 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaTimes,
+  FaGlobe,
 } from "react-icons/fa";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { SocialIcons } from "../components/SocialIcons";
 
 export default function IndividualVenuePage() {
   const { id } = useParams();
-  const [venue, setVenue] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { usersState, usersDispatch } = useContext(DataContext);
+  const { isLoading, error } = usersState;
+  const venue = usersState.currentProfile;
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
-
-  const acceptedSentBookings =
-    venue &&
-    venue.bookingsSent
-      .filter((booking) => booking.status === "accepted")
-      .map((booking) => (booking = booking.performanceDate));
-
-  const acceptedReceivedBookings =
-    venue &&
-    venue.bookingsReceived
-      .filter((booking) => booking.status === "accepted")
-      .map((booking) => (booking = booking.performanceDate));
-
-  const allAcceptedBookings = venue && [
-    ...acceptedReceivedBookings,
-    ...acceptedSentBookings,
-  ];
+  const [currentVenue, setCurrentVenue] = useState(null);
 
   useEffect(() => {
     const fetchVenue = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/users/${id}`);
-        if (!response.ok) {
-          throw new Error("Venue not found");
-        }
-        const data = await response.json();
-        console.log("Venue data:", data);
-        setVenue(data.data);
+        await getIndividualArtistOrVenue(usersDispatch, id);
       } catch (err) {
-        console.error("Error:", err);
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
+        console.error("Error fetching venue:", err);
       }
     };
 
     fetchVenue();
-  }, [id]);
+  }, [usersDispatch, id]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []); // Empty dependency array ensures this runs once when component mounts
-
-  // Photo gallery modal with carousel (same as artist page)
-  const PhotoGalleryModal = () => {
-    const allPhotos = [venue.profilePicture, ...(venue.images || [])];
-
-    const handleClose = () => {
-      setShowAllPhotos(false);
-      setSelectedPhoto(null);
-    };
-
-    return (
-      <div className="fixed inset-0 bg-black/90 z-50 overflow-hidden">
-        {selectedPhoto !== null ? (
-          // Carousel View
-          <div className="fixed inset-0 flex items-center justify-center p-8">
-            <button
-              onClick={handleClose}
-              className="absolute top-4 right-4 text-white hover:text-gray-300"
-            >
-              <FaTimes size={24} />
-            </button>
-
-            <button
-              onClick={() =>
-                setSelectedPhoto((prev) =>
-                  prev > 0 ? prev - 1 : allPhotos.length - 1
-                )
-              }
-              className="absolute left-4 text-white hover:text-gray-300"
-            >
-              <FaChevronLeft size={24} />
-            </button>
-
-            <img
-              src={allPhotos[selectedPhoto]}
-              alt={`Photo ${selectedPhoto + 1}`}
-              className="max-h-[80vh] max-w-[80vw] object-contain"
-            />
-
-            <button
-              onClick={() =>
-                setSelectedPhoto((prev) =>
-                  prev < allPhotos.length - 1 ? prev + 1 : 0
-                )
-              }
-              className="absolute right-4 text-white hover:text-gray-300"
-            >
-              <FaChevronRight size={24} />
-            </button>
-          </div>
-        ) : (
-          // Grid View
-          <div className="p-4">
-            <div className="flex justify-end mb-4">
-              <button
-                onClick={handleClose}
-                className="text-white hover:text-gray-300"
-              >
-                <FaTimes size={24} />
-              </button>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 container mx-auto">
-              {allPhotos.map((image, index) => (
-                <div
-                  key={index}
-                  onClick={() => setSelectedPhoto(index)}
-                  className="cursor-pointer hover:opacity-90 transition-opacity"
-                >
-                  <img
-                    src={image}
-                    alt={`${venue.name} photo ${index + 1}`}
-                    className="w-full h-48 object-cover rounded-lg"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
+  }, []);
 
   // Format address from additionalInfo
   const formattedAddress = venue?.additionalInfo?.address
     ? `${venue.additionalInfo.address.streetName} ${venue.additionalInfo.address.number}, ${venue.additionalInfo.address.zipCode} ${venue.additionalInfo.address.city}`
     : "Address not available";
+
+  useEffect(() => {
+    if (venue && usersState.user?.favourites) {
+      const isFavourited = usersState.user.favourites.some(
+        (favourite) => favourite._id === venue._id
+      );
+      setCurrentVenue({ ...venue, isFavourited: isFavourited });
+    } else if (venue) {
+      setCurrentVenue({ ...venue, isFavourited: false });
+    }
+  }, [venue, usersState.user?.favourites]); // this effect is triggered when the venue or the user favourites change and it does the following:
+  // 1. Check if the venue is in the user's favourites
+  // 2. If it is, set the isFavourited state to true
+  // 3. If it is not, set the isFavourited state to false
+
+  const handleFavouriteClick = async (e) => {
+    e.preventDefault();
+    e.stopPropagation(); // this prevents the click event from bubbling up to the parent elements, ie it doesn't trigger the click event of the parent element
+
+    if (!usersState.user) {
+      toast.error("Please login to favourite items.");
+      return;
+    }
+
+    if (currentVenue._id === usersState.user._id) {
+      toast.error("You cannot add yourself to favourites.");
+      return;
+    }
+
+    try {
+      if (currentVenue.isFavourited) {
+        await removeFavourite(usersDispatch, currentVenue._id);
+        setCurrentVenue({ ...currentVenue, isFavourited: false });
+        toast.success("Venue removed from favourites.");
+      } else {
+        await addFavourite(usersDispatch, currentVenue._id);
+        setCurrentVenue({ ...currentVenue, isFavourited: true });
+        toast.success("Venue added to favourites.");
+      }
+    } catch (error) {
+      console.error("Failed to update favourites:", error);
+      toast.error("Failed to update favourites.");
+    }
+  };
 
   if (isLoading)
     return (
@@ -155,12 +100,14 @@ export default function IndividualVenuePage() {
         <LoadingSpinner />
       </div>
     );
+
   if (error)
     return (
       <div className="flex justify-center items-center min-h-screen text-red-600">
         {error}
       </div>
     );
+
   if (!venue)
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -169,11 +116,11 @@ export default function IndividualVenuePage() {
     );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 mb-24">
       {/* Photo Grid Section */}
-      <div className="grid grid-cols-4 gap-4 mb-8 relative h-[400px]">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-1 mb-8">
         <div
-          className="col-span-2 row-span-2 cursor-pointer"
+          className="col-span-2 row-span-2 cursor-pointer h-[200px] md:h-[400px]"
           onClick={() => {
             setShowAllPhotos(true);
             setSelectedPhoto(0);
@@ -182,13 +129,13 @@ export default function IndividualVenuePage() {
           <img
             src={venue.profilePicture}
             alt={venue.name}
-            className="w-full h-[400px] object-cover rounded-lg hover:opacity-95 transition-opacity"
+            className="w-full h-full object-cover rounded-lg hover:opacity-95 transition-opacity"
           />
         </div>
         {venue.images?.slice(0, 4).map((image, index) => (
           <div
             key={index}
-            className="cursor-pointer relative"
+            className="cursor-pointer relative h-[100px] md:h-[198px]"
             onClick={() => {
               setShowAllPhotos(true);
               setSelectedPhoto(index + 1);
@@ -197,7 +144,7 @@ export default function IndividualVenuePage() {
             <img
               src={image}
               alt={`${venue.name} photo ${index + 1}`}
-              className="w-full h-[198px] object-cover rounded-lg hover:opacity-95 transition-opacity"
+              className="w-full h-full object-cover rounded-lg hover:opacity-95 transition-opacity"
             />
             {/* Show overlay button only on the last image if there are more photos */}
             {index === 3 && venue.images.length > 4 && (
@@ -216,10 +163,25 @@ export default function IndividualVenuePage() {
           </div>
         ))}
       </div>
+      {/* End of Photo Grid Section */}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+      {/* Main Content Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        {/* Left Column - Venue Info */}
         <div className="md:col-span-2">
-          <h1 className="text-4xl font-bold mb-4">{venue.name}</h1>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-4xl font-bold">{venue.name}</h1>
+            <button
+              onClick={handleFavouriteClick}
+              className={`p-2 rounded-full transition-colors ${
+                currentVenue?.isFavourited
+                  ? "text-red-500 hover:text-red-600"
+                  : "text-gray-400 hover:text-red-500"
+              }`}
+            >
+              <FaHeart size={24} />
+            </button>
+          </div>
 
           {/* Location */}
           <div className="flex items-center gap-2 text-gray-600 mb-4">
@@ -239,7 +201,7 @@ export default function IndividualVenuePage() {
             ))}
           </div>
 
-          <p className="text-gray-600 mb-8">{venue.description}</p>
+          <p className="text-base md:text-lg mb-8">{venue.description}</p>
 
           {/* Divider */}
           <hr className="border-gray-200 mb-6" />
@@ -260,53 +222,52 @@ export default function IndividualVenuePage() {
           </div>
 
           {/* Divider */}
-          <hr className="border-gray-200 mb-6" />
+          <hr className="border-gray-200 mb-12" />
 
           {/* Key Information */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             {/* Opening Hours */}
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-white p-4 rounded-lg">
               <div className="flex items-center gap-2 mb-3">
                 <FaClock className="text-green" />
                 <h3 className="font-semibold">Opening Hours</h3>
               </div>
               {venue.additionalInfo?.openingTimes?.map((time, index) => (
-                <div key={index} className="flex justify-between text-sm">
+                <div
+                  key={index}
+                  className="flex justify-between text-sm md:text-base"
+                >
                   <span>{time}</span>
                 </div>
               ))}
             </div>
 
             {/* Performance Times */}
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-white p-4 rounded-lg">
               <div className="flex items-center gap-2 mb-3">
                 <FaMusic className="text-green" />
                 <h3 className="font-semibold">Performance Times</h3>
               </div>
               {venue.additionalInfo?.performingTimes?.map((time, index) => (
-                <div key={index} className="flex justify-between text-sm">
+                <div
+                  key={index}
+                  className="flex justify-between text-sm md:text-base"
+                >
                   <span>{time}</span>
                 </div>
               ))}
             </div>
 
             {/* Revenue Split */}
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-white p-4 rounded-lg">
               <div className="flex items-center gap-2 mb-3">
                 <FaMoneyBillWave className="text-green" />
                 <h3 className="font-semibold">Revenue Split</h3>
               </div>
-              {venue.additionalInfo?.revenueSplit ? (
-                <p className="text-sm">
-                  {venue.additionalInfo.revenueSplit.split("/")[0]}% artist
-                  {" / "}
-                  {venue.additionalInfo.revenueSplit.split("/")[1]}% venue
-                </p>
-              ) : (
-                <p className="text-sm text-gray-500">
-                  Revenue split information not available
-                </p>
-              )}
+              <p className="text-sm">
+                {venue.additionalInfo?.revenueSplit ||
+                  "Revenue split information not available"}
+              </p>
             </div>
           </div>
 
@@ -358,9 +319,20 @@ export default function IndividualVenuePage() {
           </div>
         </div>
       </div>
+      {/* End of Main Content Section */}
 
       {/* Photo Gallery Modal */}
-      {showAllPhotos && <PhotoGalleryModal />}
+      {showAllPhotos && (
+        <PhotoGalleryModal
+          showAllPhotos={showAllPhotos}
+          selectedPhoto={selectedPhoto}
+          setShowAllPhotos={setShowAllPhotos}
+          setSelectedPhoto={setSelectedPhoto}
+          profilePicture={venue.profilePicture}
+          images={venue.images}
+          name={venue.name}
+        />
+      )}
     </div>
   );
 }

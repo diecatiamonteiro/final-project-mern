@@ -1,11 +1,10 @@
 import { useState, useEffect, useContext } from "react";
-import axios from "axios";
 import UpdateProfileForm from "../components/dashboard/profile/UpdateProfileForm";
 import MyBookings from "../components/dashboard/bookings/MyBookings";
 import MyGigs from "../components/dashboard/gigs/MyGigs";
-import LoadingSpinner from "../components/LoadingSpinner";
 import { getUserData } from "../api/usersApi";
 import { DataContext } from "../contexts/Context";
+import AccountSettings from "../components/dashboard/AccountSettings";
 
 export default function UserDashboardPage() {
   const [activeTab, setActiveTab] = useState("account");
@@ -72,7 +71,7 @@ export default function UserDashboardPage() {
               profile.
             </p>
             <p className="text-gray-500">
-              Account settings component will go here
+              <AccountSettings />
             </p>
           </div>
         )}
