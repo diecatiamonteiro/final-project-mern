@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import axios from "axios";
 import { ProfilePictureUpload, GalleryUpload } from "./UploadImage";
 import AvailabilityCalendar from "../../calendars/AvailabilityCalendar";
+import { DataContext } from "../../../contexts/Context";
 
 // Update these constants to include all existing options
 const ARTIST_PERFORMANCE_TYPES = [
@@ -75,7 +76,9 @@ const REVENUE_SPLIT_OPTIONS = [
   "50/50",
 ];
 
-export default function UpdateProfileForm({ user = {}, onUpdate }) {
+export default function UpdateProfileForm({ onUpdate }) {
+  const { usersState } = useContext(DataContext);
+  const { user } = usersState;
   const [formData, setFormData] = useState({
     name: user?.name || "",
     description: user?.description || "",
@@ -112,7 +115,7 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
     user &&
     user.bookingsReceived
       .filter((booking) => booking.status === "accepted")
-      .filter((booking) => (booking = booking.performanceDate));
+      .map((booking) => (booking = booking.performanceDate));
 
   const allAcceptedBookings = user && [
     ...acceptedSentBookings,

@@ -2,18 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import BookingRequestCalendar from "../components/calendars/BookingRequestCalendar";
 import LoadingSpinner from "../components/LoadingSpinner";
-import {
-  FaFacebook,
-  FaInstagram,
-  FaTwitter,
-  FaYoutube,
-  FaSpotify,
-  FaSoundcloud,
-  FaChevronLeft,
-  FaChevronRight,
-  FaTimes,
-  FaGlobe,
-} from "react-icons/fa";
+import { SocialIcons } from "../components/SocialIcons";
+import { FaChevronLeft, FaChevronRight, FaTimes } from "react-icons/fa";
 
 export default function IndividualArtistPage() {
   const { id } = useParams();
@@ -269,7 +259,7 @@ export default function IndividualArtistPage() {
                 rel="noopener noreferrer"
                 className="text-green hover:text-greenHover transition-colors"
               >
-                {getSocialIcon(link)}
+                <SocialIcons link={link} />
               </a>
             ))}
           </div>
@@ -360,18 +350,6 @@ export default function IndividualArtistPage() {
     </div>
   );
 }
-
-// Helper function to determine social media icon
-const getSocialIcon = (url) => {
-  if (url.includes("facebook")) return <FaFacebook size={24} />;
-  if (url.includes("instagram")) return <FaInstagram size={24} />;
-  if (url.includes("twitter")) return <FaTwitter size={24} />;
-  if (url.includes("youtube")) return <FaYoutube size={24} />;
-  if (url.includes("spotify")) return <FaSpotify size={24} />;
-  if (url.includes("soundcloud")) return <FaSoundcloud size={24} />;
-  // Add website icon as default
-  return <FaGlobe size={24} />;
-};
 
 // Helper function to extract YouTube video ID
 const getYouTubeId = (url) => {

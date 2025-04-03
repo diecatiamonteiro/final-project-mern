@@ -41,13 +41,11 @@ export default function AvailabilityCalendar({
     [bookedDates]
   );
 
-  console.log("Incoming bookedDates:", bookedDates);
-  console.log("Converted booked dates:", convertedBookedDates);
-
   const handleDateSelect = (date) => {
     // Don't allow selection of booked dates
     const isBooked = convertedBookedDates.some(
-      (d) => d.getTime() === date.getTime()
+      (d) =>
+        new Date(d).setHours(0, 0, 0, 0) === new Date(date).setHours(0, 0, 0, 0)
     );
     if (isBooked) return;
 
@@ -63,12 +61,12 @@ export default function AvailabilityCalendar({
     }, 300);
 
     const isSelected = convertedDates.some(
-      (d) => d.getTime() === utcDate.getTime()
+      (d) => new Date(d).setHours(0, 0, 0, 0) === utcDate.setHours(0, 0, 0, 0)
     );
 
     if (isSelected) {
       const newDates = convertedDates.filter(
-        (d) => d.getTime() !== utcDate.getTime()
+        (d) => new Date(d).setHours(0, 0, 0, 0) !== utcDate.setHours(0, 0, 0, 0)
       );
       onDateSelect(newDates);
     } else {
@@ -77,23 +75,21 @@ export default function AvailabilityCalendar({
   };
 
   const dayClassName = (date) => {
-    const currentDate = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate()
-    ).getTime();
+    const currentDate = new Date(date).setHours(0, 0, 0, 0);
 
     // Check for booked dates first
     const isBooked = convertedBookedDates.some(
       (d) => new Date(d).setHours(0, 0, 0, 0) === currentDate
     );
-    console.log("Checking date:", new Date(currentDate), "isBooked:", isBooked);
 
     if (isBooked) {
       return "date-booked";
     }
 
-    if (selectedDate?.getTime() === currentDate) {
+    if (
+      selectedDate &&
+      new Date(selectedDate).setHours(0, 0, 0, 0) === currentDate
+    ) {
       return "date-selected";
     }
 
@@ -164,22 +160,67 @@ export default function AvailabilityCalendar({
           }
           .availability-calendar .date-unavailable {
             cursor: pointer;
-            color: #111827;
+            color: black;
           }
           .availability-calendar .react-datepicker__day--disabled {
             color: #ccc;
             cursor: default;
+            // text-decoration: line-through
           }
           .availability-calendar .date-booked {
-            border: 2px solid #111827;
-            background-color: white;
-            color: #111827;
+            border: 1px solid #059668a7;
+            color: #059669;
             cursor: not-allowed !important;
           }
           .availability-calendar .date-booked:hover {
             background-color: white !important;
-            color: #111827 !important;
+            color: ##ccc !important;
           }
+
+          /* Add tooltip base styles */
+          .availability-calendar .date-available,
+          .availability-calendar .date-booked {
+            position: relative;
+          }
+
+          .availability-calendar .date-available::after,
+          .availability-calendar .date-booked::after {
+            content: "Available";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 5px 5px;
+            background-color: #333;
+            color: white;
+            font-size: 12px;
+            white-space: nowrap;
+            visibility: hidden;
+            border-radius: 0.2rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 1000;
+            pointer-events: none;
+            line-height: 1;
+            height: fit-content;
+            box-sizing: border-box;
+          }
+
+          .availability-calendar .date-booked::after {
+            content: "Gig booked on this day";
+          }
+
+          .availability-calendar .date-available:hover::after,
+          .availability-calendar .date-booked:hover::after {
+            visibility: visible;
+            opacity: 1;
+          }
+
+          /* Remove only the default blue highlight on keyboard selection */
+          .availability-calendar .react-datepicker__day--keyboard-selected:not(.date-available):not(.date-booked):not(.date-selected) {
+            background-color: transparent;
+          }
+
         `}
       </style>
     </div>

@@ -221,12 +221,12 @@ export default function BookingRequestCalendar({
             text-decoration: line-through;
             cursor: not-allowed;
           }
-          .booking-calendar .react-datepicker__day--keyboard-selected {
+          .booking-calendar .react-datepicker__day--keyboard-selected:not(.date-available):not(.date-selected) {
             background-color: transparent;
-            border: 2px solid #059669;
+            border: none;
             color: inherit;
           }
-          .booking-calendar .react-datepicker__day--keyboard-selected:hover {
+          .booking-calendar .react-datepicker__day--keyboard-selected:hover:not(.date-available):not(.date-selected) {
             background-color: #f3f4f6;
           }
         `}

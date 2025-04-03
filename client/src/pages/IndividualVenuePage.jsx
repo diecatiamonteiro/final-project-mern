@@ -2,10 +2,6 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import BookingRequestCalendar from "../components/calendars/BookingRequestCalendar";
 import {
-  FaFacebook,
-  FaInstagram,
-  FaTwitter,
-  FaYoutube,
   FaMapMarkerAlt,
   FaClock,
   FaMoneyBillWave,
@@ -13,9 +9,9 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaTimes,
-  FaGlobe,
 } from "react-icons/fa";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { SocialIcons } from "../components/SocialIcons";
 
 export default function IndividualVenuePage() {
   const { id } = useParams();
@@ -258,7 +254,7 @@ export default function IndividualVenuePage() {
                 rel="noopener noreferrer"
                 className="text-green hover:text-greenHover transition-colors"
               >
-                {getSocialIcon(link)}
+                <SocialIcons link={link} />
               </a>
             ))}
           </div>
@@ -368,16 +364,6 @@ export default function IndividualVenuePage() {
     </div>
   );
 }
-
-// Helper function to determine social media icon
-const getSocialIcon = (url) => {
-  if (url.includes("facebook")) return <FaFacebook size={24} />;
-  if (url.includes("instagram")) return <FaInstagram size={24} />;
-  if (url.includes("twitter")) return <FaTwitter size={24} />;
-  if (url.includes("youtube")) return <FaYoutube size={24} />;
-  // Add website icon as default
-  return <FaGlobe size={24} />;
-};
 
 // Add the YouTube helper function (same as artist page)
 const getYouTubeId = (url) => {
