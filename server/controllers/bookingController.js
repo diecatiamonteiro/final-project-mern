@@ -314,11 +314,11 @@ export const acceptBooking = async (req, res, next) => {
       from: process.env.EMAIL_USER,
       to: initiator.email,
       subject: "Booking Accepted - The Greenroom",
-      html: bookingAcceptanceEmail({
-        performanceDate: booking.performanceDate,
-        venueName: receiver.role === "venue" ? receiver.name : initiator.name,
-        artistName: receiver.role === "artist" ? receiver.name : initiator.name,
-      }),
+      html: bookingAcceptanceEmail(
+        receiver.name || `${receiver.firstName} ${receiver.lastName}`,
+        initiator.name || `${initiator.firstName} ${initiator.lastName}`,
+        booking.performanceDate
+      ),
     });
 
     // Return populated booking

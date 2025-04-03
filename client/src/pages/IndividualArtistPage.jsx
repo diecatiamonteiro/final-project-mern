@@ -9,14 +9,11 @@ import {
 import BookingRequestCalendar from "../components/calendars/BookingRequestCalendar";
 import PhotoGalleryModal from "../components/individualPages/PhotoGalleryModal";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { SocialIcons } from "../components/SocialIcons";
 import {
-  FaFacebook,
-  FaInstagram,
-  FaTwitter,
-  FaYoutube,
-  FaSpotify,
-  FaSoundcloud,
-  FaGlobe,
+  FaChevronLeft,
+  FaChevronRight,
+  FaTimes,
   FaHeart,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -29,6 +26,23 @@ export default function IndividualArtistPage() {
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [currentArtist, setCurrentArtist] = useState(null);
+
+  const acceptedSentBookings =
+    artist &&
+    artist.bookingsSent
+      .filter((booking) => booking.status === "accepted")
+      .map((booking) => (booking = booking.performanceDate));
+
+  const acceptedReceivedBookings =
+    artist &&
+    artist.bookingsReceived
+      .filter((booking) => booking.status === "accepted")
+      .map((booking) => (booking = booking.performanceDate));
+
+  const allAcceptedBookings = artist && [
+    ...acceptedReceivedBookings,
+    ...acceptedSentBookings,
+  ];
 
   useEffect(() => {
     const fetchArtist = async () => {
@@ -239,7 +253,7 @@ export default function IndividualArtistPage() {
                 rel="noopener noreferrer"
                 className="text-green hover:text-greenHover transition-colors"
               >
-                {getSocialIcon(link)}
+                <SocialIcons link={link} />
               </a>
             ))}
           </div>
@@ -321,10 +335,7 @@ export default function IndividualArtistPage() {
             <div className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center w-full">
               <BookingRequestCalendar
                 availableDates={artist.availability}
-                bookedDates={artist.bookedDates}
-                onRequestBooking={(date) => {
-                  // Handle booking request
-                }}
+                bookedDates={allAcceptedBookings}
               />
             </div>
           </div>
@@ -347,18 +358,6 @@ export default function IndividualArtistPage() {
     </div>
   );
 }
-
-// Helper function to determine social media icon
-const getSocialIcon = (url) => {
-  if (url.includes("facebook")) return <FaFacebook size={24} />;
-  if (url.includes("instagram")) return <FaInstagram size={24} />;
-  if (url.includes("twitter")) return <FaTwitter size={24} />;
-  if (url.includes("youtube")) return <FaYoutube size={24} />;
-  if (url.includes("spotify")) return <FaSpotify size={24} />;
-  if (url.includes("soundcloud")) return <FaSoundcloud size={24} />;
-  // Add website icon as default
-  return <FaGlobe size={24} />;
-};
 
 // Helper function to extract YouTube video ID
 const getYouTubeId = (url) => {

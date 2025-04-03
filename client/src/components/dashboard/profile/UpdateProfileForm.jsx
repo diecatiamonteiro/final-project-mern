@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import axios from "axios";
 import { ProfilePictureUpload, GalleryUpload } from "./UploadImage";
 import AvailabilityCalendar from "../../calendars/AvailabilityCalendar";
+import { DataContext } from "../../../contexts/Context";
 
 // Update these constants to include all existing options
 const ARTIST_PERFORMANCE_TYPES = [
@@ -75,7 +76,9 @@ const REVENUE_SPLIT_OPTIONS = [
   "50/50",
 ];
 
-export default function UpdateProfileForm({ user = {}, onUpdate }) {
+export default function UpdateProfileForm({ onUpdate }) {
+  const { usersState } = useContext(DataContext);
+  const { user } = usersState;
   const [formData, setFormData] = useState({
     name: user?.name || "",
     description: user?.description || "",
@@ -102,13 +105,28 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
     availability: user?.availability || [],
   });
 
+  const acceptedSentBookings =
+    user &&
+    user.bookingsSent
+      .filter((booking) => booking.status === "accepted")
+      .map((booking) => (booking = booking.performanceDate));
+
+  const acceptedReceivedBookings =
+    user &&
+    user.bookingsReceived
+      .filter((booking) => booking.status === "accepted")
+      .map((booking) => (booking = booking.performanceDate));
+
+  const allAcceptedBookings = user && [
+    ...acceptedSentBookings,
+    ...acceptedReceivedBookings,
+  ];
+
   const [status, setStatus] = useState({
     loading: false,
     error: null,
     success: false,
   });
-
-  console.log(formData);
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
@@ -463,7 +481,7 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
                   <div className="space-y-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Revenue Split
+                        Revenue Split %
                       </label>
                       <select
                         name="revenueSplit"
@@ -757,6 +775,7 @@ export default function UpdateProfileForm({ user = {}, onUpdate }) {
             <div className="flex justify-center md:justify-start">
               <AvailabilityCalendar
                 selectedDates={formData.availability}
+                bookedDates={allAcceptedBookings}
                 onDateSelect={handleDateSelect}
               />
             </div>

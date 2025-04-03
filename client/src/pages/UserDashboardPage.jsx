@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from "react";
 import UpdateProfileForm from "../components/dashboard/profile/UpdateProfileForm";
 import MyBookings from "../components/dashboard/bookings/MyBookings";
 import MyGigs from "../components/dashboard/gigs/MyGigs";
-import LoadingSpinner from "../components/LoadingSpinner";
 import MyAccount from "../components/dashboard/account/MyAccount";
 import { DataContext } from "../contexts/Context";
 import { getUserData } from "../api/usersApi";
@@ -77,9 +76,9 @@ export default function UserDashboardPage() {
             <h2 className="text-xl font-semibold mb-2">Profile Settings</h2>
             <p className="text-gray-500 mb-10">
               Customize your profile and set your availability. Keep your
-              information up to date to attract more bookings.
+              information up to d ate to attract more bookings.
             </p>
-            <UpdateProfileForm user={user} onUpdate={handleProfileUpdate} />
+            <UpdateProfileForm onUpdate={handleProfileUpdate} />
           </div>
         )}
 

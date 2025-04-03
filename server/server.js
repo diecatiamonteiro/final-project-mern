@@ -13,7 +13,7 @@ import {
 } from "./middleware/errorHandler.js";
 
 // Connect to the database
-connectDB();
+await connectDB();
 
 // Initialise Express application
 const app = express();

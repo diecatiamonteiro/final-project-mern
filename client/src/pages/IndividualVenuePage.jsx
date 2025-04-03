@@ -9,19 +9,13 @@ import {
 import BookingRequestCalendar from "../components/calendars/BookingRequestCalendar";
 import PhotoGalleryModal from "../components/individualPages/PhotoGalleryModal";
 import {
-  FaFacebook,
-  FaInstagram,
-  FaTwitter,
-  FaYoutube,
   FaMapMarkerAlt,
   FaClock,
   FaMoneyBillWave,
   FaMusic,
-  FaGlobe,
   FaHeart,
 } from "react-icons/fa";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { toast } from "react-toastify";
 
 export default function IndividualVenuePage() {
   const { id } = useParams();
@@ -219,7 +213,7 @@ export default function IndividualVenuePage() {
                 rel="noopener noreferrer"
                 className="text-green hover:text-greenHover transition-colors"
               >
-                {getSocialIcon(link)}
+                <SocialIcons link={link} />
               </a>
             ))}
           </div>
@@ -267,14 +261,9 @@ export default function IndividualVenuePage() {
                 <FaMoneyBillWave className="text-green" />
                 <h3 className="font-semibold">Revenue Split</h3>
               </div>
-              <p className="text-sm md:text-base">
-                {(venue.additionalInfo?.revenueSplit &&
-                  `${
-                    venue.additionalInfo?.revenueSplit?.split("/")[0]
-                  }% artist / ${
-                    venue.additionalInfo?.revenueSplit?.split("/")[1]
-                  }% venue`) ||
-                  "Information not available"}
+              <p className="text-sm">
+                {venue.additionalInfo?.revenueSplit ||
+                  "Revenue split information not available"}
               </p>
             </div>
           </div>
@@ -321,10 +310,7 @@ export default function IndividualVenuePage() {
             <div className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center w-full">
               <BookingRequestCalendar
                 availableDates={venue.availability}
-                bookedDates={venue.bookedDates}
-                onRequestBooking={(date) => {
-                  // Handle booking request
-                }}
+                bookedDates={allAcceptedBookings}
               />
             </div>
           </div>
@@ -347,16 +333,6 @@ export default function IndividualVenuePage() {
     </div>
   );
 }
-
-// Helper function to determine social media icon
-const getSocialIcon = (url) => {
-  if (url.includes("facebook")) return <FaFacebook size={24} />;
-  if (url.includes("instagram")) return <FaInstagram size={24} />;
-  if (url.includes("twitter")) return <FaTwitter size={24} />;
-  if (url.includes("youtube")) return <FaYoutube size={24} />;
-  // Add website icon as default
-  return <FaGlobe size={24} />;
-};
 
 // Add the YouTube helper function (same as artist page)
 const getYouTubeId = (url) => {

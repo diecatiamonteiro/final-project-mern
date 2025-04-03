@@ -60,7 +60,9 @@ const UserSchema = new Schema(
   { timestamps: true }
 );
 
-// Keep the pre-update middleware for password updates
+// ----------------------------------------------------------------------
+
+// Pre-update middleware for password updates
 UserSchema.pre("findOneAndUpdate", async function (next) {
   const update = this.getUpdate();
   if (update.password) {
@@ -82,5 +84,19 @@ UserSchema.set("toJSON", {
     return ret;
   },
 });
+
+// Remove past availability from array
+UserSchema.methods.cleanupPastAvailability = async function () {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  yesterday.setHours(23, 59, 59, 999); // End of previous day
+
+  // Filter out dates that are before yesterday
+  this.availability = this.availability.filter(
+    (date) => new Date(date) > yesterday
+  );
+
+  return await this.save();
+};
 
 export default model("User", UserSchema);
