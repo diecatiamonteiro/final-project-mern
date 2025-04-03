@@ -16,6 +16,8 @@ import {
   FaHeart,
 } from "react-icons/fa";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { SocialIcons } from "../components/SocialIcons";
+import { toast } from "react-toastify";
 
 export default function IndividualVenuePage() {
   const { id } = useParams();
@@ -25,6 +27,23 @@ export default function IndividualVenuePage() {
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [currentVenue, setCurrentVenue] = useState(null);
+
+  const acceptedSentBookings =
+    venue &&
+    venue.bookingsSent
+      .filter((booking) => booking.status === "accepted")
+      .map((booking) => (booking = booking.performanceDate));
+
+  const acceptedReceivedBookings =
+    venue &&
+    venue.bookingsReceived
+      .filter((booking) => booking.status === "accepted")
+      .map((booking) => (booking = booking.performanceDate));
+
+  const allAcceptedBookings = venue && [
+    ...acceptedReceivedBookings,
+    ...acceptedSentBookings,
+  ];
 
   useEffect(() => {
     const fetchVenue = async () => {
@@ -261,9 +280,14 @@ export default function IndividualVenuePage() {
                 <FaMoneyBillWave className="text-green" />
                 <h3 className="font-semibold">Revenue Split</h3>
               </div>
-              <p className="text-sm">
-                {venue.additionalInfo?.revenueSplit ||
-                  "Revenue split information not available"}
+              <p className="text-sm md:text-base">
+                {(venue.additionalInfo?.revenueSplit &&
+                  `${
+                    venue.additionalInfo?.revenueSplit?.split("/")[0]
+                  }% artist / ${
+                    venue.additionalInfo?.revenueSplit?.split("/")[1]
+                  }% venue`) ||
+                  "Information not available"}
               </p>
             </div>
           </div>
