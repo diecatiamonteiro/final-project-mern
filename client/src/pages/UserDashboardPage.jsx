@@ -2,25 +2,22 @@ import { useState, useEffect, useContext } from "react";
 import UpdateProfileForm from "../components/dashboard/profile/UpdateProfileForm";
 import MyBookings from "../components/dashboard/bookings/MyBookings";
 import MyGigs from "../components/dashboard/gigs/MyGigs";
-import { getUserData } from "../api/usersApi";
+import MyAccount from "../components/dashboard/account/MyAccount";
 import { DataContext } from "../contexts/Context";
-import AccountSettings from "../components/dashboard/AccountSettings";
+import { getUserData } from "../api/usersApi";
 
 export default function UserDashboardPage() {
   const [activeTab, setActiveTab] = useState("account");
   const { usersState, usersDispatch } = useContext(DataContext);
-
-  useEffect(() => {
-    getUserData(usersDispatch);
-  }, []);
+  const { user } = usersState;
 
   // Pass this to UpdateProfileForm
   const handleProfileUpdate = async () => {
-    await getUserData(usersDispatch); // Refresh user data after successful update
+    await getUserData(usersDispatch);
   };
 
-  // No user state (shouldn't happen if protected route is working)
-  if (!usersState.user) {
+  // Shouldn't happen if protected route is working
+  if (!user) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center text-gray-500">No user data found</div>
@@ -70,9 +67,7 @@ export default function UserDashboardPage() {
               Manage your account settings, change your password, and delete
               profile.
             </p>
-            <p className="text-gray-500">
-              <AccountSettings />
-            </p>
+            <MyAccount />
           </div>
         )}
 
