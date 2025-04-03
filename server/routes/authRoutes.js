@@ -11,6 +11,8 @@ import {
   updateAccount,
   changePassword,
   deleteAccount,
+  forgotPassword,
+  resetPassword,
 } from "../controllers/authController.js";
 
 const authRouter = express.Router();
@@ -24,6 +26,8 @@ authRouter
   .get("/user-data", checkToken, getUserData)
   .patch("/update-account", checkToken, updateAccount)
   .patch("/change-password", checkToken, changePassword)
-  .delete("/delete-account", checkToken, deleteAccount);
+  .delete("/delete-account", checkToken, deleteAccount)
+  .post("/forgot-password", forgotPassword)
+  .post("/reset-password", resetPassword);
 
 export default authRouter;

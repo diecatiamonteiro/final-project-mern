@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 import validator from "validator";
 import axios from "axios";
 import transporter from "../utils/emailConfig.js";
-import { verificationEmail } from "../utils/emailTemplates.js";
+import { verificationEmail, passwordResetEmail } from "../utils/emailTemplates.js";
 import {
   tokenizeCookie,
   generateVerificationToken,
@@ -455,3 +455,93 @@ export const deleteAccount = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * @desc    Forgot password
+ * @route   POST /api/auth/forgot-password
+ * @access  Public (guest)
+ */
+
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return next(createError(400, "Email is required"));
+    }
+
+    // Validate and sanitize email
+    if (!validator.isEmail(email)) {
+      return next(createError(400, "Invalid email format"));
+    }
+    const sanitizedEmail = validator.normalizeEmail(email);
+
+    // Find user
+    const user = await User.findOne({ email: sanitizedEmail });
+    if (!user) {
+      return next(createError(404, "No account found with this email"));
+    }
+
+    // Generate reset token
+    const resetToken = generateVerificationToken();
+
+    // Create reset link
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}&userId=${user._id}`;
+
+    // Send reset email
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: "Reset your password - The Greenroom",
+      html: passwordResetEmail(resetLink),
+    });
+
+    res.status(200).json({
+      message: "Password reset link sent to your email",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Reset password
+ * @route   POST /api/auth/reset-password
+ * @access  Public (guest)
+ */
+
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { token, userId, newPassword } = req.body;
+
+    if (!token || !userId || !newPassword) {
+      return next(createError(400, "All fields are required"));
+    }
+
+    // Verify token
+    try {
+      jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+      return next(createError(400, "Invalid or expired reset link"));
+    }
+
+    // Find user
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(createError(404, "User not found"));
+    }
+
+    // Hash and update password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({
+      message: "Password has been reset successfully. Please log in.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
