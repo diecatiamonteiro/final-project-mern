@@ -13,10 +13,7 @@ import {
   FaClock,
   FaMoneyBillWave,
   FaMusic,
-  FaChevronLeft,
-  FaChevronRight,
-  FaTimes,
-  FaGlobe,
+  FaHeart,
 } from "react-icons/fa";
 import LoadingSpinner from "../components/LoadingSpinner";
 
