@@ -1,65 +1,26 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect, useContext } from "react";
 import UpdateProfileForm from "../components/dashboard/profile/UpdateProfileForm";
 import MyBookings from "../components/dashboard/bookings/MyBookings";
 import MyGigs from "../components/dashboard/gigs/MyGigs";
-import LoadingSpinner from "../components/LoadingSpinner";
+import { getUserData } from "../api/usersApi";
+import { DataContext } from "../contexts/Context";
 import AccountSettings from "../components/dashboard/AccountSettings";
+
 export default function UserDashboardPage() {
   const [activeTab, setActiveTab] = useState("account");
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Move fetchUser to its own function so we can reuse it
-  const fetchUser = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:8000/api/auth/user-data",
-        {
-          withCredentials: true,
-        }
-      );
-      setUser(response.data.data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      setError(error.response?.data?.message || "Failed to load user data");
-      setLoading(false);
-    }
-  };
+  const { usersState, usersDispatch } = useContext(DataContext);
 
   useEffect(() => {
-    fetchUser();
+    getUserData(usersDispatch);
   }, []);
 
   // Pass this to UpdateProfileForm
   const handleProfileUpdate = async () => {
-    await fetchUser(); // Refresh user data after successful update
+    await getUserData(usersDispatch); // Refresh user data after successful update
   };
 
-  // Loading state
-  if (loading) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="text-center text-gray-500">
-          <LoadingSpinner />
-        </div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="text-center text-red-500">{error}</div>
-      </div>
-    );
-  }
-
   // No user state (shouldn't happen if protected route is working)
-  if (!user) {
+  if (!usersState.user) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center text-gray-500">No user data found</div>
@@ -120,9 +81,9 @@ export default function UserDashboardPage() {
             <h2 className="text-xl font-semibold mb-2">Profile Settings</h2>
             <p className="text-gray-500 mb-10">
               Customize your profile and set your availability. Keep your
-              information up to date to attract more bookings.
+              information up to d ate to attract more bookings.
             </p>
-            <UpdateProfileForm user={user} onUpdate={handleProfileUpdate} />
+            <UpdateProfileForm onUpdate={handleProfileUpdate} />
           </div>
         )}
 

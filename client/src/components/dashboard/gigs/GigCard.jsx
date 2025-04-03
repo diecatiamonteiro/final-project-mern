@@ -112,7 +112,16 @@ export default function GigCard({ gig }) {
           </p>
           <p className="text-sm flex items-center gap-2">
             <FaEuroSign className="text-gray-400" />
-            Revenue Split: {venueRevenueSplit}
+            Revenue Split:{" "}
+            {venueRevenueSplit ? (
+              <span>
+                {venueRevenueSplit.split("/")[0]}% artist
+                {" / "}
+                {venueRevenueSplit.split("/")[1]}% venue
+              </span>
+            ) : (
+              "Not specified"
+            )}
           </p>
           <p className="text-sm flex items-center gap-2">
             <FaCircle className="text-xs text-gray-400" />

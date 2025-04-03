@@ -240,10 +240,7 @@ export const googleLogin = async (req, res, next) => {
 
     if (!user) {
       return next(
-        createError(
-          401,
-          "This account does not exist. Please register."
-        )
+        createError(401, "This account does not exist. Please register.")
       );
     }
 
@@ -290,8 +287,10 @@ export const getUserData = async (req, res, next) => {
     // Get user ID from checkToken middleware
     const userId = req.user.id;
 
-    // Find user and exclude password from response
-    const user = await User.findById(userId);
+    // Find user
+    const user = await User.findById(userId).populate({
+      path: "bookingsReceived bookingsSent",
+    });
 
     if (!user) {
       return next(createError(404, "User not found"));

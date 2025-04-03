@@ -2,6 +2,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import Button from "../../Button";
 import { FaEnvelope } from "react-icons/fa";
+import axios from "axios";
 
 export default function MessageForm({ bookingId, onClose }) {
   const [messageForm, setMessageForm] = useState({
@@ -12,18 +13,20 @@ export default function MessageForm({ bookingId, onClose }) {
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8000/api/email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const response = await axios.post(
+        "http://localhost:8000/api/email",
+        {
           bookingId,
           ...messageForm,
-        }),
-      });
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      if (!response.ok) throw new Error("Failed to send message");
+      if (response.status !== 200) throw new Error("Failed to send message");
 
       toast.success("Message sent successfully!");
       onClose();

@@ -72,12 +72,15 @@ export const getIndividualArtistOrVenue = async (req, res, next) => {
 
     // Find user by ID and exclude password
     const user = await User.findById(id).populate({
-      path: "favourites",
+      path: "favourites bookingsReceived bookingsSent",
     });
 
     if (!user) {
       return next(createError(404, "User not found"));
     }
+
+    // Clean up past availability dates
+    await user.cleanupPastAvailability();
 
     res.status(200).json({
       message: "User retrieved successfully",
@@ -124,7 +127,16 @@ export const updateProfile = async (req, res, next) => {
       return next(createError(400, "Maximum 10 images allowed in gallery"));
     }
 
-    // Find user and update with new data
+    // Find user first
+    const user = await User.findById(id);
+    if (!user) {
+      return next(createError(404, "User not found"));
+    }
+
+    // Clean up past availability dates
+    await user.cleanupPastAvailability();
+
+    // Now update with new data
     const updatedUser = await User.findByIdAndUpdate(
       id,
       {
@@ -138,14 +150,10 @@ export const updateProfile = async (req, res, next) => {
           images,
           socialLinks,
           availability,
-        }, // $set updates the specified fields
+        },
       },
       { new: true, runValidators: true }
     );
-
-    if (!updatedUser) {
-      return next(createError(404, "User not found"));
-    }
 
     res.status(200).json({
       message: "Profile updated successfully",
@@ -493,7 +501,7 @@ export const searchForArtistOrVenue = async (req, res, next) => {
     // If neither, check the endpoint or path to determine the type
     const isArtistSearch = performanceType !== undefined || genre !== undefined;
     const isVenueSearch = type !== undefined || revenueSplit !== undefined;
-    
+
     // Default to artist if performanceType/genre params exist, venue if type/revenueSplit exist
     // If only 'q' exists, use venue (maintaining backward compatibility)
     const searchRole = isArtistSearch ? "artist" : "venue";
@@ -507,7 +515,7 @@ export const searchForArtistOrVenue = async (req, res, next) => {
 
     // Build search query
     let searchQuery = {
-      role: searchRole
+      role: searchRole,
     };
 
     // Text search on name, description, type, city, and genre
