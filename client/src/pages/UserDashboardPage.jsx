@@ -1,64 +1,23 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect, useContext } from "react";
 import UpdateProfileForm from "../components/dashboard/profile/UpdateProfileForm";
 import MyBookings from "../components/dashboard/bookings/MyBookings";
 import MyGigs from "../components/dashboard/gigs/MyGigs";
 import LoadingSpinner from "../components/LoadingSpinner";
-import AccountSettings from "../components/dashboard/AccountSettings";
+import MyAccount from "../components/dashboard/account/MyAccount";
+import { DataContext } from "../contexts/Context";
+import { getUserData } from "../api/usersApi";
+
 export default function UserDashboardPage() {
   const [activeTab, setActiveTab] = useState("account");
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Move fetchUser to its own function so we can reuse it
-  const fetchUser = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:8000/api/auth/user-data",
-        {
-          withCredentials: true,
-        }
-      );
-      setUser(response.data.data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      setError(error.response?.data?.message || "Failed to load user data");
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUser();
-  }, []);
+  const { usersState, usersDispatch } = useContext(DataContext);
+  const { user } = usersState;
 
   // Pass this to UpdateProfileForm
   const handleProfileUpdate = async () => {
-    await fetchUser(); // Refresh user data after successful update
+    await getUserData(usersDispatch);
   };
 
-  // Loading state
-  if (loading) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="text-center text-gray-500">
-          <LoadingSpinner />
-        </div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="text-center text-red-500">{error}</div>
-      </div>
-    );
-  }
-
-  // No user state (shouldn't happen if protected route is working)
+  // Shouldn't happen if protected route is working
   if (!user) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -109,9 +68,7 @@ export default function UserDashboardPage() {
               Manage your account settings, change your password, and delete
               profile.
             </p>
-            <p className="text-gray-500">
-              <AccountSettings />
-            </p>
+            <MyAccount />
           </div>
         )}
 
