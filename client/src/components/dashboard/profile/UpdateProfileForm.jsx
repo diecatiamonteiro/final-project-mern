@@ -322,7 +322,6 @@ export default function UpdateProfileForm({ onUpdate }) {
 
       setStatus({ loading: false, error: null, success: true });
       setHasUnsavedChanges(false);
-      console.log("Profile updated:", response.data);
 
       // Call the onUpdate callback to refresh parent component
       if (onUpdate) {

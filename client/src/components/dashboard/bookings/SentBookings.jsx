@@ -16,8 +16,6 @@ export default function SentBookings() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [editingBooking, setEditingBooking] = useState(null);
 
-  console.log(editingBooking);
-
   const handleEditClick = (booking) => {
     setEditingBooking(booking);
     setShowCalendar(true);

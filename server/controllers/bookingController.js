@@ -21,8 +21,6 @@ export const requestArtistOrVenue = async (req, res, next) => {
     const { receivedBy, performanceDate } = req.body;
     const senderId = req.user.id; // From checkToken middleware
 
-    console.log(req.body);
-
     // Validate input
     if (!receivedBy || !performanceDate) {
       return next(createError(400, "Please provide all required fields"));
