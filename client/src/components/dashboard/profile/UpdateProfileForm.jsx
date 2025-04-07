@@ -3,6 +3,10 @@ import axios from "axios";
 import { ProfilePictureUpload, GalleryUpload } from "./UploadImage";
 import AvailabilityCalendar from "../../calendars/AvailabilityCalendar";
 import { DataContext } from "../../../contexts/Context";
+import Modal from "../../Modal";
+import Button from "../../Button";
+import { toast } from "react-toastify";
+import { updateProfile } from "../../../api/usersApi";
 
 // Update these constants to include all existing options
 const ARTIST_PERFORMANCE_TYPES = [
@@ -77,7 +81,7 @@ const REVENUE_SPLIT_OPTIONS = [
 ];
 
 export default function UpdateProfileForm({ onUpdate }) {
-  const { usersState } = useContext(DataContext);
+  const { usersState, usersDispatch } = useContext(DataContext);
   const { user } = usersState;
   const [formData, setFormData] = useState({
     name: user?.name || "",
@@ -129,6 +133,7 @@ export default function UpdateProfileForm({ onUpdate }) {
   });
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   // Handler for profile picture upload
   const handleProfilePicture = (imageUrl) => {
@@ -182,13 +187,36 @@ export default function UpdateProfileForm({ onUpdate }) {
   // Handler for media links
   const handleMediaLink = (e, platform) => {
     const { value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      media: [
-        ...prev.media.filter((m) => m.platform !== platform),
-        ...(value ? [{ url: value, platform }] : []),
-      ],
-    }));
+
+    setFormData((prev) => {
+      const mediaIndex = prev.media.findIndex((m) => m.platform === platform);
+
+      // If media item exists, update it
+      if (mediaIndex !== -1) {
+        const updatedMedia = [...prev.media];
+        updatedMedia[mediaIndex] = {
+          ...updatedMedia[mediaIndex],
+          url: value,
+        };
+        return {
+          ...prev,
+          media: updatedMedia,
+        };
+      }
+
+      // If not found, create new media item (no _id yet)
+      return {
+        ...prev,
+        media: [
+          ...prev.media,
+          {
+            platform,
+            url: value,
+          },
+        ],
+      };
+    });
+
     setHasUnsavedChanges(true);
   };
 
@@ -309,20 +337,19 @@ export default function UpdateProfileForm({ onUpdate }) {
     </div>
   );
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setStatus({ loading: true, error: null, success: false });
 
+    console.log(formData);
+
     try {
-      const response = await axios.patch(
-        `http://localhost:8000/api/users/${user._id}/update-profile`,
-        formData,
-        { withCredentials: true }
-      );
+      await updateProfile(usersDispatch, user._id, formData);
 
       setStatus({ loading: false, error: null, success: true });
       setHasUnsavedChanges(false);
-      console.log("Profile updated:", response.data);
+      setShowConfirmModal(false);
+
+      toast.success("Profile updated successfully!");
 
       // Call the onUpdate callback to refresh parent component
       if (onUpdate) {
@@ -334,13 +361,20 @@ export default function UpdateProfileForm({ onUpdate }) {
         error: error.response?.data?.message || "Failed to update profile",
         success: false,
       });
+      toast.error("Failed to update profile. Please try again.");
       console.error("Update error:", error);
     }
   };
 
+  // New handler for form submission that shows modal
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setShowConfirmModal(true);
+  };
+
   return (
     <div className="relative">
-      <form onSubmit={handleSubmit} className="max-w-7xl mx-auto space-y-8">
+      <form onSubmit={handleFormSubmit} className="max-w-7xl mx-auto space-y-8">
         {/* Profile Header Section */}
         <div className="flex flex-col md:flex-row md:items-start md:space-x-8 mb-12">
           {/* Center profile picture section on mobile */}
@@ -363,7 +397,9 @@ export default function UpdateProfileForm({ onUpdate }) {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Name"
+                placeholder={
+                  user.role === "artist" ? "Artist Name" : "Venue Name"
+                }
                 className="w-full p-2 border rounded-lg"
               />
               <textarea
@@ -800,6 +836,39 @@ export default function UpdateProfileForm({ onUpdate }) {
           </div>
         </div>
       </form>
+
+      {/* Add Modal */}
+      {showConfirmModal && (
+        <Modal
+          title="Confirm Changes"
+          onClose={() => setShowConfirmModal(false)}
+        >
+          <div className="p-6 space-y-6">
+            <p className="text-gray-700">
+              Are you sure you want to save these changes?
+            </p>
+            <p className="text-sm text-gray-600">
+              These changes will be published to your public profile and will be
+              visible to other venues and artists.
+            </p>
+            <div className="flex justify-center space-x-4">
+              <Button
+                variant="green"
+                onClick={handleSubmit}
+                disabled={status.loading}
+              >
+                {status.loading ? "Saving..." : "Confirm"}
+              </Button>
+              <Button
+                variant="white"
+                onClick={() => setShowConfirmModal(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

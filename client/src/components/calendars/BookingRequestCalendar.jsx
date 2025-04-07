@@ -14,7 +14,7 @@ import Modal from "../Modal";
 export default function BookingRequestCalendar({
   availableDates = [],
   bookedDates = [],
-  onRequestBooking,
+  onRequestBooking = () => {},
 }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [showModal, setShowModal] = useState(false);

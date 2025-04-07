@@ -17,6 +17,11 @@ import {
   FaHeart,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
+import {
+  getYouTubeId,
+  getSpotifyId,
+  getSoundCloudUrl,
+} from "../utils/mediaHelpers";
 
 export default function IndividualArtistPage() {
   const { id } = useParams();
@@ -306,7 +311,7 @@ export default function IndividualArtistPage() {
                         ) : item.platform === "SoundCloud" ? (
                           <div className="bg-white rounded-lg shadow-lg h-[152px] overflow-hidden">
                             <iframe
-                              src={`https://w.soundcloud.com/player/?url=${item.url}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false&buying=false&sharing=false&download=false&show_playcount=false`}
+                              src={getSoundCloudUrl(item.url)}
                               className="w-full h-full rounded-lg"
                               frameBorder="0"
                             />
@@ -358,16 +363,3 @@ export default function IndividualArtistPage() {
     </div>
   );
 }
-
-// Helper function to extract YouTube video ID
-const getYouTubeId = (url) => {
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-  const match = url.match(regExp);
-  return match && match[2].length === 11 ? match[2] : null;
-};
-
-// Add this helper function next to getYouTubeId
-const getSpotifyId = (url) => {
-  const trackId = url.split("/track/")[1]?.split("?")[0];
-  return trackId || null;
-};

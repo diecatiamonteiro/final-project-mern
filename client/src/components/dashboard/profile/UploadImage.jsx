@@ -62,7 +62,7 @@ export function ProfilePictureUpload({ currentImage, onImageUpload }) {
           {uploading && (
             <div className="absolute inset-0 flex items-center justify-center">
               <svg
-                className="animate-spin h-8 w-8 text-blue-500"
+                className="animate-spin h-8 w-8 text-green-500"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"

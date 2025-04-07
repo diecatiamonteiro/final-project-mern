@@ -18,6 +18,7 @@ import {
 import LoadingSpinner from "../components/LoadingSpinner";
 import { SocialIcons } from "../components/SocialIcons";
 import { toast } from "react-toastify";
+import { getYouTubeId } from "../utils/mediaHelpers";
 
 export default function IndividualVenuePage() {
   const { id } = useParams();
@@ -357,10 +358,3 @@ export default function IndividualVenuePage() {
     </div>
   );
 }
-
-// Add the YouTube helper function (same as artist page)
-const getYouTubeId = (url) => {
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-  const match = url.match(regExp);
-  return match && match[2].length === 11 ? match[2] : null;
-};

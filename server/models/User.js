@@ -41,12 +41,12 @@ const UserSchema = new Schema(
       default:
         "https://res.cloudinary.com/dtlnz58z5/image/upload/v1742665279/icon-7797704_1280_lifkba.webp",
     }, // Default Cloudinary image
-    media: [{ url: { type: String }, platform: { type: String } }], // For artists & venues, YouTube, Spotify, SoundCloud LINKS only
+    media: [{ url: { type: String }, platform: { type: String } }], // YouTube for artists & venues. Spotify and SoundCloud for artists only
     images: [{ type: String }], // Cloudinary URLs to store images
     socialLinks: [{ type: String }], // Social media and portfolio links
 
     // Mark own availability
-    availability: [{ type: Date }], // Dates the user has marked as available in their calendar
+    availability: [{ type: Date }], // Dates the user has marked as available in their availability calendar
 
     // Bookings
     bookingsReceived: [

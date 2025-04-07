@@ -18,11 +18,9 @@ import {
   searchForArtistOrVenue,
 } from "../controllers/userController.js";
 import {
-  checkImages,
   checkMediaLinks,
   checkSocialLinks,
 } from "../middleware/checkUploads.js";
-// import { upload } from "../middleware/uploadMiddleware.js";
 
 const userRouter = express.Router();
 
@@ -41,9 +39,8 @@ userRouter
   .patch(
     "/:id/update-profile",
     checkToken,
-    // checkMediaLinks,
-    // checkImages,
-    // checkSocialLinks,
+    checkMediaLinks,
+    checkSocialLinks,
     updateProfile
   )
   .delete("/:id/delete-media/:mediaId", checkToken, deleteSingleMedia)
