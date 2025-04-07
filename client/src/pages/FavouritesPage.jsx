@@ -176,12 +176,7 @@ export default function FavouritesPage() {
                             {venue.description}
                           </p>
                         </div>
-                        <button
-                          onClick={() => navigate(`/venue/${venue._id}`)}
-                          className="mt-4 w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                        >
-                          View Details
-                        </button>
+                  
                       </div>
                     </div>
                   ))}
