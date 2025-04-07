@@ -17,3 +17,14 @@ export const getSpotifyId = (url) => {
   const trackId = url.split("/track/")[1]?.split("?")[0];
   return trackId || null;
 };
+
+export const getSoundCloudUrl = (url) => {
+  // If it's already a player URL, return it
+  if (url.includes("w.soundcloud.com/player")) {
+    return url;
+  }
+  // Otherwise, construct the player URL
+  return `https://w.soundcloud.com/player/?url=${encodeURIComponent(
+    url
+  )}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false&buying=false&sharing=false&download=false&show_playcount=false`;
+};

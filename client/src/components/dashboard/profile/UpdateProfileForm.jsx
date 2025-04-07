@@ -187,13 +187,36 @@ export default function UpdateProfileForm({ onUpdate }) {
   // Handler for media links
   const handleMediaLink = (e, platform) => {
     const { value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      media: [
-        ...prev.media.filter((m) => m.platform !== platform),
-        ...(value ? [{ url: value, platform }] : []),
-      ],
-    }));
+
+    setFormData((prev) => {
+      const mediaIndex = prev.media.findIndex((m) => m.platform === platform);
+
+      // If media item exists, update it
+      if (mediaIndex !== -1) {
+        const updatedMedia = [...prev.media];
+        updatedMedia[mediaIndex] = {
+          ...updatedMedia[mediaIndex],
+          url: value,
+        };
+        return {
+          ...prev,
+          media: updatedMedia,
+        };
+      }
+
+      // If not found, create new media item (no _id yet)
+      return {
+        ...prev,
+        media: [
+          ...prev.media,
+          {
+            platform,
+            url: value,
+          },
+        ],
+      };
+    });
+
     setHasUnsavedChanges(true);
   };
 

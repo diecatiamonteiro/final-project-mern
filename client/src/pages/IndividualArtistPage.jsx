@@ -17,7 +17,11 @@ import {
   FaHeart,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { getYouTubeId, getSpotifyId } from "../utils/mediaHelpers";
+import {
+  getYouTubeId,
+  getSpotifyId,
+  getSoundCloudUrl,
+} from "../utils/mediaHelpers";
 
 export default function IndividualArtistPage() {
   const { id } = useParams();
@@ -307,7 +311,7 @@ export default function IndividualArtistPage() {
                         ) : item.platform === "SoundCloud" ? (
                           <div className="bg-white rounded-lg shadow-lg h-[152px] overflow-hidden">
                             <iframe
-                              src={`https://w.soundcloud.com/player/?url=${item.url}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false&buying=false&sharing=false&download=false&show_playcount=false`}
+                              src={getSoundCloudUrl(item.url)}
                               className="w-full h-full rounded-lg"
                               frameBorder="0"
                             />
