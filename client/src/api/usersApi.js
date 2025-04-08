@@ -1,7 +1,7 @@
 import axios from "axios";
 import { USER_ACTIONS } from "../reducers/usersReducer";
 
-/* All the 22 API calls for the users page:
+/* All the 24 API calls for the users page:
     - register()
     - verifyEmail()
     - login()
@@ -10,6 +10,8 @@ import { USER_ACTIONS } from "../reducers/usersReducer";
     - getUserData()
     - updateAccount()
     - changePassword()
+    - forgotPassword()
+    - resetPassword()
     - deleteAccount()
     - getAllVenues()
     - getAllArtists()
@@ -24,6 +26,7 @@ import { USER_ACTIONS } from "../reducers/usersReducer";
     - getAllReceivedBookings()
     - getAllSentBookings()
     - searchForArtistOrVenue()  
+
 */
 
 export const register = async (usersDispatch, userData) => {
@@ -75,6 +78,9 @@ export const verifyEmail = async (usersDispatch, token, userId) => {
 export const login = async (usersDispatch, credentials) => {
   usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
+    // Clear any existing errors first
+    usersDispatch({ type: USER_ACTIONS.SET_ERROR, payload: null });
+
     const response = await axios.post("/api/auth/login", credentials);
     usersDispatch({
       type: USER_ACTIONS.LOGIN,
@@ -97,6 +103,9 @@ export const login = async (usersDispatch, credentials) => {
 export const googleLogin = async (usersDispatch, credentials) => {
   usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
+    // Clear any existing errors first
+    usersDispatch({ type: USER_ACTIONS.SET_ERROR, payload: null });
+
     const response = await axios.post(
       "/api/auth/login/google",
       {
@@ -182,11 +191,27 @@ export const getUserData = async (usersDispatch) => {
 export const updateAccount = async (usersDispatch, userData) => {
   usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    const response = await axios.patch("api/auth/update-account", userData);
+    const response = await axios.patch(
+      "/api/auth/update-account",
+      {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+
     usersDispatch({
       type: USER_ACTIONS.UPDATE_ACCOUNT,
       payload: response.data,
     });
+
+    if (response.data.requireReauth) {
+      return { ...response.data, requireReauth: true };
+    }
+
     return response.data;
   } catch (error) {
     const errorMessage =
@@ -195,7 +220,7 @@ export const updateAccount = async (usersDispatch, userData) => {
       type: USER_ACTIONS.SET_ERROR,
       payload: errorMessage,
     });
-    throw error; // Need to throw error to stop the function and show error message
+    throw error;
   } finally {
     usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
   }
@@ -204,13 +229,69 @@ export const updateAccount = async (usersDispatch, userData) => {
 export const changePassword = async (usersDispatch, passwordData) => {
   usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    await axios.patch("/api/auth/change-password", passwordData);
+    const response = await axios.patch(
+      "/api/auth/change-password",
+      passwordData
+    );
     usersDispatch({
       type: USER_ACTIONS.CHANGE_PASSWORD,
+      payload: response.data,
     });
+    return response.data;
   } catch (error) {
     const errorMessage =
       error.response?.data?.message || "Failed to change password.";
+    usersDispatch({
+      type: USER_ACTIONS.SET_ERROR,
+      payload: errorMessage,
+    });
+    throw error; // Throw the error to be caught by the component
+  } finally {
+    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
+  }
+};
+
+export const forgotPassword = async (usersDispatch, { email }) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
+  try {
+    const response = await axios.post("/api/auth/forgot-password", { email });
+    usersDispatch({
+      type: USER_ACTIONS.FORGOT_PASSWORD,
+      payload: response.data,
+    });
+    return response.data;
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.message || "Failed to send reset link.";
+    usersDispatch({
+      type: USER_ACTIONS.SET_ERROR,
+      payload: errorMessage,
+    });
+    throw error;
+  } finally {
+    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
+  }
+};
+
+export const resetPassword = async (
+  usersDispatch,
+  { token, userId, newPassword }
+) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
+  try {
+    const response = await axios.post("/api/auth/reset-password", {
+      token,
+      userId,
+      newPassword,
+    });
+    usersDispatch({
+      type: USER_ACTIONS.RESET_PASSWORD,
+      payload: response.data,
+    });
+    return response.data;
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.message || "Failed to reset password.";
     usersDispatch({
       type: USER_ACTIONS.SET_ERROR,
       payload: errorMessage,
@@ -293,8 +374,6 @@ export const getIndividualArtistOrVenue = async (usersDispatch, userId) => {
       type: USER_ACTIONS.GET_INDIVIDUAL_ARTIST_OR_VENUE,
       payload: response.data,
     });
-
-    console.log(response.data);
     return response.data;
   } catch (error) {
     const errorMessage =
@@ -528,52 +607,6 @@ export const searchForArtistOrVenue = async (usersDispatch, searchParams) => {
         payload: errorMessage,
       });
     }
-    throw error;
-  } finally {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
-  }
-};
-
-export const forgotPassword = async (usersDispatch, { email }) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
-  try {
-    const response = await axios.post("/api/auth/forgot-password", { email });
-    usersDispatch({
-      type: USER_ACTIONS.FORGOT_PASSWORD,
-      payload: response.data,
-    });
-    return response.data;
-  } catch (error) {
-    const errorMessage = error.response?.data?.message || "Failed to send reset link.";
-    usersDispatch({
-      type: USER_ACTIONS.SET_ERROR,
-      payload: errorMessage,
-    });
-    throw error;
-  } finally {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
-  }
-};
-
-export const resetPassword = async (usersDispatch, { token, userId, newPassword }) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
-  try {
-    const response = await axios.post("/api/auth/reset-password", {
-      token,
-      userId,
-      newPassword,
-    });
-    usersDispatch({
-      type: USER_ACTIONS.RESET_PASSWORD,
-      payload: response.data,
-    });
-    return response.data;
-  } catch (error) {
-    const errorMessage = error.response?.data?.message || "Failed to reset password.";
-    usersDispatch({
-      type: USER_ACTIONS.SET_ERROR,
-      payload: errorMessage,
-    });
     throw error;
   } finally {
     usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });

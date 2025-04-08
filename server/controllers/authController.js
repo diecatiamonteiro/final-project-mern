@@ -7,7 +7,11 @@ import jwt from "jsonwebtoken";
 import validator from "validator";
 import axios from "axios";
 import transporter from "../utils/emailConfig.js";
-import { verificationEmail, passwordResetEmail } from "../utils/emailTemplates.js";
+import {
+  verificationEmail,
+  passwordResetEmail,
+  accountDeletionEmail,
+} from "../utils/emailTemplates.js";
 import {
   tokenizeCookie,
   generateVerificationToken,
@@ -55,7 +59,11 @@ export const register = async (req, res, next) => {
     // Sanitize inputs
     const sanitizedFirstName = validator.escape(firstName);
     const sanitizedLastName = validator.escape(lastName);
-    const sanitizedEmail = validator.normalizeEmail(email);
+    const sanitizedEmail = validator.normalizeEmail(email, {
+      gmail_remove_dots: false,
+      gmail_remove_subaddress: true,
+      all_lowercase: true,
+    });
 
     // Check if user already exists
     const existingUser = await User.findOne({ email: sanitizedEmail });
@@ -102,7 +110,7 @@ export const register = async (req, res, next) => {
 };
 
 /**
- * @desc    Verify registered user's email
+ * @desc    Verify registered user's email (initial and updated email)
  * @route   GET /api/auth/verify-email
  * @access  Public (guest)
  */
@@ -115,6 +123,12 @@ export const verifyEmail = async (req, res, next) => {
       return next(createError(400, "Missing verification information"));
     }
 
+    // Find user first
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(createError(404, "User not found"));
+    }
+
     // Verify the token
     try {
       jwt.verify(token, process.env.JWT_SECRET);
@@ -122,20 +136,36 @@ export const verifyEmail = async (req, res, next) => {
       return next(createError(400, "Invalid or expired verification link"));
     }
 
-    // Find and update user
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { isConfirmed: true },
-      { new: true }
-    );
+    let updatedUser;
 
-    if (!user) {
-      return next(createError(404, "User not found"));
+    // Check if this is an email update verification
+    if (user.tempEmail && user.emailVerificationToken === token) {
+      // Email update verification
+      updatedUser = await User.findByIdAndUpdate(
+        userId,
+        {
+          email: user.tempEmail,
+          isConfirmed: true,
+          $unset: {
+            tempEmail: "",
+            emailVerificationToken: "",
+            emailVerificationExpires: "",
+          },
+        },
+        { new: true }
+      );
+    } else {
+      // Initial registration verification
+      updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { isConfirmed: true },
+        { new: true }
+      );
     }
 
     res.status(200).json({
       message: "Email verified successfully. You can now log in.",
-      data: user,
+      data: updatedUser,
     });
   } catch (error) {
     next(error);
@@ -163,15 +193,29 @@ export const login = async (req, res, next) => {
     }
 
     // Sanitize email
-    const sanitizedEmail = validator.normalizeEmail(email);
+    const sanitizedEmail = validator.normalizeEmail(email, {
+      gmail_remove_dots: false,
+      gmail_remove_subaddress: true,
+      all_lowercase: true,
+    });
 
-    // Check if user exists (using sanitized email)
-    const user = await User.findOne({ email: sanitizedEmail }).populate(
-      "favourites"
-    );
+    // First check if this email exists as a tempEmail (pending verification)
+    let user = await User.findOne({ tempEmail: sanitizedEmail }).populate("favourites");
+    if (user) {
+      return next(
+        createError(401, "Please verify your email before logging in")
+      );
+    }
+
+    // Then check if it exists as a primary email
+    user = await User.findOne({ email: sanitizedEmail }).populate("favourites");
     if (!user) {
-      // Using a generic message for security
-      return next(createError(401, "Invalid credentials"));
+      return next(createError(401, "User not found. Please register first."));
+    }
+
+    // If user has a pending email change, they shouldn't be able to log in with old email
+    if (user.tempEmail) {
+      return next(createError(401, "User not found. Please register first."));
     }
 
     // Check email verification status
@@ -227,7 +271,11 @@ export const googleLogin = async (req, res, next) => {
     );
 
     let { email } = response.data;
-    email = validator.normalizeEmail(email);
+    email = validator.normalizeEmail(email, {
+      gmail_remove_dots: false,
+      gmail_remove_subaddress: true,
+      all_lowercase: true,
+    });
 
     if (!email) {
       return next(
@@ -235,12 +283,26 @@ export const googleLogin = async (req, res, next) => {
       );
     }
 
-    // Check if user exists
-    let user = await User.findOne({ email }).populate("favourites");
-
-    if (!user) {
+    // First check if this email exists as a tempEmail (pending verification)
+    let user = await User.findOne({ tempEmail: email }).populate("favourites");
+    if (user) {
       return next(
-        createError(401, "This account does not exist. Please register.")
+        createError(401, "Please verify your email before logging in")
+      );
+    }
+
+    // Then check if it exists as a primary email
+    user = await User.findOne({ email }).populate("favourites");
+    if (!user || user.tempEmail) {
+      return next(
+        createError(401, "User not found. Please register first.")
+      );
+    }
+
+    // Check email verification status
+    if (!user.isConfirmed) {
+      return next(
+        createError(401, "Please verify your email before logging in")
       );
     }
 
@@ -315,32 +377,85 @@ export const updateAccount = async (req, res, next) => {
   try {
     const { firstName, lastName, email } = req.body;
     const userId = req.user.id;
+    const currentUser = await User.findById(userId);
 
-    // Validate email if it's being updated
-    if (email) {
-      if (!validator.isEmail(email)) {
+    // Sanitize email if provided
+    const sanitizedEmail = email
+      ? validator.normalizeEmail(email, {
+          gmail_remove_dots: false,
+          gmail_remove_subaddress: true,
+          all_lowercase: true,
+        })
+      : currentUser.email;
+
+    const isEmailChange = sanitizedEmail !== currentUser.email;
+
+    // Validate new email if being changed
+    if (isEmailChange) {
+      if (!validator.isEmail(sanitizedEmail)) {
         return next(createError(400, "Invalid email format"));
       }
       // Check if email is already in use
-      const existingUser = await User.findOne({ email });
-      if (existingUser && existingUser._id.toString() !== userId) {
+      const existingUser = await User.findOne({ email: sanitizedEmail });
+      if (existingUser) {
         return next(createError(400, "Email already in use"));
       }
+
+      // Store verification token and invalidate current session
+      const verificationToken = generateVerificationToken();
+      await User.findByIdAndUpdate(userId, {
+        $set: {
+          tempEmail: sanitizedEmail,
+          emailVerificationToken: verificationToken,
+          emailVerificationExpires: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+          isConfirmed: false // Invalidate current email
+        },
+      });
+
+      // Send verification email
+      const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}&userId=${userId}`;
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: sanitizedEmail,
+        subject: "Verify your new email",
+        html: verificationEmail(verificationLink),
+      });
+
+      // Clear the authentication cookie
+      res.clearCookie("jwtToken", {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+        path: "/",
+      });
+
+      // Send response
+      return res.status(200).json({
+        message: "Please check your new email for verification link",
+        requireReauth: true
+      });
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { $set: { firstName, lastName, email } },
-      { new: true, runValidators: true }
+    // If only updating names
+    const result = await User.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          firstName: validator.escape(firstName || currentUser.firstName),
+          lastName: validator.escape(lastName || currentUser.lastName),
+        },
+      }
     );
 
-    if (!updatedUser) {
-      return next(createError(404, "User not found"));
+    if (!result.acknowledged) {
+      return next(createError(500, "Failed to update account"));
     }
 
-    res
-      .status(200)
-      .json({ message: "User updated successfully", data: updatedUser });
+    const updatedUser = await User.findById(userId);
+    res.status(200).json({
+      message: "Account updated successfully",
+      data: updatedUser,
+    });
   } catch (error) {
     next(error);
   }
@@ -355,30 +470,46 @@ export const updateAccount = async (req, res, next) => {
 export const changePassword = async (req, res, next) => {
   try {
     const { currentPassword, newPassword } = req.body;
-    const userId = req.user.id; // From checkToken middleware
+    const userId = req.user.id;
 
-    if (!currentPassword || !newPassword) {
-      return next(createError(400, "All fields are required"));
-    }
+    // Get user with password
+    const user = await User.findById(userId).select("+password");
 
-    const user = await User.findById(userId);
     if (!user) {
       return next(createError(404, "User not found"));
     }
 
-    // Verify current password
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) {
-      return next(createError(401, "Invalid current password"));
+    // Compare password directly like in login
+    const isPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Current password is incorrect" });
     }
 
-    // Hash and update new password
+    // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedPassword;
-    await user.save();
 
-    res.status(200).json({ message: "Password updated successfully" });
+    // Update password directly without triggering middleware
+    user.password = hashedPassword;
+    await user.save({ validateBeforeSave: false });
+
+    // Clear cookie before response
+    res.clearCookie("jwtToken", {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      path: "/",
+    });
+
+    // Send success response
+    res.status(200).json({
+      message: "Password updated successfully. Please log in again",
+      requireReauth: true,
+    });
   } catch (error) {
+    console.error("Password change error:", error);
     next(error);
   }
 };
@@ -398,11 +529,15 @@ export const deleteAccount = async (req, res, next) => {
     session.startTransaction();
 
     try {
-      // Get user data first (for Cloudinary cleanup)
+      // Get user data first (for Cloudinary cleanup and email)
       const user = await User.findById(userId);
       if (!user) {
         return next(createError(404, "User not found"));
       }
+
+      // Store email for later use (since we'll delete the user)
+      const userEmail = user.email;
+      const userName = user.name || `${user.firstName} ${user.lastName}`;
 
       // Delete Cloudinary images
       if (user.profilePicture && !user.profilePicture.includes("default")) {
@@ -429,10 +564,18 @@ export const deleteAccount = async (req, res, next) => {
         { session }
       );
 
+      // After successful deletion and before clearing cookie, send email
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: userEmail,
+        subject: "Account Deleted - The Greenroom",
+        html: accountDeletionEmail(userName),
+      });
+
       // Delete user with transaction
       await User.findByIdAndDelete(userId).session(session);
 
-      // If everything succeeded, commit the transaction
+      // Commit the transaction
       await session.commitTransaction();
 
       // Clear auth cookie
@@ -444,7 +587,6 @@ export const deleteAccount = async (req, res, next) => {
 
       res.status(200).json({ message: "User account deleted successfully" });
     } catch (error) {
-      // If anything failed, rollback all database changes
       await session.abortTransaction();
       throw error;
     } finally {
@@ -456,7 +598,7 @@ export const deleteAccount = async (req, res, next) => {
 };
 
 /**
- * @desc    Forgot password
+ * @desc    Forgot password - Handles the initial password reset request (does not actually change the password)
  * @route   POST /api/auth/forgot-password
  * @access  Public (guest)
  */
@@ -473,7 +615,11 @@ export const forgotPassword = async (req, res, next) => {
     if (!validator.isEmail(email)) {
       return next(createError(400, "Invalid email format"));
     }
-    const sanitizedEmail = validator.normalizeEmail(email);
+    const sanitizedEmail = validator.normalizeEmail(email, {
+      gmail_remove_dots: false,
+      gmail_remove_subaddress: true,
+      all_lowercase: true,
+    });
 
     // Find user
     const user = await User.findOne({ email: sanitizedEmail });
@@ -504,7 +650,7 @@ export const forgotPassword = async (req, res, next) => {
 };
 
 /**
- * @desc    Reset password
+ * @desc    Reset password - Handles the actual password reset (completes the password reset process)
  * @route   POST /api/auth/reset-password
  * @access  Public (guest)
  */
@@ -542,5 +688,3 @@ export const resetPassword = async (req, res, next) => {
     next(error);
   }
 };
-
-

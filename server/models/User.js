@@ -56,6 +56,11 @@ const UserSchema = new Schema(
 
     // Favourites
     favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+
+    // Temporary email fields
+    tempEmail: String,
+    emailVerificationToken: String,
+    emailVerificationExpires: Date
   },
   { timestamps: true }
 );
