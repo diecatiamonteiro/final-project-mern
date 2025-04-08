@@ -377,8 +377,6 @@ export default function UpdateProfileForm({ onUpdate }) {
   const handleSubmit = async () => {
     setStatus({ loading: true, error: null, success: false });
 
-    console.log(formData);
-
     try {
       await updateProfile(usersDispatch, user._id, formData);
 
