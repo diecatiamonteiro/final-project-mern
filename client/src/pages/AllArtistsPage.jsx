@@ -151,7 +151,6 @@ export default function AllArtistsPage() {
                       currentSearchParams.city.charAt(0).toUpperCase() +
                       currentSearchParams.city.slice(1)
                     }`}
-                  .
                 </p>
               </div>
             )}
