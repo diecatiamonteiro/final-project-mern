@@ -7,99 +7,98 @@ import Modal from "../../Modal";
 import Button from "../../Button";
 import { toast } from "react-toastify";
 import { updateProfile } from "../../../api/usersApi";
+import TagSelector from "./TagSelector";
 
-const ARTIST_PERFORMANCE_TYPES = [
-  // Musical Acts
-  "Band",
-  "Duo",
-  "Solo Artist",
-  "Singer-Songwriter",
-  "Rapper",
-  "DJ",
-  "Orchestra",
-  "Ensemble",
-  // Dance & Movement
-  "Dancer",
-  // Comedy & Speaking
-  "Comedian",
-  "Poet",
-  "Spoken Word Artist",
-  // Variety & Specialty
-  "Magician",
-  "Theatrical Performer",
-  "Drag Performer",
-  "Improv Performer",
-  // Visual Performance
-  "Digital Artist",
-  // Multi-disciplinary
-  "Multi-disciplinary Artist",
-  "Performance Collective",
-  "Other",
-];
+const ARTIST_PERFORMANCE_TYPES = {
+  "Musical Acts": [
+    "Band",
+    "Duo",
+    "Solo Artist",
+    "Singer-Songwriter",
+    "Rapper",
+    "DJ",
+    "Orchestra",
+    "Ensemble",
+  ],
+  "Performing Acts": [
+    "Dancer",
+    "Comedian",
+    "Poet",
+    "Spoken Word Artist",
+    "Magician",
+    "Theatrical Performer",
+    "Drag Performer",
+    "Improv Performer",
+  ],
+  Other: [
+    "Digital Artist",
+    "Multi-disciplinary Artist",
+    "Performance Collective",
+    "Other",
+  ],
+};
 
-const ARTIST_GENRES = [
-  // Music Genres
-  "Rock",
-  "Pop",
-  "Jazz",
-  "Classical",
-  "Electronic",
-  "Hip Hop",
-  "R&B",
-  "Folk",
-  "Folk Rock",
-  "Country",
-  "Blues",
-  "Dream Pop",
-  "Disco",
-  "Dance",
-  "Metal",
-  "Indie",
-  "Indie Rock",
-  "Indie Pop",
-  "Alternative",
-  "Art Pop",
-  "Experimental",
-  "Psychedelic Rock",
-  "Garage Rock",
-  "Soul",
-  "Funk",
-  "Punk",
-  "World Music",
-  "Reggae",
-  "Latin",
-  "EDM",
-  // Dance Styles
-  "Contemporary Dance",
-  "Ballet",
-  "Hip Hop Dance",
-  "Jazz Dance",
-  "Tap",
-  "Street Dance",
-  "Ballroom",
-  "Traditional Dance",
-  "Modern Dance",
-  "Break Dance",
-  // Comedy Styles
-  "Stand-up",
-  "Improv Comedy",
-  // Spoken Word & Poetry
-  "Slam Poetry",
-  "Traditional Poetry",
-  // Variety & Circus
-  "Magic",
-  // Theater & Performance
-  "Theater",
-  "Drag",
-  "Cabaret",
-  "Burlesque",
-  // Visual Performance
-  "Digital Performance",
-  // General
-  "Family-Friendly",
-  "Adult",
-  "Other",
-];
+const ARTIST_GENRES = {
+  "Music Genres": [
+    "Rock",
+    "Pop",
+    "Jazz",
+    "Classical",
+    "Electronic",
+    "Hip Hop",
+    "R&B",
+    "Folk",
+    "Folk Rock",
+    "Country",
+    "Blues",
+    "Dream Pop",
+    "Disco",
+    "Metal",
+    "Indie",
+    "Indie Rock",
+    "Indie Pop",
+    "Alternative",
+    "Art Pop",
+    "Experimental",
+    "Psychedelic Rock",
+    "Garage Rock",
+    "Soul",
+    "Funk",
+    "Punk",
+    "World Music",
+    "Reggae",
+    "Latin",
+    "EDM",
+    "Dance",
+  ],
+  "Dance Styles": [
+    "Contemporary",
+    "Ballet",
+    "Hip Hop Dance",
+    "Jazz Dance",
+    "Tap",
+    "Street Dance",
+    "Ballroom",
+    "Traditional Dance",
+    "Modern Dance",
+    "Break Dance",
+  ],
+  "Comedy & Spoken Word": [
+    "Stand-up",
+    "Improv Comedy",
+    "Slam Poetry",
+    "Traditional Poetry",
+  ],
+  "Performance Arts": [
+    "Magic",
+    "Theater",
+    "Drag",
+    "Cabaret",
+    "Burlesque",
+    "Digital Performance",
+  ],
+  Other: ["Family-Friendly", "Adult", "Other"],
+};
 
 const VENUE_TYPES = [
   "Bar",
@@ -375,31 +374,6 @@ export default function UpdateProfileForm({ onUpdate }) {
     setHasUnsavedChanges(true);
   };
 
-  // Add this component for rendering tag bubbles
-  const TagSelector = ({ title, tags, selectedTags, onToggle }) => (
-    <div className="space-y-4">
-      <h4 className="text-md font-medium">{title}</h4>
-      <div className="flex flex-wrap gap-2">
-        {tags.map((tag) => (
-          <button
-            key={tag}
-            type="button"
-            onClick={() => onToggle(tag)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
-              ${
-                selectedTags.includes(tag)
-                  ? "bg-green text-white hover:bg-greenHover"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-          >
-            {selectedTags.includes(tag) && <span className="mr-1">✓</span>}
-            {tag}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-
   const handleSubmit = async () => {
     setStatus({ loading: true, error: null, success: false });
 
@@ -476,30 +450,26 @@ export default function UpdateProfileForm({ onUpdate }) {
           </div>
         </div>
 
-        {/* Tags Selection Section */}
-        <div className="space-y-8">
-          <h3 className="text-lg font-semibold mb-6">
-            {user.role === "artist" ? "Artist Categories" : "Venue Categories"}
-          </h3>
-
+        {/* Performance Type and Genre */}
+        <div className="space-y-6 mb-12">
           {user.role === "artist" ? (
-            // Artist-specific tags
-            <div className="space-y-8">
+            <>
               <TagSelector
                 title="Performance Type"
                 tags={ARTIST_PERFORMANCE_TYPES}
                 selectedTags={formData.type}
                 onToggle={(tag) => handleTagToggle("type", tag)}
+                defaultCategory="Musical Acts"
               />
               <TagSelector
                 title="Genre"
                 tags={ARTIST_GENRES}
                 selectedTags={formData.additionalInfo.genre || []}
                 onToggle={(tag) => handleTagToggle("genre", tag)}
+                defaultCategory="Music Genres"
               />
-            </div>
+            </>
           ) : (
-            // Venue-specific tags
             <TagSelector
               title="Venue Type"
               tags={VENUE_TYPES}
@@ -509,193 +479,11 @@ export default function UpdateProfileForm({ onUpdate }) {
           )}
         </div>
 
-        {/* Venue-specific fields */}
-        {user.role === "venue" && (
-          <div className="space-y-8">
-            <h3 className="text-lg font-semibold mb-6">Venue Details</h3>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              {/* Left Column - Address */}
-              <div className="space-y-6">
-                <div>
-                  <h4 className="text-md font-medium mb-6">Address</h4>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Street Name
-                      </label>
-                      <input
-                        type="text"
-                        name="streetName"
-                        value={formData.additionalInfo.address.streetName}
-                        onChange={handleAddressChange}
-                        className="w-full p-2 border rounded-lg"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Number
-                      </label>
-                      <input
-                        type="text"
-                        name="number"
-                        value={formData.additionalInfo.address.number}
-                        onChange={handleAddressChange}
-                        className="w-full p-2 border rounded-lg"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Zip Code
-                      </label>
-                      <input
-                        type="text"
-                        name="zipCode"
-                        value={formData.additionalInfo.address.zipCode}
-                        onChange={handleAddressChange}
-                        className="w-full p-2 border rounded-lg"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        City
-                      </label>
-                      <input
-                        type="text"
-                        name="city"
-                        value={formData.additionalInfo.address.city}
-                        onChange={handleAddressChange}
-                        className="w-full p-2 border rounded-lg"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column - Revenue Split and Times */}
-              <div className="space-y-6">
-                {/* Revenue Split */}
-                <div>
-                  <h4 className="text-md font-medium mb-6">Venue Operations</h4>
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Revenue Split %
-                      </label>
-                      <select
-                        name="revenueSplit"
-                        value={formData.additionalInfo.revenueSplit}
-                        onChange={(e) => {
-                          setFormData((prev) => ({
-                            ...prev,
-                            additionalInfo: {
-                              ...prev.additionalInfo,
-                              revenueSplit: e.target.value,
-                            },
-                          }));
-                          setHasUnsavedChanges(true);
-                        }}
-                        className="w-full p-2 border rounded-lg bg-white"
-                      >
-                        <option value="">Select a revenue split</option>
-                        {REVENUE_SPLIT_OPTIONS.map((split) => (
-                          <option key={split} value={split}>
-                            {split} (Artist/Venue)
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Times Arrays */}
-                    {["openingTimes", "performingTimes"].map((timeType) => (
-                      <div key={timeType}>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          {timeType === "openingTimes"
-                            ? "Opening Times"
-                            : "Performance Times"}
-                        </label>
-                        <div className="space-y-2">
-                          {formData.additionalInfo[timeType].map(
-                            (time, index) => (
-                              <div key={index} className="flex gap-2">
-                                <input
-                                  type="text"
-                                  value={time}
-                                  onChange={(e) =>
-                                    handleTimeArrayChange(
-                                      timeType,
-                                      index,
-                                      e.target.value
-                                    )
-                                  }
-                                  className="w-full p-2 border rounded-lg"
-                                  placeholder={`Enter ${
-                                    timeType === "openingTimes"
-                                      ? "opening"
-                                      : "performance"
-                                  } time`}
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleRemoveTime(timeType, index)
-                                  }
-                                  className="text-red-500 hover:text-red-700"
-                                >
-                                  <svg
-                                    className="w-5 h-5"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                </button>
-                              </div>
-                            )
-                          )}
-                          <button
-                            type="button"
-                            onClick={() => handleAddTime(timeType)}
-                            className="text-green hover:text-greenHover flex items-center gap-1"
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 4v16m8-8H4"
-                              />
-                            </svg>
-                            Add{" "}
-                            {timeType === "openingTimes"
-                              ? "Opening"
-                              : "Performance"}{" "}
-                            Time
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Media and Social Links Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        {/* Gallery and Social Links Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
           {/* Gallery Images */}
           <div>
-            <h3 className="text-lg font-semibold mb-6">Gallery Images</h3>
+            <h3 className="text-lg font-semibold mb-4">Gallery Images</h3>
             <div className="space-y-6">
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {formData.images.map((image, index) => (
@@ -736,10 +524,11 @@ export default function UpdateProfileForm({ onUpdate }) {
             </div>
           </div>
 
+          {/* Social & Media Links */}
           <div className="space-y-8">
             {/* Social Links */}
             <div>
-              <h3 className="text-lg font-semibold mb-6">Social Links</h3>
+              <h3 className="text-lg font-semibold mb-4">Social Links</h3>
               <div className="space-y-4">
                 {formData.socialLinks.map((link, index) => (
                   <div
@@ -813,7 +602,7 @@ export default function UpdateProfileForm({ onUpdate }) {
 
             {/* Media Links */}
             <div>
-              <h3 className="text-lg font-semibold mb-6">Media Links</h3>
+              <h3 className="text-lg font-semibold mb-4">Media Links</h3>
               <div className="space-y-4">
                 {user.role === "artist"
                   ? ["YouTube", "Spotify", "SoundCloud"].map((platform) => (
@@ -861,15 +650,13 @@ export default function UpdateProfileForm({ onUpdate }) {
           </div>
         </div>
 
-        {/* Availability Calendar Section */}
+        {/* Availability Calendar */}
         <div>
-          <h3 className="text-lg font-semibold mb-6 text-center md:text-left">
-            Set Your Availability
-          </h3>
+          <h3 className="text-lg font-semibold mb-3">Set Your Availability</h3>
           <div className="bg-white rounded-lg p-6 border border-gray-200">
             <p className="text-gray-600 mb-4 text-center md:text-left">
-              Select dates when you're available for bookings. Click a date to
-              mark it as available.
+              Select dates when you're available for bookings. Any confirmed
+              gigs are also shown here.
             </p>
             <div className="flex justify-center md:justify-start">
               <AvailabilityCalendar

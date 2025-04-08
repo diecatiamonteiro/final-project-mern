@@ -29,6 +29,32 @@ export const checkMediaLinks = (req, res, next) => {
         );
       }
 
+      // Validate URL format and security
+      try {
+        const parsedUrl = new URL(item.url);
+
+        // Security checks
+        if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+          throw createError(400, "URLs must use HTTP or HTTPS protocol");
+        }
+
+        // Prevent localhost, private IP addresses, and internal network access
+        const hostname = parsedUrl.hostname.toLowerCase();
+        if (
+          hostname === "localhost" ||
+          hostname.startsWith("127.") ||
+          hostname.startsWith("192.168.") ||
+          hostname.startsWith("10.") ||
+          hostname.startsWith("169.254.") ||
+          hostname.endsWith(".local") ||
+          hostname.endsWith(".internal")
+        ) {
+          throw createError(400, "Invalid domain");
+        }
+      } catch (error) {
+        throw createError(400, "Invalid URL format");
+      }
+
       return {
         ...item,
         url: convertToEmbed(item.url, item.platform),
@@ -85,15 +111,6 @@ export const checkSocialLinks = (req, res, next) => {
     next();
   } catch (error) {
     next(error);
-  }
-};
-
-// Helper function to validate URLs
-const validateUrl = (url) => {
-  try {
-    new URL(url);
-  } catch (error) {
-    return next(createError(400, "Invalid URL format"));
   }
 };
 

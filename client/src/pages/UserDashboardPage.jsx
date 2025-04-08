@@ -80,8 +80,9 @@ export default function UserDashboardPage() {
           <div className="p-6">
             <h2 className="text-xl font-semibold mb-2">Profile Settings</h2>
             <p className="text-gray-500 mb-10">
-              Customize your profile and set your availability. Keep your
-              information up to date to attract more bookings.
+              Customize your public profile and set your availability. This will
+              be visible to other venues and artists, keep your information up
+              to date to attract more bookings.
             </p>
             <UpdateProfileForm onUpdate={handleProfileUpdate} />
           </div>
