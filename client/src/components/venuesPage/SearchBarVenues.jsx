@@ -159,7 +159,7 @@ export default function SearchBar({ className, onSearch }) {
           <input
             type="text"
             name="q"
-            placeholder="Type a venue name"
+            placeholder="Type a Name"
             value={searchParams.q}
             onChange={handleInputChange}
             className="p-3 bg-offwhite/20 backdrop-blur-sm border border-offwhite/30 rounded-xl text-offwhite placeholder-offwhite/70 focus:outline-none focus:ring-2 focus:ring-green"
@@ -174,7 +174,7 @@ export default function SearchBar({ className, onSearch }) {
           <input
             type="text"
             name="city"
-            placeholder="Type a city"
+            placeholder="Type a City"
             value={searchParams.city}
             onChange={handleInputChange}
             className="p-3 bg-offwhite/20 backdrop-blur-sm border border-offwhite/30 rounded-xl text-offwhite placeholder-offwhite/70 focus:outline-none focus:ring-2 focus:ring-green"
