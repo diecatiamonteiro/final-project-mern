@@ -7,8 +7,10 @@ export const checkMediaLinks = (req, res, next) => {
   try {
     const { media } = req.body;
 
-    if (!media || !media.length)
-      throw createError(400, "No media link provided");
+    // If no media is provided, continue without validation
+    if (!media || !media.length) {
+      return next();
+    }
 
     const allowedPlatforms = ["YouTube", "Spotify", "SoundCloud"];
 
@@ -46,8 +48,10 @@ export const checkSocialLinks = (req, res, next) => {
   try {
     const { socialLinks } = req.body;
 
-    if (!socialLinks || !socialLinks.length)
-      return next(createError(400, "No social links provided"));
+    // If no social links are provided, continue without validation
+    if (!socialLinks || !socialLinks.length) {
+      return next();
+    }
 
     req.body.socialLinks = socialLinks.map((url) => {
       try {

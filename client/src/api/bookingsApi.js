@@ -1,6 +1,5 @@
 import axios from "axios";
 import { BOOKING_ACTIONS } from "../reducers/bookingsReducer";
-import { toast } from "react-toastify";
 
 /* All the 7 API calls for the bookings page:
     - requestArtistOrVenue()

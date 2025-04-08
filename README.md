@@ -2,7 +2,7 @@
 
 ## 1. Project Overview
 
-The Greenroom is a web platform connecting artists and small venues in Germany for performances, jam sessions, and gigs. It provides a space where musicianscan showcase their work and easily find performance opportunities, while venues can discover new talent and manage their bookings efficiently.
+The Greenroom is a web platform connecting artists and small venues in Germany for performances, jam sessions, and gigs. It provides a space where musicians, comedians, poets, and other performers can showcase their work and easily find performance opportunities, while venues can discover new talent and manage their bookings efficiently.
 
 ## 2. Core Features
 

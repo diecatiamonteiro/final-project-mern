@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { toast } from "react-toastify";
 import Button from "../../Button";
-import { FaEnvelope } from "react-icons/fa";
-import axios from "axios";
+import { DataContext } from "../../../contexts/Context";
+import { sendEmail } from "../../../api/emailApi";
 
 export default function MessageForm({ bookingId, onClose }) {
+  const { usersDispatch } = useContext(DataContext);
   const [messageForm, setMessageForm] = useState({
     subject: "",
     message: "",
@@ -13,26 +14,19 @@ export default function MessageForm({ bookingId, onClose }) {
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/email",
-        {
-          bookingId,
-          ...messageForm,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.status !== 200) throw new Error("Failed to send message");
+      await sendEmail(usersDispatch, {
+        bookingId,
+        ...messageForm,
+      });
 
       toast.success("Message sent successfully!");
       onClose();
     } catch (error) {
       console.error("Error sending message:", error);
-      toast.error("Failed to send message. Please try again.");
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to send message. Please try again."
+      );
     }
   };
 

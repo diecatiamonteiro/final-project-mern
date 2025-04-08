@@ -8,8 +8,8 @@ import Button from "../../Button";
 import { toast } from "react-toastify";
 import { updateProfile } from "../../../api/usersApi";
 
-// Update these constants to include all existing options
 const ARTIST_PERFORMANCE_TYPES = [
+  // Musical Acts
   "Band",
   "Duo",
   "Solo Artist",
@@ -18,9 +18,27 @@ const ARTIST_PERFORMANCE_TYPES = [
   "DJ",
   "Orchestra",
   "Ensemble",
+  // Dance & Movement
+  "Dancer",
+  // Comedy & Speaking
+  "Comedian",
+  "Poet",
+  "Spoken Word Artist",
+  // Variety & Specialty
+  "Magician",
+  "Theatrical Performer",
+  "Drag Performer",
+  "Improv Performer",
+  // Visual Performance
+  "Digital Artist",
+  // Multi-disciplinary
+  "Multi-disciplinary Artist",
+  "Performance Collective",
+  "Other",
 ];
 
 const ARTIST_GENRES = [
+  // Music Genres
   "Rock",
   "Pop",
   "Jazz",
@@ -34,6 +52,7 @@ const ARTIST_GENRES = [
   "Blues",
   "Dream Pop",
   "Disco",
+  "Dance",
   "Metal",
   "Indie",
   "Indie Rock",
@@ -50,25 +69,61 @@ const ARTIST_GENRES = [
   "Reggae",
   "Latin",
   "EDM",
+  // Dance Styles
+  "Contemporary Dance",
+  "Ballet",
+  "Hip Hop Dance",
+  "Jazz Dance",
+  "Tap",
+  "Street Dance",
+  "Ballroom",
+  "Traditional Dance",
+  "Modern Dance",
+  "Break Dance",
+  // Comedy Styles
+  "Stand-up",
+  "Improv Comedy",
+  // Spoken Word & Poetry
+  "Slam Poetry",
+  "Traditional Poetry",
+  // Variety & Circus
+  "Magic",
+  // Theater & Performance
+  "Theater",
+  "Drag",
+  "Cabaret",
+  "Burlesque",
+  // Visual Performance
+  "Digital Performance",
+  // General
+  "Family-Friendly",
+  "Adult",
   "Other",
 ];
 
 const VENUE_TYPES = [
   "Bar",
+  "Jazz Bar",
   "Club",
-  "Restaurant",
-  "Nightclub",
   "Concert Hall",
-  "Theater",
-  "Outdoor Venue",
-  "Cultural Center",
-  "Cafe",
-  "Hotel",
   "Arena",
-  "Festival Grounds",
-  "Art Gallery",
+  "Comedy Club",
+  "Cabaret Club",
+  "Outdoor Venue",
+  "Rooftop Venue",
+  "Festival",
+  "Theater",
+  "Cultural Center",
   "Community Center",
-  "Event Space",
+  "Café",
+  "Restaurant",
+  "Hotel",
+  "Art Gallery",
+  "Museum",
+  "Co-working Space",
+  "Bookstore",
+  "Pop-up Space",
+  "Other",
 ];
 
 const REVENUE_SPLIT_OPTIONS = [
@@ -189,6 +244,14 @@ export default function UpdateProfileForm({ onUpdate }) {
     const { value } = e.target;
 
     setFormData((prev) => {
+      // If the value is empty, remove this platform from media array
+      if (!value) {
+        return {
+          ...prev,
+          media: prev.media.filter((m) => m.platform !== platform),
+        };
+      }
+
       const mediaIndex = prev.media.findIndex((m) => m.platform === platform);
 
       // If media item exists, update it
@@ -204,7 +267,7 @@ export default function UpdateProfileForm({ onUpdate }) {
         };
       }
 
-      // If not found, create new media item (no _id yet)
+      // If not found and value exists, create new media item
       return {
         ...prev,
         media: [
