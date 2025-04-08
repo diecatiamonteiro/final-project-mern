@@ -41,8 +41,6 @@ export default function AvailabilityCalendar({
     [bookedDates]
   );
 
-  console.log("converted booked dates: ", convertedBookedDates);
-
   const handleDateSelect = (date) => {
     // Don't allow selection of booked dates
     const isBooked = convertedBookedDates.some(

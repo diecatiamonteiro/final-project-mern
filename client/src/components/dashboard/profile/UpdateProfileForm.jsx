@@ -52,6 +52,7 @@ const ARTIST_GENRES = [
   "Blues",
   "Dream Pop",
   "Disco",
+  "Dance",
   "Metal",
   "Indie",
   "Indie Rock",
@@ -69,7 +70,7 @@ const ARTIST_GENRES = [
   "Latin",
   "EDM",
   // Dance Styles
-  "Contemporary",
+  "Contemporary Dance",
   "Ballet",
   "Hip Hop Dance",
   "Jazz Dance",
@@ -243,6 +244,14 @@ export default function UpdateProfileForm({ onUpdate }) {
     const { value } = e.target;
 
     setFormData((prev) => {
+      // If the value is empty, remove this platform from media array
+      if (!value) {
+        return {
+          ...prev,
+          media: prev.media.filter((m) => m.platform !== platform),
+        };
+      }
+
       const mediaIndex = prev.media.findIndex((m) => m.platform === platform);
 
       // If media item exists, update it
@@ -258,7 +267,7 @@ export default function UpdateProfileForm({ onUpdate }) {
         };
       }
 
-      // If not found, create new media item (no _id yet)
+      // If not found and value exists, create new media item
       return {
         ...prev,
         media: [

@@ -45,6 +45,7 @@ export const USER_ACTIONS = {
   CLEAR_SEARCH: "CLEAR_SEARCH",
   FORGOT_PASSWORD: "FORGOT_PASSWORD",
   RESET_PASSWORD: "RESET_PASSWORD",
+  SEND_EMAIL: "SEND_EMAIL",
 };
 
 export const usersReducer = (state, action) => {
@@ -175,6 +176,11 @@ export const usersReducer = (state, action) => {
 
     case USER_ACTIONS.FORGOT_PASSWORD:
     case USER_ACTIONS.RESET_PASSWORD:
+      return {
+        ...state,
+      };
+
+    case USER_ACTIONS.SEND_EMAIL:
       return {
         ...state,
       };
