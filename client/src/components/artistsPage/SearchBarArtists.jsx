@@ -49,11 +49,12 @@ export default function SearchBarArtists({ className, onSearch }) {
         "Reggae",
         "Latin",
         "EDM",
+        "Dance",
       ],
       "Dance Styles": [
         "Contemporary",
         "Ballet",
-        "Hip Hop",
+        "Hip Hop Dance",
         "Jazz Dance",
         "Tap",
         "Street Dance",
@@ -283,7 +284,7 @@ export default function SearchBarArtists({ className, onSearch }) {
         {/* Genres Section */}
         <div className="flex flex-col gap-2 relative" ref={genreRef}>
           <label htmlFor="genres" className="text-offwhite font-medium">
-            Artist Genres
+            Genres
           </label>
           <button
             onClick={() => toggleSection("genre")}
