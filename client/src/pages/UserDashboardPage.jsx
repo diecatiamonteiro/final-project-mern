@@ -11,6 +11,11 @@ export default function UserDashboardPage() {
   const { usersState, usersDispatch } = useContext(DataContext);
   const { user } = usersState;
 
+  // Add this useEffect to fetch user data when component mounts
+  useEffect(() => {
+    getUserData(usersDispatch);
+  }, [usersDispatch]);
+
   // Pass this to UpdateProfileForm
   const handleProfileUpdate = async () => {
     await getUserData(usersDispatch);
