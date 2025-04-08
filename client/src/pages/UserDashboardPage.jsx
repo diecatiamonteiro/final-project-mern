@@ -33,7 +33,7 @@ export default function UserDashboardPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 pb-8">
+    <div className="max-w-7xl mx-auto px-4 mb-24">
       <h1 className="text-3xl font-bold mb-8">My Greenroom</h1>
 
       {/* Tab Navigation */}
@@ -44,7 +44,7 @@ export default function UserDashboardPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`
-                py-4 px-1 border-b-2 font-medium text-sm
+                py-4 px-1 border-b-2 font-medium text-sm md:text-lg
                 ${
                   activeTab === tab.id
                     ? "border-green text-green"
@@ -64,8 +64,8 @@ export default function UserDashboardPage() {
           <div className="p-6">
             <h2 className="text-xl font-semibold mb-2">Account Settings</h2>
             <p className="text-gray-500 mb-10">
-              Manage your account settings, change your password, and delete
-              profile.
+              Manage your personal data, change your password and delete your
+              account.
             </p>
             <MyAccount />
           </div>
@@ -76,7 +76,7 @@ export default function UserDashboardPage() {
             <h2 className="text-xl font-semibold mb-2">Profile Settings</h2>
             <p className="text-gray-500 mb-10">
               Customize your profile and set your availability. Keep your
-              information up to d ate to attract more bookings.
+              information up to date to attract more bookings.
             </p>
             <UpdateProfileForm onUpdate={handleProfileUpdate} />
           </div>

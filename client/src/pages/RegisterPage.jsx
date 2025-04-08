@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Button from "../components/Button";
 import { DataContext } from "../contexts/Context";
 import { register } from "../api/usersApi";
-import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
+import ShowHidePassword from "../components/ShowHidePassword";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -173,17 +173,10 @@ export default function RegisterPage() {
                 }
                 disabled={isLoading}
               />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <IoEyeOffOutline className="h-5 w-5" />
-                ) : (
-                  <IoEyeOutline className="h-5 w-5" />
-                )}
-              </button>
+              <ShowHidePassword
+                show={showPassword}
+                onToggle={() => setShowPassword(!showPassword)}
+              />
             </div>
           </div>
 

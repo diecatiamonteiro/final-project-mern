@@ -53,7 +53,6 @@ export const usersReducer = (state, action) => {
       return {
         ...state,
         isLoading: action.payload,
-        error: null,
       };
 
     case USER_ACTIONS.SET_ERROR:
@@ -67,7 +66,6 @@ export const usersReducer = (state, action) => {
       return {
         ...state,
         user: action.payload.data,
-        error: null,
       };
 
     case USER_ACTIONS.LOGIN:
@@ -78,7 +76,6 @@ export const usersReducer = (state, action) => {
         isAuthenticated: true,
         user: action.payload.data,
         favourites: action.payload.data?.favourites || [],
-        error: null,
       };
 
     case USER_ACTIONS.GET_USER_DATA:
@@ -87,7 +84,6 @@ export const usersReducer = (state, action) => {
         isAuthenticated: true,
         user: action.payload.data,
         favourites: action.payload.data?.favourites || [],
-        error: null,
       };
 
     case USER_ACTIONS.LOGOUT:
@@ -95,40 +91,34 @@ export const usersReducer = (state, action) => {
         ...state,
         user: null,
         isAuthenticated: false,
-        error: null,
       };
 
     case USER_ACTIONS.CHANGE_PASSWORD:
       return {
         ...state,
-        error: null,
       };
 
     case USER_ACTIONS.DELETE_ACCOUNT:
       return {
         ...usersInitialState,
-        error: null,
       };
 
     case USER_ACTIONS.GET_ALL_VENUES:
       return {
         ...state,
         venues: action.payload.data, // .data & .count
-        error: null,
       };
 
     case USER_ACTIONS.GET_ALL_ARTISTS:
       return {
         ...state,
         artists: action.payload.data, // .data & .count
-        error: null,
       };
 
     case USER_ACTIONS.GET_INDIVIDUAL_ARTIST_OR_VENUE:
       return {
         ...state,
         currentProfile: action.payload.data,
-        error: null,
       };
 
     case USER_ACTIONS.UPDATE_PROFILE:
@@ -137,7 +127,6 @@ export const usersReducer = (state, action) => {
       return {
         ...state,
         user: action.payload.data,
-        error: null,
       };
 
     case USER_ACTIONS.ADD_FAVOURITE:
@@ -145,14 +134,12 @@ export const usersReducer = (state, action) => {
       return {
         ...state,
         user: action.payload.data,
-        error: null,
       };
 
     case USER_ACTIONS.GET_ALL_FAVOURITES:
       return {
         ...state,
         favourites: action.payload.data, // .data & .count
-        error: null,
       };
 
     case USER_ACTIONS.GET_ALL_RECEIVED_AND_SENT_BOOKINGS:
@@ -160,47 +147,39 @@ export const usersReducer = (state, action) => {
         ...state,
         bookingsReceived: action.payload.data.received.bookings, // & .count
         bookingsSent: action.payload.data.sent.bookings, // & .count
-        error: null,
       };
 
     case USER_ACTIONS.GET_ALL_RECEIVED_BOOKINGS:
       return {
         ...state,
         bookingsReceived: action.payload.data, // .data & .count
-        error: null,
       };
 
     case USER_ACTIONS.GET_ALL_SENT_BOOKINGS:
       return {
         ...state,
         bookingsSent: action.payload.data, // .data & .count
-        error: null,
       };
 
     case USER_ACTIONS.SEARCH_FOR_ARTIST_OR_VENUE:
       return {
         ...state,
         searchResults: action.payload.data, // .data & .count
-        error: null,
       };
 
     case USER_ACTIONS.CLEAR_SEARCH:
       return {
         ...state,
         searchResults: [],
-        error: null,
       };
 
     case USER_ACTIONS.FORGOT_PASSWORD:
     case USER_ACTIONS.RESET_PASSWORD:
       return {
         ...state,
-        error: null,
       };
 
     default:
       return state;
   }
 };
-
-
