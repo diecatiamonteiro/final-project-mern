@@ -4,7 +4,7 @@ import Button from "../components/Button";
 import { useGoogleLogin } from "@react-oauth/google";
 import { DataContext } from "../contexts/Context";
 import { login, googleLogin } from "../api/usersApi";
-import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
+import ShowHidePassword from "../components/ShowHidePassword";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -24,9 +24,9 @@ export default function LoginPage() {
       await login(usersDispatch, formData);
       navigate("/dashboard");
     } catch (error) {
-      if (error.response?.data?.message === "User not registered") {
+      if (error.response?.data?.message === "User not found") {
         setIsUserRegistered(false);
-        setError("User not registered. Please register first.");
+        setError("User not found. Please register first.");
       } else if (error.response?.data?.message === "Invalid credentials") {
         setError("Invalid email or password");
       } else {
@@ -121,17 +121,10 @@ export default function LoginPage() {
                   }
                   disabled={isLoading}
                 />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <IoEyeOffOutline className="h-5 w-5" />
-                  ) : (
-                    <IoEyeOutline className="h-5 w-5" />
-                  )}
-                </button>
+                <ShowHidePassword
+                  show={showPassword}
+                  onToggle={() => setShowPassword(!showPassword)}
+                />
               </div>
               <div className="text-right mt-1">
                 <Link

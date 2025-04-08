@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { DataContext } from "../contexts/Context";
 import { resetPassword } from "../api/usersApi";
 import Button from "../components/Button";
-import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
+import ShowHidePassword from "../components/ShowHidePassword";
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
@@ -18,7 +18,11 @@ export default function ResetPasswordPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await resetPassword(usersDispatch, { token, userId, newPassword: password });
+      await resetPassword(usersDispatch, {
+        token,
+        userId,
+        newPassword: password,
+      });
       navigate("/login");
     } catch (error) {
       // Error handling is managed by the reducer
@@ -49,17 +53,10 @@ export default function ResetPasswordPage() {
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
             />
-            <button
-              type="button"
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
-                <IoEyeOffOutline className="h-5 w-5" />
-              ) : (
-                <IoEyeOutline className="h-5 w-5" />
-              )}
-            </button>
+            <ShowHidePassword
+              show={showPassword}
+              onToggle={() => setShowPassword(!showPassword)}
+            />
           </div>
           <Button
             type="submit"
@@ -73,4 +70,4 @@ export default function ResetPasswordPage() {
       </div>
     </div>
   );
-} 
+}

@@ -34,7 +34,7 @@ export default function Button({
       "bg-transparent hover:bg-green/10 text-green border border-green", //! link to /register (light bg)
     outlineBlack:
       "bg-transparent hover:bg-midnightBlack/10 text-midnightBlack border border-midnightBlack", //! link to /register (dark bg)
-    white: "bg-offwhite hover:bg-gray-200 text-midnightBlack", //! So far Logout button only
+    white: "bg-offwhite hover:bg-gray-200 text-midnightBlack",
     danger: "bg-red-600 hover:bg-red-700 text-offwhite",
     warning: "bg-amber-500 hover:bg-amber-600 text-midnightBlack",
     success: "bg-emerald-500 hover:bg-emerald-600 text-offwhite",
