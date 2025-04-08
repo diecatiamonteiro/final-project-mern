@@ -486,6 +486,9 @@ export const getAllAcceptedBookings = async (req, res, next) => {
   try {
     const userId = req.user.id; // From checkToken middleware
 
+    // First cleanup past bookings
+    await Booking.cleanupAllPastBookings();
+
     // Find all accepted bookings where user is either initiator or receiver
     const acceptedBookings = await Booking.find({
       $and: [

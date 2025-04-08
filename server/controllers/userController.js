@@ -370,24 +370,35 @@ export const getAllReceivedAndSentBookings = async (req, res, next) => {
   try {
     const { id } = req.params;
 
+    // First cleanup past bookings
+    await Booking.cleanupAllPastBookings();
+
     const user = await User.findById(id)
       .select("bookingsReceived bookingsSent")
       .populate([
         {
           path: "bookingsReceived",
-          match: { isCancelledOrDeclined: false },
+          match: {
+            isCancelledOrDeclined: false,
+            performanceDate: { $gte: new Date().setHours(0, 0, 0, 0) },
+          },
           populate: {
             path: "initiatedBy receivedBy",
-            select: " -bookingsReceived -bookingsSent",
+            select: "-bookingsReceived -bookingsSent",
           },
+          options: { sort: { performanceDate: 1 } },
         },
         {
           path: "bookingsSent",
-          match: { isCancelledOrDeclined: false },
+          match: {
+            isCancelledOrDeclined: false,
+            performanceDate: { $gte: new Date().setHours(0, 0, 0, 0) },
+          },
           populate: {
             path: "initiatedBy receivedBy",
-            select: " -bookingsReceived -bookingsSent",
+            select: "-bookingsReceived -bookingsSent",
           },
+          options: { sort: { performanceDate: 1 } },
         },
       ]);
 
@@ -432,6 +443,7 @@ export const getAllReceivedBookings = async (req, res, next) => {
           path: "initiatedBy receivedBy",
           select: " -bookingsReceived -bookingsSent",
         },
+        options: { sort: { performanceDate: 1 } },
       });
 
     if (!user) {
@@ -467,6 +479,7 @@ export const getAllSentBookings = async (req, res, next) => {
           path: "initiatedBy receivedBy",
           select: " -bookingsReceived -bookingsSent",
         },
+        options: { sort: { performanceDate: 1 } },
       });
 
     if (!user) {

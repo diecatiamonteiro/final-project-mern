@@ -27,4 +27,20 @@ const BookingSchema = new Schema(
   { timestamps: true }
 );
 
+// Add this static method to handle multiple bookings
+BookingSchema.statics.cleanupAllPastBookings = async function () {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  await this.updateMany(
+    {
+      performanceDate: { $lt: today },
+      isCancelledOrDeclined: false,
+    },
+    {
+      $set: { isCancelledOrDeclined: true },
+    }
+  );
+};
+
 export default model("Booking", BookingSchema);
