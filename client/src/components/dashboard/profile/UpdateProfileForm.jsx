@@ -7,99 +7,98 @@ import Modal from "../../Modal";
 import Button from "../../Button";
 import { toast } from "react-toastify";
 import { updateProfile } from "../../../api/usersApi";
+import TagSelector from "./TagSelector";
 
-const ARTIST_PERFORMANCE_TYPES = [
-  // Musical Acts
-  "Band",
-  "Duo",
-  "Solo Artist",
-  "Singer-Songwriter",
-  "Rapper",
-  "DJ",
-  "Orchestra",
-  "Ensemble",
-  // Dance & Movement
-  "Dancer",
-  // Comedy & Speaking
-  "Comedian",
-  "Poet",
-  "Spoken Word Artist",
-  // Variety & Specialty
-  "Magician",
-  "Theatrical Performer",
-  "Drag Performer",
-  "Improv Performer",
-  // Visual Performance
-  "Digital Artist",
-  // Multi-disciplinary
-  "Multi-disciplinary Artist",
-  "Performance Collective",
-  "Other",
-];
+const ARTIST_PERFORMANCE_TYPES = {
+  "Musical Acts": [
+    "Band",
+    "Duo",
+    "Solo Artist",
+    "Singer-Songwriter",
+    "Rapper",
+    "DJ",
+    "Orchestra",
+    "Ensemble",
+  ],
+  "Performing Acts": [
+    "Dancer",
+    "Comedian",
+    "Poet",
+    "Spoken Word Artist",
+    "Magician",
+    "Theatrical Performer",
+    "Drag Performer",
+    "Improv Performer",
+  ],
+  Other: [
+    "Digital Artist",
+    "Multi-disciplinary Artist",
+    "Performance Collective",
+    "Other",
+  ],
+};
 
-const ARTIST_GENRES = [
-  // Music Genres
-  "Rock",
-  "Pop",
-  "Jazz",
-  "Classical",
-  "Electronic",
-  "Hip Hop",
-  "R&B",
-  "Folk",
-  "Folk Rock",
-  "Country",
-  "Blues",
-  "Dream Pop",
-  "Disco",
-  "Dance",
-  "Metal",
-  "Indie",
-  "Indie Rock",
-  "Indie Pop",
-  "Alternative",
-  "Art Pop",
-  "Experimental",
-  "Psychedelic Rock",
-  "Garage Rock",
-  "Soul",
-  "Funk",
-  "Punk",
-  "World Music",
-  "Reggae",
-  "Latin",
-  "EDM",
-  // Dance Styles
-  "Contemporary Dance",
-  "Ballet",
-  "Hip Hop Dance",
-  "Jazz Dance",
-  "Tap",
-  "Street Dance",
-  "Ballroom",
-  "Traditional Dance",
-  "Modern Dance",
-  "Break Dance",
-  // Comedy Styles
-  "Stand-up",
-  "Improv Comedy",
-  // Spoken Word & Poetry
-  "Slam Poetry",
-  "Traditional Poetry",
-  // Variety & Circus
-  "Magic",
-  // Theater & Performance
-  "Theater",
-  "Drag",
-  "Cabaret",
-  "Burlesque",
-  // Visual Performance
-  "Digital Performance",
-  // General
-  "Family-Friendly",
-  "Adult",
-  "Other",
-];
+const ARTIST_GENRES = {
+  "Music Genres": [
+    "Alternative",
+    "Art Pop",
+    "Blues",
+    "Classical",
+    "Country",
+    "Dance",
+    "Disco",
+    "Dream Pop",
+    "EDM",
+    "Electronic",
+    "Experimental",
+    "Folk",
+    "Folk Rock",
+    "Funk",
+    "Garage Rock",
+    "Hip Hop",
+    "Indie",
+    "Indie Pop",
+    "Indie Rock",
+    "Jazz",
+    "Latin",
+    "Metal",
+    "Pop",
+    "Psychedelic Rock",
+    "Punk",
+    "Reggae",
+    "Rock",
+    "R&B",
+    "Soul",
+    "World Music",
+  ],
+  "Dance Styles": [
+    "Ballet",
+    "Ballroom",
+    "Break Dance",
+    "Contemporary",
+    "Hip Hop Dance",
+    "Jazz Dance",
+    "Modern Dance",
+    "Street Dance",
+    "Tap",
+    "Traditional Dance",
+  ],
+  "Comedy & Spoken Word": [
+    "Improv Comedy",
+    "Slam Poetry",
+    "Stand-up",
+    "Traditional Poetry",
+  ],
+  "Performance Arts": [
+    "Theater",
+    "Burlesque",
+    "Cabaret",
+    "Digital Performance",
+    "Drag",
+    "Magic",
+  ],
+  Other: ["Adult", "Family-Friendly", "Other"],
+};
 
 const VENUE_TYPES = [
   "Bar",
@@ -375,33 +374,9 @@ export default function UpdateProfileForm({ onUpdate }) {
     setHasUnsavedChanges(true);
   };
 
-  // Add this component for rendering tag bubbles
-  const TagSelector = ({ title, tags, selectedTags, onToggle }) => (
-    <div className="space-y-4">
-      <h4 className="text-md font-medium">{title}</h4>
-      <div className="flex flex-wrap gap-2">
-        {tags.map((tag) => (
-          <button
-            key={tag}
-            type="button"
-            onClick={() => onToggle(tag)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
-              ${
-                selectedTags.includes(tag)
-                  ? "bg-green text-white hover:bg-greenHover"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-          >
-            {selectedTags.includes(tag) && <span className="mr-1">✓</span>}
-            {tag}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-
   const handleSubmit = async () => {
     setStatus({ loading: true, error: null, success: false });
+
     try {
       await updateProfile(usersDispatch, user._id, formData);
 
@@ -475,30 +450,26 @@ export default function UpdateProfileForm({ onUpdate }) {
           </div>
         </div>
 
-        {/* Tags Selection Section */}
-        <div>
-          <h3 className="text-lg md:text-xl font-bold mb-4">
-            {user.role === "artist" ? "Artist Categories" : "Venue Categories"}
-          </h3>
-
+        {/* Performance Type and Genre */}
+        <div className="space-y-6 mb-12">
           {user.role === "artist" ? (
-            // Artist-specific tags
-            <div className="space-y-8">
+            <>
               <TagSelector
                 title={<>Performance Type<span className="text-green">*</span></>}
                 tags={ARTIST_PERFORMANCE_TYPES}
                 selectedTags={formData.type}
                 onToggle={(tag) => handleTagToggle("type", tag)}
+                defaultCategory="Musical Acts"
               />
               <TagSelector
                 title={<>Genre<span className="text-green">*</span></>}
                 tags={ARTIST_GENRES}
                 selectedTags={formData.additionalInfo.genre || []}
                 onToggle={(tag) => handleTagToggle("genre", tag)}
+                defaultCategory="Music Genres"
               />
-            </div>
+            </>
           ) : (
-            // Venue-specific tags
             <TagSelector
               title={<>Venue Type<span className="text-green">*</span></>}
               tags={VENUE_TYPES}
@@ -742,6 +713,7 @@ export default function UpdateProfileForm({ onUpdate }) {
             </div>
           </div>
 
+          {/* Social & Media Links */}
           <div className="space-y-8">
             {/* Social Links */}
             <div>
@@ -869,15 +841,15 @@ export default function UpdateProfileForm({ onUpdate }) {
           </div>
         </div>
 
-        {/* Availability Calendar Section */}
+        {/* Availability Calendar */}
         <div>
           <h3 className="text-lg md:text-xl font-bold mb-6 text-center md:text-left">
             Set Your Availability<span className="text-green">*</span>
           </h3>
           <div className="bg-white rounded-lg p-6 border border-gray-200">
             <p className="text-gray-600 mb-4 text-center md:text-left">
-              Select dates when you're available for bookings. Click a date to
-              mark it as available.
+              Select dates when you're available for bookings. Any confirmed
+              gigs are also shown here.
             </p>
             <div className="flex justify-center md:justify-start">
               <AvailabilityCalendar
