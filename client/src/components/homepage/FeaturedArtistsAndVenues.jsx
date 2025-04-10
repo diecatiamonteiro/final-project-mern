@@ -54,7 +54,7 @@ export default function FeaturedArtistsAndVenues() {
   };
 
   const handleFavouriteClick = async (e, item, type) => {
-    // 1. Prevent default behavior and stop event propagation
+    // 1. Prevent default behaviour and stop event propagation
     e.preventDefault();
     e.stopPropagation();
 
@@ -74,7 +74,7 @@ export default function FeaturedArtistsAndVenues() {
     try {
       // 5a. If item is already favourited, remove it
       if (item.isFavourited) {
-        // Make API call to remove favorite
+        // Make API call to remove favourite
         await removeFavourite(usersDispatch, item._id);
         toast.success(`${type} removed from favourites.`);
 
@@ -95,9 +95,9 @@ export default function FeaturedArtistsAndVenues() {
           );
         }
       }
-      // 5b. If item is not favorited, add it
+      // 5b. If item is not favourited, add it
       else {
-        // Make API call to add favorite
+        // Make API call to add favourite
         await addFavourite(usersDispatch, item._id);
         toast.success(`${type} added to favourites.`);
 

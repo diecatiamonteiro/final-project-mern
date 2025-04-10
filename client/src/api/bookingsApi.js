@@ -12,7 +12,6 @@ import { BOOKING_ACTIONS } from "../reducers/bookingsReducer";
 */
 
 export const requestArtistOrVenue = async (bookingsDispatch, bookingData) => {
-  console.log(bookingData);
   bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.post("/api/bookings", bookingData);
@@ -20,7 +19,6 @@ export const requestArtistOrVenue = async (bookingsDispatch, bookingData) => {
       type: BOOKING_ACTIONS.REQUEST_ARTIST_OR_VENUE,
       payload: response.data,
     });
-    console.log("Booking response: ", response.data);
     return response.data;
   } catch (error) {
     const errorMessage =

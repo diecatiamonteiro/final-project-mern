@@ -78,8 +78,21 @@ export default function AllVenuesPage() {
     // Decide which list of venues to work with: If there are search results, use that list. Otherwise, fall back to showing all venues.
     const baseVenues = searchResults.length > 0 ? searchResults : venues;
 
-    // For each venue in the selected list, add an 'isFavourited' flag depending on whether the logged-in user has favourited it. If there's no user or no favourites list yet, assume this venue is NOT favourited
-    const updatedVenues = baseVenues?.map((venue) => {
+    // Filter out incomplete profiles and add favourite status
+    //! original: remove .filter until and keep only .map
+    const updatedVenues = baseVenues?.filter(venue => 
+      venue.name && 
+      venue.description && 
+      venue.type?.length > 0 &&
+      venue.additionalInfo?.address?.streetName &&
+      venue.additionalInfo?.address?.number &&
+      venue.additionalInfo?.address?.zipCode &&
+      venue.additionalInfo?.address?.city &&
+      venue.additionalInfo?.revenueSplit &&
+      venue.additionalInfo?.openingTimes &&
+      venue.additionalInfo?.performingTimes &&
+      venue.availability?.length > 0
+    ).map((venue) => {
       if (!user || !user.favourites) return { ...venue, isFavourited: false };
 
       // Try to find this venue in the user's list of favourites

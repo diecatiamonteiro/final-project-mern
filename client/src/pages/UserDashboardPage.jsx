@@ -32,7 +32,7 @@ export default function UserDashboardPage() {
 
   const tabs = [
     { id: "account", label: "My Account" },
-    { id: "profile", label: "My Profile" },
+    { id: "profile", label: "My Public Profile" },
     { id: "bookings", label: "My Bookings" },
     { id: "gigs", label: "My Gigs" },
   ];
@@ -78,11 +78,53 @@ export default function UserDashboardPage() {
 
         {activeTab === "profile" && (
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-2">Profile Settings</h2>
-            <p className="text-gray-500 mb-10">
-              Customize your profile and set your availability. Keep your
-              information up to date to attract more bookings.
-            </p>
+            <h2 className="text-xl font-semibold mb-2">
+              Public Profile Settings
+            </h2>
+            {user.role === "artist" ? (
+              <div>
+                <p className="text-gray-500 mb-6">
+                  Customise your public profile and set your availability to
+                  attract bookings. Once the required fields are filled in, your
+                  profile will be published in the{" "}
+                  <span className="font-bold">Find Artists</span> page.
+                </p>
+                <div className="bg-orange-500/10 p-4 rounded-lg mb-10">
+                  <p className="text-orange-500 mb-2">
+                    Please note that your profile will only be published in the
+                    Find Artists page once you have filled in <span className="font-bold">all</span> of the following
+                    fields:
+                  </p>
+                  <ul className="list-disc pl-5 text-orange-500">
+                    <li>Basic Information</li>
+                    <li>Artist Categories</li>
+                    <li>Calendar Available Dates</li>
+                  </ul>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <p className="text-gray-500 mb-6">
+                  Customise your public profile and set your availability to
+                  attract bookings. Once the required fields are filled in, your
+                  profile will be published in the{" "}
+                  <span className="font-bold">Find Venues</span> page.
+                </p>
+                <div className="bg-orange-500/10 p-4 rounded-lg mb-10">
+                  <p className="text-orange-500 mb-2">
+                    Please note that your profile will only be published in the
+                    Find Venues page once you have filled in <span className="font-bold">all</span> of the following
+                    fields:
+                  </p>
+                  <ul className="list-disc pl-5 text-orange-500">
+                    <li>Basic Information</li>
+                    <li>Venue Categories</li>
+                    <li>Venue Details</li>
+                    <li>Calendar Available Dates</li>
+                  </ul>
+                </div>
+              </div>
+            )}
             <UpdateProfileForm onUpdate={handleProfileUpdate} />
           </div>
         )}

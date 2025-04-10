@@ -144,9 +144,9 @@ export default function UpdateProfileForm({ onUpdate }) {
     type: user?.type || [],
     additionalInfo: {
       ...user?.additionalInfo,
-      // Ensure genre array exists and is initialized with user's existing genres
+      // Ensure genre array exists and is initialised with user's existing genres
       genre: user?.additionalInfo?.genre || [],
-      // Venue specific fields - initialize with existing data or defaults
+      // Venue specific fields - initialise with existing data or defaults
       address: {
         streetName: user?.additionalInfo?.address?.streetName || "",
         number: user?.additionalInfo?.address?.number || "",
@@ -402,9 +402,6 @@ export default function UpdateProfileForm({ onUpdate }) {
 
   const handleSubmit = async () => {
     setStatus({ loading: true, error: null, success: false });
-
-    console.log(formData);
-
     try {
       await updateProfile(usersDispatch, user._id, formData);
 
@@ -442,7 +439,7 @@ export default function UpdateProfileForm({ onUpdate }) {
         <div className="flex flex-col md:flex-row md:items-start md:space-x-8 mb-12">
           {/* Center profile picture section on mobile */}
           <div className="flex-shrink-0 mb-8 md:mb-0 flex flex-col items-center md:items-start">
-            <h3 className="text-lg font-semibold mb-4 text-center md:text-left">
+            <h3 className="text-lg md:text-xl font-bold mb-4 text-center md:text-left">
               Profile Picture
             </h3>
             <ProfilePictureUpload
@@ -453,7 +450,9 @@ export default function UpdateProfileForm({ onUpdate }) {
 
           {/* Basic Info stacks below profile picture on mobile */}
           <div className="flex-grow w-full">
-            <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
+            <h3 className="text-lg md:text-xl font-bold mb-4">
+              Basic Information<span className="text-green">*</span>
+            </h3>
             <div className="space-y-4">
               <input
                 type="text"
@@ -477,8 +476,8 @@ export default function UpdateProfileForm({ onUpdate }) {
         </div>
 
         {/* Tags Selection Section */}
-        <div className="space-y-8">
-          <h3 className="text-lg font-semibold mb-6">
+        <div>
+          <h3 className="text-lg md:text-xl font-bold mb-4">
             {user.role === "artist" ? "Artist Categories" : "Venue Categories"}
           </h3>
 
@@ -486,13 +485,13 @@ export default function UpdateProfileForm({ onUpdate }) {
             // Artist-specific tags
             <div className="space-y-8">
               <TagSelector
-                title="Performance Type"
+                title={<>Performance Type<span className="text-green">*</span></>}
                 tags={ARTIST_PERFORMANCE_TYPES}
                 selectedTags={formData.type}
                 onToggle={(tag) => handleTagToggle("type", tag)}
               />
               <TagSelector
-                title="Genre"
+                title={<>Genre<span className="text-green">*</span></>}
                 tags={ARTIST_GENRES}
                 selectedTags={formData.additionalInfo.genre || []}
                 onToggle={(tag) => handleTagToggle("genre", tag)}
@@ -501,7 +500,7 @@ export default function UpdateProfileForm({ onUpdate }) {
           ) : (
             // Venue-specific tags
             <TagSelector
-              title="Venue Type"
+              title={<>Venue Type<span className="text-green">*</span></>}
               tags={VENUE_TYPES}
               selectedTags={formData.type}
               onToggle={(tag) => handleTagToggle("type", tag)}
@@ -512,17 +511,19 @@ export default function UpdateProfileForm({ onUpdate }) {
         {/* Venue-specific fields */}
         {user.role === "venue" && (
           <div className="space-y-8">
-            <h3 className="text-lg font-semibold mb-6">Venue Details</h3>
+            <h3 className="text-lg md:text-xl font-bold mb-6">
+              Venue Details<span className="text-green">*</span>
+            </h3>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Left Column - Address */}
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-md font-medium mb-6">Address</h4>
+                  <h4 className="text-md font-semibold mb-6">Address</h4>
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Street Name
+                        Street Name<span className="text-green">*</span>
                       </label>
                       <input
                         type="text"
@@ -534,7 +535,7 @@ export default function UpdateProfileForm({ onUpdate }) {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Number
+                        Number<span className="text-green">*</span>
                       </label>
                       <input
                         type="text"
@@ -546,7 +547,7 @@ export default function UpdateProfileForm({ onUpdate }) {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Zip Code
+                        Zip Code<span className="text-green">*</span>
                       </label>
                       <input
                         type="text"
@@ -558,7 +559,7 @@ export default function UpdateProfileForm({ onUpdate }) {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        City
+                        City<span className="text-green">*</span>
                       </label>
                       <input
                         type="text"
@@ -576,11 +577,13 @@ export default function UpdateProfileForm({ onUpdate }) {
               <div className="space-y-6">
                 {/* Revenue Split */}
                 <div>
-                  <h4 className="text-md font-medium mb-6">Venue Operations</h4>
+                  <h4 className="text-md font-semibold mb-6">
+                    Venue Operations
+                  </h4>
                   <div className="space-y-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Revenue Split %
+                        Revenue Split<span className="text-green">*</span>
                       </label>
                       <select
                         name="revenueSplit"
@@ -600,7 +603,8 @@ export default function UpdateProfileForm({ onUpdate }) {
                         <option value="">Select a revenue split</option>
                         {REVENUE_SPLIT_OPTIONS.map((split) => (
                           <option key={split} value={split}>
-                            {split} (Artist/Venue)
+                            {split.split("/")[0] || "Not Set "}% artist /{" "}
+                            {split.split("/")[1] || "Not Set "}% venue
                           </option>
                         ))}
                       </select>
@@ -611,8 +615,8 @@ export default function UpdateProfileForm({ onUpdate }) {
                       <div key={timeType}>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           {timeType === "openingTimes"
-                            ? "Opening Times"
-                            : "Performance Times"}
+                            ? <>Opening Times<span className="text-green">*</span></>
+                            : <>Performance Times<span className="text-green">*</span></>}
                         </label>
                         <div className="space-y-2">
                           {formData.additionalInfo[timeType].map(
@@ -695,7 +699,9 @@ export default function UpdateProfileForm({ onUpdate }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Gallery Images */}
           <div>
-            <h3 className="text-lg font-semibold mb-6">Gallery Images</h3>
+            <h3 className="text-lg md:text-xl font-bold mb-6">
+              Gallery Images
+            </h3>
             <div className="space-y-6">
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {formData.images.map((image, index) => (
@@ -739,7 +745,9 @@ export default function UpdateProfileForm({ onUpdate }) {
           <div className="space-y-8">
             {/* Social Links */}
             <div>
-              <h3 className="text-lg font-semibold mb-6">Social Links</h3>
+              <h3 className="text-lg md:text-xl font-bold mb-6">
+                Social Links
+              </h3>
               <div className="space-y-4">
                 {formData.socialLinks.map((link, index) => (
                   <div
@@ -813,7 +821,7 @@ export default function UpdateProfileForm({ onUpdate }) {
 
             {/* Media Links */}
             <div>
-              <h3 className="text-lg font-semibold mb-6">Media Links</h3>
+              <h3 className="text-lg md:text-xl font-bold mb-6">Media Links</h3>
               <div className="space-y-4">
                 {user.role === "artist"
                   ? ["YouTube", "Spotify", "SoundCloud"].map((platform) => (
@@ -863,8 +871,8 @@ export default function UpdateProfileForm({ onUpdate }) {
 
         {/* Availability Calendar Section */}
         <div>
-          <h3 className="text-lg font-semibold mb-6 text-center md:text-left">
-            Set Your Availability
+          <h3 className="text-lg md:text-xl font-bold mb-6 text-center md:text-left">
+            Set Your Availability<span className="text-green">*</span>
           </h3>
           <div className="bg-white rounded-lg p-6 border border-gray-200">
             <p className="text-gray-600 mb-4 text-center md:text-left">
@@ -889,13 +897,14 @@ export default function UpdateProfileForm({ onUpdate }) {
                 ⚠️ You have unsaved changes
               </span>
             )}
-            <button
-              type="submit"
+            <Button
+              type="button"
+              variant="green"
+              onClick={handleFormSubmit}
               disabled={status.loading || !hasUnsavedChanges}
-              className="bg-green text-white px-4 sm:px-8 py-2 sm:py-3 rounded-lg hover:bg-greenHover disabled:bg-gray-400 text-xs sm:text-base"
             >
               {status.loading ? "Saving..." : "Save Changes"}
-            </button>
+            </Button>
           </div>
         </div>
       </form>
@@ -911,8 +920,8 @@ export default function UpdateProfileForm({ onUpdate }) {
               Are you sure you want to save these changes?
             </p>
             <p className="text-sm text-gray-600">
-              These changes will be published to your public profile and will be
-              visible to other venues and artists.
+              Once all the required fields are filled in, these changes will be
+              published to your public profile.
             </p>
             <div className="flex justify-center space-x-4">
               <Button

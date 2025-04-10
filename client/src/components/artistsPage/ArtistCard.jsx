@@ -1,10 +1,9 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Button from "../Button";
 import { DataContext } from "../../contexts/Context";
-import { addFavourite, removeFavourite } from "../../api/usersApi";
-import { IoLocationOutline } from "react-icons/io5";
+import { addFavourite, getUserData, removeFavourite } from "../../api/usersApi";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 
 export default function ArtistCardArtistsPage({ artist }) {
@@ -50,7 +49,7 @@ export default function ArtistCardArtistsPage({ artist }) {
       <div className="relative w-full">
         <img
           src={artist.profilePicture}
-          alt={artist.name}
+          alt={artist.name || "Artist Profile Picture"}
           className="w-full h-52 object-cover"
         />
 
@@ -71,32 +70,47 @@ export default function ArtistCardArtistsPage({ artist }) {
       <div className="p-6 flex flex-col justify-between flex-grow">
         <div>
           <h3 className="font-semibold text-xl md:text-2xl mb-4">
-            {artist.name}
+            {artist.name || "Artist Name Not Available"}
           </h3>
 
-          <p className="text-midnightBlack/80 mb-2 flex flex-wrap gap-2">
-            {artist.type?.map((type) => (
-              <span
-                key={type}
-                className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full"
-              >
-                {type}
-              </span>
-            ))}
-          </p>
-
+          {/* Combined Type and Genre Section */}
           <p className="text-midnightBlack/80 mb-4 flex flex-wrap gap-2">
-            {artist.additionalInfo?.genre.map((genre) => (
-              <span
-                key={genre}
-                className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full"
-              >
-                {genre}
+            {/* Type Tags */}
+            {artist.type?.length > 0 ? (
+              artist.type.map((type) => (
+                <span
+                  key={type}
+                  className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full"
+                >
+                  {type}
+                </span>
+              ))
+            ) : (
+              <span className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full">
+                Type Not Available
               </span>
-            ))}
+            )}
+
+            {/* Genre Tags */}
+            {artist.additionalInfo?.genre?.length > 0 ? (
+              artist.additionalInfo.genre.map((genre) => (
+                <span
+                  key={genre}
+                  className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full"
+                >
+                  {genre}
+                </span>
+              ))
+            ) : (
+              <span className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full">
+                Genre Not Available
+              </span>
+            )}
           </p>
 
-          <p className="mb-8 line-clamp-3 leading-snug">{artist.description}</p>
+          <p className="mb-8 line-clamp-3 leading-snug">
+            {artist.description || "Artist Description Not Available"}
+          </p>
         </div>
 
         <Button

@@ -51,8 +51,15 @@ export default function AllArtistsPage() {
     // Decide which list of artists to work with: If there are search results, use that list. Otherwise, fall back to showing all artists.
     const baseArtists = searchResults.length > 0 ? searchResults : artists;
 
-    // For each artist in the selected list, add an 'isFavourited' flag depending on whether the logged-in user has favourited it. If there's no user or no favourites list yet, assume this artist is NOT favourited
-    const updatedArtists = baseArtists?.map((artist) => {
+    // Filter out incomplete profiles and add favourite status
+    //! original: remove .filter until and keep only .map
+    const updatedArtists = baseArtists?.filter(artist => 
+      artist.name && 
+      artist.description && 
+      artist.type?.length > 0 &&
+      artist.additionalInfo?.genre &&
+      artist.availability?.length > 0
+    ).map((artist) => {
       if (!user || !user.favourites) return { ...artist, isFavourited: false };
 
       // Try to find this artist in the user's list of favourites

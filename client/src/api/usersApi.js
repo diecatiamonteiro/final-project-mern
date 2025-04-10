@@ -161,7 +161,7 @@ export const getUserData = async (usersDispatch) => {
   try {
     const response = await axios.get("/api/auth/user-data");
 
-    // If we have a user, populate their favorites
+    // If we have a user, populate their favourites
     if (response.data.data) {
       const favouritesResponse = await axios.get("/api/users/favourites");
       response.data.data.favourites = favouritesResponse.data.data;

@@ -102,7 +102,11 @@ export default function Footer() {
             <h3 className="text-offwhite font-semibold mb-4">Contact</h3>
             <ul className="space-y-2">
               <li className="text-offwhite/90 text-sm">Berlin, Germany</li>
-              <li className="text-offwhite/90 text-sm">info@fakeemail.com</li>
+              <li className="text-offwhite/90 text-sm">
+                <a href="mailto:thegreenroom.notifications@gmail.com">
+                  thegreenroom.notifications@gmail.com
+                </a>
+              </li>
             </ul>
           </div>
         </div>

@@ -126,24 +126,13 @@ export const passwordResetEmail = (resetLink) =>
 `);
 
 /**
- * @desc  Email sent to user informing them their password has been changed
- */
-export const changePasswordEmail = (loginLink) =>
-  baseEmailTemplate(`
-    <h1 style="${styles.heading}">Password Changed</h1>
-    <p style="${styles.paragraph}">Your password has been changed successfully.</p>
-    <p style="${styles.paragraph}">You can now log in to your account with your new password.</p>
-    <p style="${styles.paragraph}">If you didn't request this, please contact us at <a href="mailto:support.fakemail@thegreenroom.com">support.fakemail@thegreenroom.com</a>.</p>
-`);
-
-/**
  * @desc  Email sent to user informing them their account has been deleted
  */
 export const accountDeletionEmail = (userName) =>
   baseEmailTemplate(`
     <h1 style="${styles.heading}">Account Deleted</h1>
     <p style="${styles.paragraph}">Your account has been deleted successfully.</p>
-    <p style="${styles.paragraph}">If you didn't request this, please contact us at <a href="mailto:support.fakemail@thegreenroom.com">support.fakemail@thegreenroom.com</a>.</p>
+    <p style="${styles.paragraph}">If you didn't request this, please contact us at <a href="mailto:thegreenroom.notifications@gmail.com">thegreenroom.notifications@gmail.com</a>.</p>
 `);
 
 //! Booking emails -------------------------------------------------------------------------------------------->
