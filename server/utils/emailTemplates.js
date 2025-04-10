@@ -1,10 +1,15 @@
 const baseEmailTemplate = (content) => `
   <div style="
-    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    color: #0A0A0A;
-    background-color:rgb(233, 233, 233);
+    color: #3A3A3A;
+    background-color: #f5f5f3;
+    line-height: 1.5;
+    font-weight: 400;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   ">
   <header style="
     text-align: center;
@@ -314,11 +319,13 @@ export const userMessageEmail = (
     month: "long",
     day: "numeric",
   })}</p>
-  <div style="max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: stretch; background-color: #f5f5f5; padding: 20px; border: 1px solid rgb(48, 48, 48); border-radius: 10px; margin: 20px 0;">
-    <div style="width: 100%; margin-bottom: 10px;">
-      <h2 style="${styles.subheadingLeft}">Subject: ${subject}</h2>
+  <div style="width: 100%; max-width: 500px; margin: 20px auto; background-color: #f5f5f5; padding: 20px; border: 1px solid rgb(48, 48, 48); border-radius: 10px;">
+    <div style="margin-bottom: 20px;">
+      <h2 style="${styles.subheadingLeft}">Subject</h2>
+      <p style="${styles.paragraphLeft}">${subject}</p>
     </div>
-    <div style="width: 100%;">
+    <div>
+      <h2 style="${styles.subheadingLeft}">Message</h2>
       <p style="${styles.paragraphLeft}">${message}</p>
     </div>
   </div>
