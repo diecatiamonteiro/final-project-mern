@@ -6,6 +6,8 @@ import { IoLocationOutline, IoClose } from "react-icons/io5";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { toast } from "react-toastify";
 import Button from "../components/Button";
+import VenueCard from "../components/venuesPage/VenueCard";
+import ArtistCard from "../components/artistsPage/ArtistCard";
 
 export default function FavouritesPage() {
   const navigate = useNavigate();
@@ -132,60 +134,11 @@ export default function FavouritesPage() {
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                       {venues.map((venue) => (
-                        <div
-                          key={venue._id}
-                          className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer transform transition-transform hover:scale-[1.02] flex flex-col"
-                          onClick={() => handleProfileClick("venue", venue._id)}
-                        >
-                          <div className="h-48 relative">
-                            <img
-                              src={venue.profilePicture}
-                              alt={venue.name}
-                              className="w-full h-full object-cover"
-                            />
-                            <button
-                              onClick={(e) => handleFavouriteClick(e, venue)}
-                              className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg border border-midnightBlack/30 shadow-midnightBlack/10 hover:scale-[1.05] hover:bg-red-50 duration-300 cursor-pointer"
-                            >
-                              <IoClose className="text-xl text-red-500" />
-                            </button>
-                            <div className="absolute top-4 left-4 p-2 bg-midnightBlack/70 rounded-lg shadow-lg">
-                              <p className="text-sm font-semibold text-white">
-                                Split:{" "}
-                                {venue.additionalInfo?.revenueSplit?.split("/")[0]}%
-                                artist /{" "}
-                                {venue.additionalInfo?.revenueSplit?.split("/")[1]}%
-                                venue
-                              </p>
-                            </div>
-                          </div>
-                          <div className="p-6 flex-1 flex flex-col">
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-xl md:text-2xl mb-2 line-clamp-2">
-                                {venue.name}
-                              </h3>
-                              <p className="text-gray-500 text-sm mb-4">
-                                <span className="inline-block mr-2">
-                                  <IoLocationOutline />
-                                </span>
-                                {venue.additionalInfo?.address?.city}
-                              </p>
-                              <div className="flex flex-wrap gap-2 mb-4">
-                                {venue.type?.map((type, index) => (
-                                  <span
-                                    key={`${venue._id}-type-${index}`}
-                                    className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full"
-                                  >
-                                    {type}
-                                  </span>
-                                ))}
-                              </div>
-                              <p className="text-gray-600 text-sm mt-auto line-clamp-2">
-                                {venue.description}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
+                        <VenueCard 
+                          key={venue._id} 
+                          venue={venue} 
+                          onFavoriteClick={handleFavouriteClick}
+                        />
                       ))}
                     </div>
                   )}
@@ -217,57 +170,11 @@ export default function FavouritesPage() {
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                       {artists.map((artist) => (
-                        <div
-                          key={artist._id}
-                          className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer transform transition-transform hover:scale-[1.02] flex flex-col"
-                          onClick={() => handleProfileClick("artist", artist._id)}
-                        >
-                          <div className="h-48 relative">
-                            <img
-                              src={artist.profilePicture}
-                              alt={artist.name}
-                              className="w-full h-full object-cover"
-                            />
-                            <button
-                              onClick={(e) => handleFavouriteClick(e, artist)}
-                              className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg border border-midnightBlack/30 shadow-midnightBlack/10 hover:scale-[1.05] hover:bg-red-50 duration-300 cursor-pointer"
-                            >
-                              <IoClose className="text-xl text-red-500" />
-                            </button>
-                          </div>
-                          <div className="p-6 flex-1 flex flex-col">
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-xl md:text-2xl mb-2 line-clamp-2">
-                                {artist.name}
-                              </h3>
-                              <div className="flex flex-wrap gap-2 mb-4">
-                                {artist.additionalInfo?.genre?.map(
-                                  (genre, index) => (
-                                    <span
-                                      key={`${artist._id}-genre-${index}`}
-                                      className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full"
-                                    >
-                                      {genre}
-                                    </span>
-                                  )
-                                )}
-                              </div>
-                              <div className="flex flex-wrap gap-2 mb-4">
-                                {artist.type?.map((type, index) => (
-                                  <span
-                                    key={`${artist._id}-type-${index}`}
-                                    className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full"
-                                  >
-                                    {type}
-                                  </span>
-                                ))}
-                              </div>
-                              <p className="text-gray-600 text-sm mt-auto line-clamp-2">
-                                {artist.description}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
+                        <ArtistCard 
+                          key={artist._id} 
+                          artist={artist} 
+                          onFavoriteClick={handleFavouriteClick}
+                        />
                       ))}
                     </div>
                   )}

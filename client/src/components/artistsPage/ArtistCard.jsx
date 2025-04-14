@@ -5,8 +5,9 @@ import Button from "../Button";
 import { DataContext } from "../../contexts/Context";
 import { addFavourite, getUserData, removeFavourite } from "../../api/usersApi";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
 
-export default function ArtistCardArtistsPage({ artist }) {
+export default function ArtistCard({ artist, onFavoriteClick }) {
   const navigate = useNavigate();
   const { usersState, usersDispatch } = useContext(DataContext);
 
@@ -14,8 +15,15 @@ export default function ArtistCardArtistsPage({ artist }) {
     e.preventDefault();
     e.stopPropagation();
 
+    if (onFavoriteClick) {
+      // Use custom handler if provided (for FavouritesPage)
+      onFavoriteClick(e, artist);
+      return;
+    }
+
+    // Default favorite handling logic
     if (!usersState.user) {
-      toast.error("Please login to favourite venues.");
+      toast.error("Please login to favourite artists.");
       return;
     }
 
@@ -58,7 +66,9 @@ export default function ArtistCardArtistsPage({ artist }) {
           onClick={handleFavouriteClick}
           className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg border border-midnightBlack/30 shadow-midnightBlack/10 hover:scale-[1.05] duration-300 cursor-pointer"
         >
-          {artist.isFavourited ? (
+          {onFavoriteClick ? (
+            <IoClose className="text-xl text-red-500" />
+          ) : artist.isFavourited ? (
             <FaHeart className="text-xl text-red-500" />
           ) : (
             <FaRegHeart className="text-xl text-midnightBlack" />

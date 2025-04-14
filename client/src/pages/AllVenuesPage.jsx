@@ -9,6 +9,7 @@ import Button from "../components/Button";
 import { USER_ACTIONS } from "../reducers/usersReducer";
 import { FaArrowUpLong } from "react-icons/fa6";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import ScrollToTopButton from "../components/ScrollToTopButton";
 
 export default function AllVenuesPage() {
   const { usersState, usersDispatch } = useContext(DataContext);
@@ -19,20 +20,14 @@ export default function AllVenuesPage() {
   );
   const [searchTriggered, setSearchTriggered] = useState(false); // flags when a search was triggered in the SearchBarVenues component so we can display a message of no results found
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // params are needed for the no results message and are passed from the SearchBarVenues component
-  const [showScrollButton, setShowScrollButton] = useState(false);
   const navigate = useNavigate();
 
-  // Show button "To Top" after scrolling 300px
+  // Clear search results when component mounts (to prevent search results from /artists to be shown on /venues)
   useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollButton(window.scrollY > 300);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    usersDispatch({ type: USER_ACTIONS.CLEAR_SEARCH });
+    setSearchTriggered(false);
+    setCurrentSearchParams({});
   }, []);
-
-  // ************************************
 
   // Fetch all venues when the page is loaded
   useEffect(() => {
@@ -47,8 +42,6 @@ export default function AllVenuesPage() {
       getAllFavourites(usersDispatch);
     }
   }, [user]);
-
-  // ************************************
 
   // Handle initial city parameter from PopularCities in homepage
   useEffect(() => {
@@ -71,28 +64,33 @@ export default function AllVenuesPage() {
     }
   }, [searchParams, venues, usersDispatch, searchTriggered]);
 
-  // ************************************
+  const getCompletedVenues = (venues) => {
+    return venues?.filter(
+      (venue) =>
+        venue.name &&
+        venue.description &&
+        venue.name &&
+        venue.description &&
+        venue.type?.length > 0 &&
+        venue.additionalInfo?.address?.streetName &&
+        venue.additionalInfo?.address?.number &&
+        venue.additionalInfo?.address?.zipCode &&
+        venue.additionalInfo?.address?.city &&
+        venue.additionalInfo?.revenueSplit &&
+        venue.additionalInfo?.openingTimes?.length > 0 &&
+        venue.additionalInfo?.performingTimes?.length > 0
+    );
+  };
 
   // Update the list of venues with 'isFavourited' status for each venue
   useEffect(() => {
     // Decide which list of venues to work with: If there are search results, use that list. Otherwise, fall back to showing all venues.
     const baseVenues = searchResults.length > 0 ? searchResults : venues;
 
+    const completedVenues = getCompletedVenues(baseVenues);
     // Filter out incomplete profiles and add favourite status
     //! original: remove .filter until and keep only .map
-    const updatedVenues = baseVenues?.filter(venue => 
-      venue.name && 
-      venue.description && 
-      venue.type?.length > 0 &&
-      venue.additionalInfo?.address?.streetName &&
-      venue.additionalInfo?.address?.number &&
-      venue.additionalInfo?.address?.zipCode &&
-      venue.additionalInfo?.address?.city &&
-      venue.additionalInfo?.revenueSplit &&
-      venue.additionalInfo?.openingTimes &&
-      venue.additionalInfo?.performingTimes &&
-      venue.availability?.length > 0
-    ).map((venue) => {
+    const updatedVenues = completedVenues.map((venue) => {
       if (!user || !user.favourites) return { ...venue, isFavourited: false };
 
       // Try to find this venue in the user's list of favourites
@@ -210,7 +208,7 @@ export default function AllVenuesPage() {
           {searchResults.length > 0 ? (
             <div className="flex flex-wrap items-center gap-8 my-8 md:my-16">
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold">
-                {searchResults.length > 0
+                {venuesWithFavouriteStatus?.length > 0
                   ? `Venues ${
                       currentSearchParams.q
                         ? `matching "${currentSearchParams.q}"`
@@ -230,8 +228,8 @@ export default function AllVenuesPage() {
                       currentSearchParams.revenueSplit
                         ? ` with ${currentSearchParams.revenueSplit} revenue split`
                         : ""
-                    } (${searchResults.length})`
-                  : "All Venues"}
+                    } (${venuesWithFavouriteStatus.length})`
+                  : "We are waiting for this venue to complete their profile. Check back later!"}
               </h2>
               <Button variant="black" size="small" onClick={handleClearSearch}>
                 Clear Search
@@ -260,21 +258,7 @@ export default function AllVenuesPage() {
       )}
       {/* DIV END */}
 
-      {/* To top button - only shown when scrolling down after 300px */}
-      {showScrollButton && (
-        <div className="fixed bottom-4 right-4 z-50">
-          <Button
-            variant="black"
-            size="small"
-            className="flex flex-row items-center gap-1"
-            onClick={() => {
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-          >
-            <FaArrowUpLong /> To Top
-          </Button>
-        </div>
-      )}
+      <ScrollToTopButton />
     </>
   );
 }

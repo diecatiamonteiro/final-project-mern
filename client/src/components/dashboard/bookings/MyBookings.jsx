@@ -28,7 +28,7 @@ export default function MyBookings() {
           <button
             onClick={() => setActiveTab("received")}
             className={`
-              py-4 px-1 border-b-2 font-medium text-sm
+              py-4 px-1 border-b-2 font-medium
               ${
                 activeTab === "received"
                   ? "border-green text-green"
@@ -41,7 +41,7 @@ export default function MyBookings() {
           <button
             onClick={() => setActiveTab("sent")}
             className={`
-              py-4 px-1 border-b-2 font-medium text-sm
+              py-4 px-1 border-b-2 font-medium
               ${
                 activeTab === "sent"
                   ? "border-green text-green"

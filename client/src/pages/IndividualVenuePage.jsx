@@ -19,6 +19,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { SocialIcons } from "../components/SocialIcons";
 import { toast } from "react-toastify";
 import { getYouTubeId } from "../utils/mediaHelpers";
+import ScrollToTopButton from "../components/ScrollToTopButton";
 
 export default function IndividualVenuePage() {
   const { id } = useParams();
@@ -57,10 +58,6 @@ export default function IndividualVenuePage() {
 
     fetchVenue();
   }, [usersDispatch, id]);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   // Format address from additionalInfo
   const formattedAddress = venue?.additionalInfo?.address
@@ -355,6 +352,7 @@ export default function IndividualVenuePage() {
           name={venue.name}
         />
       )}
+      <ScrollToTopButton />
     </div>
   );
 }

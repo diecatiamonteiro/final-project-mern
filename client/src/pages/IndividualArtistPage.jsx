@@ -22,6 +22,7 @@ import {
   getSpotifyId,
   getSoundCloudUrl,
 } from "../utils/mediaHelpers";
+import ScrollToTopButton from "../components/ScrollToTopButton";
 
 export default function IndividualArtistPage() {
   const { id } = useParams();
@@ -60,10 +61,6 @@ export default function IndividualArtistPage() {
 
     fetchArtist();
   }, [usersDispatch, id]);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   useEffect(() => {
     if (artist && usersState.user?.favourites) {
@@ -360,6 +357,7 @@ export default function IndividualArtistPage() {
           name={artist.name}
         />
       )}
+      <ScrollToTopButton />
     </div>
   );
 }

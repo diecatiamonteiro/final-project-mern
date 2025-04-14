@@ -4,10 +4,10 @@ import { toast } from "react-toastify";
 import Button from "../Button";
 import { DataContext } from "../../contexts/Context";
 import { addFavourite, removeFavourite } from "../../api/usersApi";
-import { IoLocationOutline } from "react-icons/io5";
+import { IoLocationOutline, IoClose } from "react-icons/io5";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 
-export default function VenueCardVenuesPage({ venue }) {
+export default function VenueCard({ venue, onFavoriteClick }) {
   const navigate = useNavigate();
   const { usersState, usersDispatch } = useContext(DataContext);
 
@@ -15,6 +15,13 @@ export default function VenueCardVenuesPage({ venue }) {
     e.preventDefault();
     e.stopPropagation();
 
+    if (onFavoriteClick) {
+      // Use custom handler if provided (for FavouritesPage)
+      onFavoriteClick(e, venue);
+      return;
+    }
+
+    // Default favorite handling logic
     if (!usersState.user) {
       toast.error("Please login to favourite venues.");
       return;
@@ -70,7 +77,9 @@ export default function VenueCardVenuesPage({ venue }) {
           onClick={handleFavouriteClick}
           className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg border border-midnightBlack/30 shadow-midnightBlack/10 hover:scale-[1.05] duration-300 cursor-pointer"
         >
-          {venue.isFavourited ? (
+          {onFavoriteClick ? (
+            <IoClose className="text-xl text-red-500" />
+          ) : venue.isFavourited ? (
             <FaHeart className="text-xl text-red-500" />
           ) : (
             <FaRegHeart className="text-xl text-midnightBlack" />

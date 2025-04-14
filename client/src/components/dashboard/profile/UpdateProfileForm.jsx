@@ -374,7 +374,41 @@ export default function UpdateProfileForm({ onUpdate }) {
     setHasUnsavedChanges(true);
   };
 
+  // Add this validation helper function
+  const validateTimes = (times) => {
+    // Check if there are any times and that none are empty strings
+    return times.length > 0 && times.every(time => time.trim() !== "");
+  };
+
+  // Add this to check if the form is valid before submission
+  const isFormValid = () => {
+    const timesSections = ['openingTimes', 'performingTimes'];
+    const hasValidTimes = timesSections.every(timeType => 
+      validateTimes(formData.additionalInfo[timeType])
+    );
+
+    return hasValidTimes;
+  };
+
+  // Update the handleSubmit function
   const handleSubmit = async () => {
+    // Check if any time arrays contain empty strings
+    const hasEmptyTimes = ["openingTimes", "performingTimes"].some(timeType =>
+      formData.additionalInfo[timeType].some(time => !time.trim())
+    );
+
+    if (hasEmptyTimes) {
+      toast.error("Please type in all times before saving");
+      setShowConfirmModal(false);
+      return;
+    }
+
+    // if (!isFormValid()) {
+    //   toast.error("Please fill in all required times before saving");
+    //   setShowConfirmModal(false);
+    //   return;
+    // }
+
     setStatus({ loading: true, error: null, success: false });
 
     try {
@@ -481,17 +515,17 @@ export default function UpdateProfileForm({ onUpdate }) {
 
         {/* Venue-specific fields */}
         {user.role === "venue" && (
-          <div className="space-y-8">
+          <div className="space-y-8 pt-8">
             <h3 className="text-lg md:text-xl font-bold mb-6">
-              Venue Details<span className="text-green">*</span>
+              Venue Details
             </h3>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Left Column - Address */}
               <div className="space-y-6">
-                <div>
+                <div className="border border-midnightBlack/10 p-4 rounded-lg">
                   <h4 className="text-md font-semibold mb-6">Address</h4>
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Street Name<span className="text-green">*</span>
@@ -516,6 +550,7 @@ export default function UpdateProfileForm({ onUpdate }) {
                         className="w-full p-2 border rounded-lg"
                       />
                     </div>
+                    <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Zip Code<span className="text-green">*</span>
@@ -540,6 +575,7 @@ export default function UpdateProfileForm({ onUpdate }) {
                         className="w-full p-2 border rounded-lg"
                       />
                     </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -547,13 +583,13 @@ export default function UpdateProfileForm({ onUpdate }) {
               {/* Right Column - Revenue Split and Times */}
               <div className="space-y-6">
                 {/* Revenue Split */}
-                <div>
-                  <h4 className="text-md font-semibold mb-6">
+                <div className="border border-midnightBlack/10 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-6">
                     Venue Operations
                   </h4>
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <div className="space-y-3">
+                    <div className="border border-midnightBlack/10 p-4 rounded-lg">
+                      <label className="block font-bold text-gray-700 mb-1">
                         Revenue Split<span className="text-green">*</span>
                       </label>
                       <select
@@ -582,83 +618,95 @@ export default function UpdateProfileForm({ onUpdate }) {
                     </div>
 
                     {/* Times Arrays */}
-                    {["openingTimes", "performingTimes"].map((timeType) => (
-                      <div key={timeType}>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          {timeType === "openingTimes"
-                            ? <>Opening Times<span className="text-green">*</span></>
-                            : <>Performance Times<span className="text-green">*</span></>}
-                        </label>
-                        <div className="space-y-2">
-                          {formData.additionalInfo[timeType].map(
-                            (time, index) => (
-                              <div key={index} className="flex gap-2">
-                                <input
-                                  type="text"
-                                  value={time}
-                                  onChange={(e) =>
-                                    handleTimeArrayChange(
-                                      timeType,
-                                      index,
-                                      e.target.value
-                                    )
-                                  }
-                                  className="w-full p-2 border rounded-lg"
-                                  placeholder={`Enter ${
-                                    timeType === "openingTimes"
-                                      ? "opening"
-                                      : "performance"
-                                  } time`}
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleRemoveTime(timeType, index)
-                                  }
-                                  className="text-red-500 hover:text-red-700"
-                                >
-                                  <svg
-                                    className="w-5 h-5"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                </button>
-                              </div>
-                            )
-                          )}
-                          <button
-                            type="button"
-                            onClick={() => handleAddTime(timeType)}
-                            className="text-green hover:text-greenHover flex items-center gap-1"
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 4v16m8-8H4"
-                              />
-                            </svg>
-                            Add{" "}
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {["openingTimes", "performingTimes"].map((timeType) => (
+                        <div key={timeType} className="border border-midnightBlack/10 p-4 rounded-lg">
+                          <label className="block font-bold text-gray-700 mb-1">
                             {timeType === "openingTimes"
-                              ? "Opening"
-                              : "Performance"}{" "}
-                            Time
-                          </button>
+                              ? <>Opening Times<span className="text-green">*</span></>
+                              : <>Performance Times<span className="text-green">*</span></>}
+                          </label>
+                          {/* {formData.additionalInfo[timeType].length === 0 && (
+                            <p className="text-red-500 text-sm mb-2">
+                              At least one {timeType === "openingTimes" ? "opening" : "performance"} time is required
+                            </p>
+                          )} */}
+                          {formData.additionalInfo[timeType].some(time => time.trim() === "") && (
+                            <p className="text-red-500 text-sm mb-2">
+                              Please type in a time
+                            </p>
+                          )}
+                          <div className="space-y-2">
+                            {formData.additionalInfo[timeType].map(
+                              (time, index) => (
+                                <div key={index} className="flex gap-2">
+                                  <input
+                                    type="text"
+                                    value={time}
+                                    onChange={(e) =>
+                                      handleTimeArrayChange(
+                                        timeType,
+                                        index,
+                                        e.target.value
+                                      )
+                                    }
+                                    className="w-full p-2 border rounded-lg"
+                                    placeholder={`E.g. ${
+                                      timeType === "openingTimes"
+                                        ? "19:00 - 23:00"
+                                        : "20:00 - 22:00"
+                                    }`}
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleRemoveTime(timeType, index)
+                                    }
+                                    className="text-red-500 hover:text-red-700"
+                                  >
+                                    <svg
+                                      className="w-5 h-5"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                  </button>
+                                </div>
+                              )
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleAddTime(timeType)}
+                              className="text-green hover:text-greenHover flex items-center gap-1"
+                            >
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 4v16m8-8H4"
+                                />
+                              </svg>
+                              Add{" "}
+                              {timeType === "openingTimes"
+                                ? "Opening"
+                                : "Performance"}{" "}
+                              Time
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

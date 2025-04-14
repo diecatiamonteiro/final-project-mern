@@ -36,6 +36,7 @@ export default function Button({
       "bg-transparent hover:bg-midnightBlack/10 text-midnightBlack border border-midnightBlack", //! link to /register (dark bg)
     white: "bg-offwhite hover:bg-gray-200 text-midnightBlack",
     danger: "bg-red-600 hover:bg-red-700 text-offwhite",
+    outlineDanger: "bg-transparent hover:bg-red-600/10 text-red-600 border border-red-600",
     warning: "bg-amber-500 hover:bg-amber-600 text-midnightBlack",
     success: "bg-emerald-500 hover:bg-emerald-600 text-offwhite",
   };
