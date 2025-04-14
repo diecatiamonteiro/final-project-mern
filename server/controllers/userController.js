@@ -70,10 +70,38 @@ export const getIndividualArtistOrVenue = async (req, res, next) => {
       return next(createError(400, "Invalid user ID format"));
     }
 
-    // Find user by ID and exclude password
-    const user = await User.findById(id).populate({
-      path: "favourites bookingsReceived bookingsSent",
-    });
+    // Find user by ID and exclude password, with deep population
+    const user = await User.findById(id).populate([
+      {
+        path: "favourites"
+      },
+      {
+        path: "bookingsReceived",
+        populate: [
+          {
+            path: "initiatedBy",
+            select: "name profilePicture type role"
+          },
+          {
+            path: "receivedBy",
+            select: "name profilePicture type role"
+          }
+        ]
+      },
+      {
+        path: "bookingsSent",
+        populate: [
+          {
+            path: "initiatedBy",
+            select: "name profilePicture type role"
+          },
+          {
+            path: "receivedBy",
+            select: "name profilePicture type role"
+          }
+        ]
+      }
+    ]);
 
     if (!user) {
       return next(createError(404, "User not found"));

@@ -86,14 +86,6 @@ export default function Footer() {
                   Terms of Service
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/contact"
-                  className="text-offwhite/90 hover:text-offwhite text-sm"
-                >
-                  Get In Touch
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -101,7 +93,15 @@ export default function Footer() {
           <div className="col-span-1">
             <h3 className="text-offwhite font-semibold mb-4">Contact</h3>
             <ul className="space-y-2">
-              <li className="text-offwhite/90 text-sm">Berlin, Germany</li>
+            <li>
+                <Link
+                  to="/contact"
+                  className="text-offwhite/90 hover:text-offwhite text-sm"
+                >
+                  Get In Touch
+                </Link>
+              </li>
+              {/* <li className="text-offwhite/70 text-sm">Berlin, Germany</li> */}
               <li className="text-offwhite/90 text-sm">
                 <a href="mailto:thegreenroom.notifications@gmail.com">
                   thegreenroom.notifications@gmail.com
