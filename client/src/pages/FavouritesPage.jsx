@@ -16,7 +16,7 @@ export default function FavouritesPage() {
 
   // Set default active tab based on user role - only on first mount
   const [activeTab, setActiveTab] = useState(
-    user?.role === "artist" ? "venues" : "artists"
+    user?.role === "venue" ? "artists" : "venues"
   );
 
   const venues = favourites
@@ -77,32 +77,65 @@ export default function FavouritesPage() {
       {/* Tab Navigation */}
       <div className="border-b border-gray-200 mb-8">
         <nav className="flex space-x-8" aria-label="Dashboard Navigation">
-          <button
-            onClick={() => setActiveTab("artists")}
-            className={`
-              py-4 px-1 border-b-2 font-medium text-lg
-              ${
-                activeTab === "artists"
-                  ? "border-green text-green"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }
-            `}
-          >
-            Artists
-          </button>
-          <button
-            onClick={() => setActiveTab("venues")}
-            className={`
-              py-4 px-1 border-b-2 font-medium text-lg
-              ${
-                activeTab === "venues"
-                  ? "border-green text-green"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }
-            `}
-          >
-            Venues
-          </button>
+          {user?.role === "venue" ? (
+            <>
+              <button
+                onClick={() => setActiveTab("artists")}
+                className={`
+                  py-4 px-1 border-b-2 font-medium text-lg
+                  ${
+                    activeTab === "artists"
+                      ? "border-green text-green"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }
+                `}
+              >
+                Artists
+              </button>
+              <button
+                onClick={() => setActiveTab("venues")}
+                className={`
+                  py-4 px-1 border-b-2 font-medium text-lg
+                  ${
+                    activeTab === "venues"
+                      ? "border-green text-green"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }
+                `}
+              >
+                Venues
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => setActiveTab("venues")}
+                className={`
+                  py-4 px-1 border-b-2 font-medium text-lg
+                  ${
+                    activeTab === "venues"
+                      ? "border-green text-green"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }
+                `}
+              >
+                Venues
+              </button>
+              <button
+                onClick={() => setActiveTab("artists")}
+                className={`
+                  py-4 px-1 border-b-2 font-medium text-lg
+                  ${
+                    activeTab === "artists"
+                      ? "border-green text-green"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }
+                `}
+              >
+                Artists
+              </button>
+            </>
+          )}
         </nav>
       </div>
 
