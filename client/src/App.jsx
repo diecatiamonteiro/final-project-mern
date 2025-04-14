@@ -10,12 +10,16 @@ import IndividualVenuePage from "./pages/IndividualVenuePage";
 import IndividualArtistPage from "./pages/IndividualArtistPage";
 import FavouritesPage from "./pages/FavouritesPage";
 import UserDashboardPage from "./pages/UserDashboardPage";
+import AboutUS from "./pages/AboutUSPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import VerificationPage from "./pages/VerificationPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Privacy from "./pages/Privacy";
+import Contact from "./pages/Contact";
+import Terms from "./pages/Terms";
 
 function App() {
   return (
@@ -31,13 +35,17 @@ function App() {
           <Route path="artist/:id" element={<IndividualArtistPage />} />
           <Route path="favourites" element={<FavouritesPage />} />
           <Route path="dashboard" element={<UserDashboardPage />} />
+          <Route path="about" element={<AboutUS />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="privacy" element={<Privacy />} />
+          <Route path="terms" element={<Terms />} />
           <Route path="verify-email" element={<VerificationPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
           <Route path="reset-password" element={<ResetPasswordPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
-      <ToastContainer 
+      <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={true}
