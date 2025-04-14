@@ -45,10 +45,11 @@ The Greenroom is a web platform connecting artists and small venues in Germany f
 ### Possible Future Features
 
 - Admin controls
-- Notifications system (for status of received & sent bookings and gigs)
+- Real time notifications system (for status of received & sent bookings and gigs)
 - Review and rating system
 - Preview and then publish profile in the user dashboard
-- Expand artist type to include comedians, poets, dancers, etc.
+- Address filter (Germany only)
+- Address input field and searchbar autofill
 
 ## 3. User Stories
 
