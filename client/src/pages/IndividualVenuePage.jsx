@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { DataContext } from "../contexts/Context";
 import {
   addFavourite,
@@ -29,6 +29,7 @@ export default function IndividualVenuePage() {
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [currentVenue, setCurrentVenue] = useState(null);
+  const navigate = useNavigate();
 
   const acceptedSentBookings =
     venue &&
@@ -108,6 +109,12 @@ export default function IndividualVenuePage() {
     }
   };
 
+  // Check if the current user is venue
+  const isVenue = usersState.user?.role === "venue";
+
+  // Check if the current user is viewing their own profile
+  const isOwnProfile = usersState.user && venue ? usersState.user._id === venue._id : false; // this expression checks if the user is viewing their own profile by comparing the user's ID with the venue's ID; if false means
+
   if (isLoading)
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -185,16 +192,19 @@ export default function IndividualVenuePage() {
         <div className="md:col-span-2">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-4xl font-bold">{venue.name}</h1>
-            <button
-              onClick={handleFavouriteClick}
-              className={`p-2 rounded-full transition-colors ${
-                currentVenue?.isFavourited
-                  ? "text-red-500 hover:text-red-600"
-                  : "text-gray-400 hover:text-red-500"
-              }`}
-            >
-              <FaHeart size={24} />
-            </button>
+            {/* Only show favorite button if not own profile */}
+            {!isOwnProfile && (
+              <button
+                onClick={handleFavouriteClick}
+                className={`p-2 rounded-full transition-colors ${
+                  currentVenue?.isFavourited
+                    ? "text-red-500 hover:text-red-600"
+                    : "text-gray-400 hover:text-red-500"
+                }`}
+              >
+                <FaHeart size={24} />
+              </button>
+            )}
           </div>
 
           {/* Location */}
@@ -326,15 +336,70 @@ export default function IndividualVenuePage() {
           </div>
         </div>
 
-        {/* Right Column - Calendar */}
+        {/* Right Column - Calendar or Venue Stats */}
         <div className="relative">
           <div className="sticky top-24">
-            <div className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center w-full">
-              <BookingRequestCalendar
-                availableDates={venue.availability}
-                bookedDates={allAcceptedBookings}
-              />
-            </div>
+            {!isVenue ? (
+              <div className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center w-full">
+                <BookingRequestCalendar
+                  availableDates={venue.availability}
+                  bookedDates={allAcceptedBookings}
+                />
+              </div>
+            ) : (
+              <div className="bg-white rounded-lg shadow-lg p-4 w-full">
+                <h2 className="text-xl font-semibold mb-4">Upcoming Bookings</h2>
+                <div className="space-y-4">
+                  <div>
+                    {venue.bookingsReceived.concat(venue.bookingsSent)
+                      .filter(booking => 
+                        booking.status === "accepted" && 
+                        new Date(booking.performanceDate) >= new Date()
+                      )
+                      .sort((a, b) => new Date(a.performanceDate) - new Date(b.performanceDate))
+                      .slice(0, 3)
+                      .map((booking) => {
+                        // Determine if this is a sent or received booking
+                        const artist = booking.initiatedBy.role === "artist" 
+                          ? booking.initiatedBy 
+                          : booking.receivedBy;
+                        
+                        return (
+                          <div key={booking._id} className="mb-3 p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center gap-3">
+                              <img 
+                                src={artist.profilePicture} 
+                                alt={artist.name}
+                                className="w-10 h-10 rounded-full object-cover cursor-pointer hover:scale-105 transition-transform"
+                                onClick={() => {
+                                  navigate(`/artist/${artist._id}`);
+                                }}
+                              />
+                              <div>
+                                <p className="font-medium">{artist.name}</p>
+                                <p className="text-sm text-gray-600">
+                                  {new Date(booking.performanceDate).toLocaleDateString('en-US', {
+                                    weekday: 'long',
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
+                                  })}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    {venue.bookingsReceived.concat(venue.bookingsSent).filter(b => 
+                      b.status === "accepted" && 
+                      new Date(b.performanceDate) >= new Date()
+                    ).length === 0 && (
+                      <p className="text-gray-500 text-sm italic">No upcoming bookings</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
