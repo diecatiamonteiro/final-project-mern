@@ -123,6 +123,19 @@ export const usersReducer = (state, action) => {
       };
 
     case USER_ACTIONS.UPDATE_PROFILE:
+      return {
+        ...state,
+        user: action.payload.data,
+        // Update the matching artist in the artists array
+        artists: state.artists.map((artist) =>
+          artist._id === action.payload.data._id ? action.payload.data : artist
+        ),
+        // Update the matching venue in the venues array
+        venues: state.venues.map((venue) =>
+          venue._id === action.payload.data._id ? action.payload.data : venue
+        ),
+      };
+
     case USER_ACTIONS.DELETE_SINGLE_MEDIA:
     case USER_ACTIONS.DELETE_SINGLE_IMAGE:
       return {

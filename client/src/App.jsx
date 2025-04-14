@@ -15,8 +15,9 @@ import NotFoundPage from "./pages/NotFoundPage";
 import VerificationPage from "./pages/VerificationPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ScrollToTop from "./components/ScrollToTop";
 import Privacy from "./pages/Privacy";
 import Contact from "./pages/Contact";
 import Terms from "./pages/Terms";
@@ -24,6 +25,7 @@ import Terms from "./pages/Terms";
 function App() {
   return (
     <>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<Homepage />} />

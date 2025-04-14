@@ -543,7 +543,7 @@ Does not modify email, password, or role.
 | View received & sent bookings in dashboard      | ❌ No                     | ✅ Yes                         |
 | See accepted bookings ("My Gigs")               | ❌ No                     | ✅ Yes                         |
 | Contact a venue/artist via email form           | ❌ No                     | ✅ Yes                         |
-| Favorite artists & venues                       | ❌ No                     | ✅ Yes                         |
+| Favourite artists & venues                       | ❌ No                     | ✅ Yes                         |
 | Delete account                                  | ❌ No                     | ✅ Yes                         |
 
 ## 9. Frontend Structure
