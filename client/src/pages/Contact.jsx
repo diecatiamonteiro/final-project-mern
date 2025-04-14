@@ -75,7 +75,7 @@ const Contact = () => {
                 className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green"
               ></textarea>
             </div>
-
+            {/* Ignore  comment */}
             <Button
               type="submit"
               className="w-full     bg-green hover:bg-greenHover text-offwhite 
