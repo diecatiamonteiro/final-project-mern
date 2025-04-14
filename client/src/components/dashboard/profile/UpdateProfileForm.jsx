@@ -377,13 +377,13 @@ export default function UpdateProfileForm({ onUpdate }) {
   // Add this validation helper function
   const validateTimes = (times) => {
     // Check if there are any times and that none are empty strings
-    return times.length > 0 && times.every(time => time.trim() !== "");
+    return times.length > 0 && times.every((time) => time.trim() !== "");
   };
 
   // Add this to check if the form is valid before submission
   const isFormValid = () => {
-    const timesSections = ['openingTimes', 'performingTimes'];
-    const hasValidTimes = timesSections.every(timeType => 
+    const timesSections = ["openingTimes", "performingTimes"];
+    const hasValidTimes = timesSections.every((timeType) =>
       validateTimes(formData.additionalInfo[timeType])
     );
 
@@ -393,8 +393,8 @@ export default function UpdateProfileForm({ onUpdate }) {
   // Update the handleSubmit function
   const handleSubmit = async () => {
     // Check if any time arrays contain empty strings
-    const hasEmptyTimes = ["openingTimes", "performingTimes"].some(timeType =>
-      formData.additionalInfo[timeType].some(time => !time.trim())
+    const hasEmptyTimes = ["openingTimes", "performingTimes"].some((timeType) =>
+      formData.additionalInfo[timeType].some((time) => !time.trim())
     );
 
     if (hasEmptyTimes) {
@@ -402,12 +402,6 @@ export default function UpdateProfileForm({ onUpdate }) {
       setShowConfirmModal(false);
       return;
     }
-
-    // if (!isFormValid()) {
-    //   toast.error("Please fill in all required times before saving");
-    //   setShowConfirmModal(false);
-    //   return;
-    // }
 
     setStatus({ loading: true, error: null, success: false });
 
@@ -489,14 +483,22 @@ export default function UpdateProfileForm({ onUpdate }) {
           {user.role === "artist" ? (
             <>
               <TagSelector
-                title={<>Performance Type<span className="text-green">*</span></>}
+                title={
+                  <>
+                    Performance Type<span className="text-green">*</span>
+                  </>
+                }
                 tags={ARTIST_PERFORMANCE_TYPES}
                 selectedTags={formData.type}
                 onToggle={(tag) => handleTagToggle("type", tag)}
                 defaultCategory="Musical Acts"
               />
               <TagSelector
-                title={<>Genre<span className="text-green">*</span></>}
+                title={
+                  <>
+                    Genre<span className="text-green">*</span>
+                  </>
+                }
                 tags={ARTIST_GENRES}
                 selectedTags={formData.additionalInfo.genre || []}
                 onToggle={(tag) => handleTagToggle("genre", tag)}
@@ -505,7 +507,11 @@ export default function UpdateProfileForm({ onUpdate }) {
             </>
           ) : (
             <TagSelector
-              title={<>Venue Type<span className="text-green">*</span></>}
+              title={
+                <>
+                  Venue Type<span className="text-green">*</span>
+                </>
+              }
               tags={VENUE_TYPES}
               selectedTags={formData.type}
               onToggle={(tag) => handleTagToggle("type", tag)}
@@ -516,9 +522,7 @@ export default function UpdateProfileForm({ onUpdate }) {
         {/* Venue-specific fields */}
         {user.role === "venue" && (
           <div className="space-y-8 pt-8">
-            <h3 className="text-lg md:text-xl font-bold mb-6">
-              Venue Details
-            </h3>
+            <h3 className="text-lg md:text-xl font-bold mb-6">Venue Details</h3>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Left Column - Address */}
@@ -551,30 +555,30 @@ export default function UpdateProfileForm({ onUpdate }) {
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Zip Code<span className="text-green">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="zipCode"
-                        value={formData.additionalInfo.address.zipCode}
-                        onChange={handleAddressChange}
-                        className="w-full p-2 border rounded-lg"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        City<span className="text-green">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="city"
-                        value={formData.additionalInfo.address.city}
-                        onChange={handleAddressChange}
-                        className="w-full p-2 border rounded-lg"
-                      />
-                    </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Zip Code<span className="text-green">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="zipCode"
+                          value={formData.additionalInfo.address.zipCode}
+                          onChange={handleAddressChange}
+                          className="w-full p-2 border rounded-lg"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          City<span className="text-green">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="city"
+                          value={formData.additionalInfo.address.city}
+                          onChange={handleAddressChange}
+                          className="w-full p-2 border rounded-lg"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -584,9 +588,7 @@ export default function UpdateProfileForm({ onUpdate }) {
               <div className="space-y-6">
                 {/* Revenue Split */}
                 <div className="border border-midnightBlack/10 p-4 rounded-lg">
-                  <h4 className="font-semibold mb-6">
-                    Venue Operations
-                  </h4>
+                  <h4 className="font-semibold mb-6">Venue Operations</h4>
                   <div className="space-y-3">
                     <div className="border border-midnightBlack/10 p-4 rounded-lg">
                       <label className="block font-bold text-gray-700 mb-1">
@@ -620,18 +622,26 @@ export default function UpdateProfileForm({ onUpdate }) {
                     {/* Times Arrays */}
                     <div className="grid md:grid-cols-2 gap-4">
                       {["openingTimes", "performingTimes"].map((timeType) => (
-                        <div key={timeType} className="border border-midnightBlack/10 p-4 rounded-lg">
+                        <div
+                          key={timeType}
+                          className="border border-midnightBlack/10 p-4 rounded-lg"
+                        >
                           <label className="block font-bold text-gray-700 mb-1">
-                            {timeType === "openingTimes"
-                              ? <>Opening Times<span className="text-green">*</span></>
-                              : <>Performance Times<span className="text-green">*</span></>}
+                            {timeType === "openingTimes" ? (
+                              <>
+                                Opening Times
+                                <span className="text-green">*</span>
+                              </>
+                            ) : (
+                              <>
+                                Performance Times
+                                <span className="text-green">*</span>
+                              </>
+                            )}
                           </label>
-                          {/* {formData.additionalInfo[timeType].length === 0 && (
-                            <p className="text-red-500 text-sm mb-2">
-                              At least one {timeType === "openingTimes" ? "opening" : "performance"} time is required
-                            </p>
-                          )} */}
-                          {formData.additionalInfo[timeType].some(time => time.trim() === "") && (
+                          {formData.additionalInfo[timeType].some(
+                            (time) => time.trim() === ""
+                          ) && (
                             <p className="text-red-500 text-sm mb-2">
                               Please type in a time
                             </p>
