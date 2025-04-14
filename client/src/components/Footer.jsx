@@ -91,7 +91,7 @@ export default function Footer() {
                   to="/contact"
                   className="text-offwhite/90 hover:text-offwhite text-sm"
                 >
-                  Contact Us
+                  Get In Touch
                 </Link>
               </li>
             </ul>
