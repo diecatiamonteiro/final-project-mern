@@ -7,30 +7,27 @@ import heroImage from "../assets/artistsPage/artistsPage-heroImage.jpg";
 import SearchBar from "../components/artistsPage/SearchBarArtists";
 import Button from "../components/Button";
 import { USER_ACTIONS } from "../reducers/usersReducer";
-import { FaArrowUpLong } from "react-icons/fa6";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import ScrollToTopButton from "../components/ScrollToTopButton";
 
 export default function AllArtistsPage() {
   const { usersState, usersDispatch } = useContext(DataContext);
   const { isLoading, error, artists, searchResults, user } = usersState;
-  const [searchParams] = useSearchParams();
   const [artistsWithFavouriteStatus, setArtistsWithFavouriteStatus] = useState(
     []
   );
   const [searchTriggered, setSearchTriggered] = useState(false); // flags when a search was triggered in the SearchBarArtists component so we can display a message of no results found
   const [currentSearchParams, setCurrentSearchParams] = useState({}); // params are needed for the no results message and are passed from the SearchBarArtists component
-  const [showScrollButton, setShowScrollButton] = useState(false);
   const navigate = useNavigate();
 
-  // Show button "To Top" after scrolling 300px
+  // Clear search results when component mounts (to prevent search results from /venues to be shown on /artists)
   useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollButton(window.scrollY > 300);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    usersDispatch({ type: USER_ACTIONS.CLEAR_SEARCH });
+    setSearchTriggered(false);
+    setCurrentSearchParams({});
   }, []);
+
+
 
   // Fetch all artists when the page is loaded
   useEffect(() => {
@@ -46,27 +43,42 @@ export default function AllArtistsPage() {
     }
   }, [user]);
 
+  const getCompletedArtists = (artists) => {
+    return artists?.filter(
+      (artist) =>
+        artist.name &&
+        artist.description &&
+        artist.type?.length > 0 &&
+        artist.additionalInfo?.genre &&
+        artist.availability?.length > 0
+    );
+  };
+
   // Update the list of artists with 'isFavourited' status for each artist
   useEffect(() => {
     // Decide which list of artists to work with: If there are search results, use that list. Otherwise, fall back to showing all artists.
     const baseArtists = searchResults.length > 0 ? searchResults : artists;
 
-    // For each artist in the selected list, add an 'isFavourited' flag depending on whether the logged-in user has favourited it. If there's no user or no favourites list yet, assume this artist is NOT favourited
-    const updatedArtists = baseArtists?.map((artist) => {
-      if (!user || !user.favourites) return { ...artist, isFavourited: false };
+    const completedArtists = getCompletedArtists(baseArtists);
 
-      // Try to find this artist in the user's list of favourites
-      const matchingFavourite = user.favourites.find(
-        (favourite) => favourite._id === artist._id
-      );
+    // Filter out incomplete profiles and add favourite status
+    //! original: remove .filter until and keep only .map
+    const updatedArtists = completedArtists.map((artist) => {
+        if (!user || !user.favourites)
+          return { ...artist, isFavourited: false };
 
-      // If it's found, merge it with the artist data and set 'isFavourited' to true. Otherwise, return the artist as is with 'isFavourited: false'
-      if (matchingFavourite) {
-        return { ...artist, ...matchingFavourite, isFavourited: true };
-      } else {
-        return { ...artist, isFavourited: false };
-      }
-    });
+        // Try to find this artist in the user's list of favourites
+        const matchingFavourite = user.favourites.find(
+          (favourite) => favourite._id === artist._id
+        );
+
+        // If it's found, merge it with the artist data and set 'isFavourited' to true. Otherwise, return the artist as is with 'isFavourited: false'
+        if (matchingFavourite) {
+          return { ...artist, ...matchingFavourite, isFavourited: true };
+        } else {
+          return { ...artist, isFavourited: false };
+        }
+      });
 
     // Update local state with the new list that includes favourite status
     setArtistsWithFavouriteStatus(updatedArtists);
@@ -159,7 +171,7 @@ export default function AllArtistsPage() {
           {searchResults.length > 0 ? (
             <div className="flex flex-wrap items-center gap-8 my-8 md:my-16">
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold">
-                {searchResults.length > 0
+                {artistsWithFavouriteStatus.length > 0
                   ? `Artists ${
                       currentSearchParams.q
                         ? `matching "${currentSearchParams.q}"`
@@ -172,8 +184,8 @@ export default function AllArtistsPage() {
                       currentSearchParams.genre
                         ? ` in genre "${currentSearchParams.genre}"`
                         : ""
-                    } (${searchResults.length})`
-                  : "All Artists"}
+                    } (${artistsWithFavouriteStatus.length})`
+                  : "We are waiting for this artist to complete their profile. Check back later!"}
               </h2>
               <Button variant="black" size="small" onClick={handleClearSearch}>
                 Clear Search
@@ -187,35 +199,18 @@ export default function AllArtistsPage() {
 
           {/* All Artists Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-32">
-            {Array.isArray(artistsWithFavouriteStatus) && artistsWithFavouriteStatus.length > 0 ? (
+            {Array.isArray(artistsWithFavouriteStatus) &&
+            artistsWithFavouriteStatus.length > 0 ? (
               artistsWithFavouriteStatus.map((artist) => (
                 <ArtistCard key={artist._id} artist={artist} />
               ))
-            ) : (
-              <div className="text-base md:text-lg text-midnightBlack/70">
-                No artists found
-              </div>
-            )}
+            ) : null}
           </div>
         </div>
       )}
       {/* DIV END */}
 
-      {/* To top button - only shown when scrolling down after 300px */}
-      {showScrollButton && (
-        <div className="fixed bottom-4 right-4 z-50">
-          <Button
-            variant="black"
-            size="small"
-            className="flex flex-row items-center gap-1"
-            onClick={() => {
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-          >
-            <FaArrowUpLong /> To Top
-          </Button>
-        </div>
-      )}
+      <ScrollToTopButton />
     </>
   );
 }

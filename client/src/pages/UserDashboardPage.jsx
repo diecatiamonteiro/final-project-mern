@@ -5,12 +5,15 @@ import MyGigs from "../components/dashboard/gigs/MyGigs";
 import MyAccount from "../components/dashboard/account/MyAccount";
 import { DataContext } from "../contexts/Context";
 import { getUserData } from "../api/usersApi";
+import ScrollToTopButton from "../components/ScrollToTopButton";
+import { useNavigate } from "react-router-dom";
+import Button from "../components/Button";
 
 export default function UserDashboardPage() {
   const [activeTab, setActiveTab] = useState("account");
   const { usersState, usersDispatch } = useContext(DataContext);
   const { user } = usersState;
-
+  const navigate = useNavigate();
   // Add this useEffect to fetch user data when component mounts
   useEffect(() => {
     getUserData(usersDispatch);
@@ -30,11 +33,50 @@ export default function UserDashboardPage() {
     );
   }
 
+  const areVenueDetailsComplete = (user) => {
+    const address = user.additionalInfo?.address;
+    return (
+      address?.streetName &&
+      address?.number &&
+      address?.zipCode &&
+      address?.city &&
+      user.additionalInfo?.openingTimes?.length &&
+      user.additionalInfo?.performingTimes?.length &&
+      user.additionalInfo?.revenueSplit
+    );
+  };
+
+  const isArtistProfileComplete = (user) => {
+    return (
+      user.name &&
+      user.description &&
+      user.type?.length > 0 &&
+      user.additionalInfo?.genre?.length > 0 &&
+      user.availability?.length > 0
+    );
+  };
+
+  const isVenueProfileComplete = (user) => {
+    return (
+      user.name &&
+      user.description &&
+      user.type?.length > 0 &&
+      user.additionalInfo?.address?.streetName &&
+      user.additionalInfo?.address?.number &&
+      user.additionalInfo?.address?.zipCode &&
+      user.additionalInfo?.address?.city &&
+      user.additionalInfo?.revenueSplit &&
+      user.additionalInfo?.openingTimes?.length > 0 &&
+      user.additionalInfo?.performingTimes?.length > 0 &&
+      user.availability?.length > 0
+    );
+  };
+
   const tabs = [
     { id: "account", label: "My Account" },
-    { id: "profile", label: "My Profile" },
+    { id: "profile", label: "My Public Profile" },
     { id: "bookings", label: "My Bookings" },
-    { id: "gigs", label: "My Gigs" },
+    { id: "gigs", label: "My Confirmed Gigs" },
   ];
 
   return (
@@ -78,12 +120,117 @@ export default function UserDashboardPage() {
 
         {activeTab === "profile" && (
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-2">Profile Settings</h2>
-            <p className="text-gray-500 mb-10">
-              Customize your public profile and set your availability. This will
-              be visible to other venues and artists, keep your information up
-              to date to attract more bookings.
-            </p>
+            <h2 className="text-xl font-semibold mb-2">
+              Public Profile Settings
+            </h2>
+            {user.role === "artist" ? (
+              <div>
+                <p className="text-gray-500 mb-6">
+                  Customise your public profile and set your availability to
+                  attract bookings. Once the required fields are filled in, your
+                  profile will be published in the{" "}
+                  <span className="font-bold">Find Artists</span> page.
+                </p>
+                {isArtistProfileComplete(user) ? (
+                  <div className="bg-green/10 p-4 border-l-4 border-green mb-10">
+                    <p className="text-green font-bold">
+                      Profile Published{" "}
+                    </p>
+                    <p className="text-green/80 text-sm mb-3">
+                      You can continue to update your profile at any time.
+                    </p>
+                    <Button variant="outlineGreen" size="small" onClick={() => navigate(`/artist/${user._id}`)}>
+                      View Profile
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="bg-orange-500/10 p-4 border-l-4 border-orange-500 mb-10">
+                    <p className="text-orange-500 mb-2 font-bold">
+                      Profile Not Published
+                    </p>
+                    <p className="text-orange-500 text-sm">
+                      Please fill in:
+                    </p>
+                    <ul className="list-disc pl-5 text-orange-500 text-sm">
+                      <li
+                        className={
+                          user.name && user.description ? "hidden" : ""
+                        }
+                      >
+                        Basic Information
+                      </li>
+                      <li className={user.type?.length ? "hidden" : ""}>
+                        Performance Type
+                      </li>
+                      <li
+                        className={
+                          user.additionalInfo?.genre?.length ? "hidden" : ""
+                        }
+                      >
+                        Genre
+                      </li>
+                      <li className={user.availability?.length ? "hidden" : ""}>
+                        Calendar Available Dates
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div>
+                <p className="text-gray-500 mb-6">
+                  Customise your public profile and set your availability to
+                  attract bookings. Once the required fields are filled in, your
+                  profile will be published in the{" "}
+                  <span className="font-bold">Find Venues</span> page.
+                </p>
+                {isVenueProfileComplete(user) ? (
+                  <div className="bg-green/10 p-4 border-l-4 border-green mb-10">
+                    <p className="text-green font-bold">
+                      Profile Published
+                    </p>
+                    <p className="text-green/80 text-sm mb-3">
+                      You can continue to update your profile at any time.
+                    </p>
+                    <Button variant="outlineGreen" size="small" onClick={() => navigate(`/venue/${user._id}`)}>
+                      View Profile
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="bg-orange-500/10 p-4 border-l-4 border-orange-500 mb-10">
+                    <p className="text-orange-500 mb-2 font-bold">
+                      Profile Not Published
+                    </p>
+                    <p className="text-orange-500 text-sm">
+                      Please fill in:
+                    </p>
+                    <ul className="list-disc pl-5 text-orange-500 text-sm">
+                      <li
+                        className={
+                          user.name && user.description ? "hidden" : ""
+                        }
+                      >
+                        Basic Information
+                      </li>
+                      <li className={user.type?.length ? "hidden" : ""}>
+                        Venue Type
+                      </li>
+                      <li
+                        className={
+                          areVenueDetailsComplete(user) ? "hidden" : ""
+                        }
+                      >
+                        Venue Details (Address, Split, Opening & Performing
+                        Times)
+                      </li>
+                      <li className={user.availability?.length ? "hidden" : ""}>
+                        Calendar Available Dates
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
             <UpdateProfileForm onUpdate={handleProfileUpdate} />
           </div>
         )}
@@ -110,6 +257,7 @@ export default function UserDashboardPage() {
           </div>
         )}
       </div>
+      <ScrollToTopButton />
     </div>
   );
 }

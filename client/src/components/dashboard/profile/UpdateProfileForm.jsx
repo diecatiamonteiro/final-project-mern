@@ -143,9 +143,9 @@ export default function UpdateProfileForm({ onUpdate }) {
     type: user?.type || [],
     additionalInfo: {
       ...user?.additionalInfo,
-      // Ensure genre array exists and is initialized with user's existing genres
+      // Ensure genre array exists and is initialised with user's existing genres
       genre: user?.additionalInfo?.genre || [],
-      // Venue specific fields - initialize with existing data or defaults
+      // Venue specific fields - initialise with existing data or defaults
       address: {
         streetName: user?.additionalInfo?.address?.streetName || "",
         number: user?.additionalInfo?.address?.number || "",
@@ -374,7 +374,35 @@ export default function UpdateProfileForm({ onUpdate }) {
     setHasUnsavedChanges(true);
   };
 
+  // Add this validation helper function
+  const validateTimes = (times) => {
+    // Check if there are any times and that none are empty strings
+    return times.length > 0 && times.every((time) => time.trim() !== "");
+  };
+
+  // Add this to check if the form is valid before submission
+  const isFormValid = () => {
+    const timesSections = ["openingTimes", "performingTimes"];
+    const hasValidTimes = timesSections.every((timeType) =>
+      validateTimes(formData.additionalInfo[timeType])
+    );
+
+    return hasValidTimes;
+  };
+
+  // Update the handleSubmit function
   const handleSubmit = async () => {
+    // Check if any time arrays contain empty strings
+    const hasEmptyTimes = ["openingTimes", "performingTimes"].some((timeType) =>
+      formData.additionalInfo[timeType].some((time) => !time.trim())
+    );
+
+    if (hasEmptyTimes) {
+      toast.error("Please type in all times before saving");
+      setShowConfirmModal(false);
+      return;
+    }
+
     setStatus({ loading: true, error: null, success: false });
 
     try {
@@ -414,7 +442,7 @@ export default function UpdateProfileForm({ onUpdate }) {
         <div className="flex flex-col md:flex-row md:items-start md:space-x-8 mb-12">
           {/* Center profile picture section on mobile */}
           <div className="flex-shrink-0 mb-8 md:mb-0 flex flex-col items-center md:items-start">
-            <h3 className="text-lg font-semibold mb-4 text-center md:text-left">
+            <h3 className="text-lg md:text-xl font-bold mb-4 text-center md:text-left">
               Profile Picture
             </h3>
             <ProfilePictureUpload
@@ -425,7 +453,9 @@ export default function UpdateProfileForm({ onUpdate }) {
 
           {/* Basic Info stacks below profile picture on mobile */}
           <div className="flex-grow w-full">
-            <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
+            <h3 className="text-lg md:text-xl font-bold mb-4">
+              Basic Information<span className="text-green">*</span>
+            </h3>
             <div className="space-y-4">
               <input
                 type="text"
@@ -453,14 +483,22 @@ export default function UpdateProfileForm({ onUpdate }) {
           {user.role === "artist" ? (
             <>
               <TagSelector
-                title="Performance Type"
+                title={
+                  <>
+                    Performance Type<span className="text-green">*</span>
+                  </>
+                }
                 tags={ARTIST_PERFORMANCE_TYPES}
                 selectedTags={formData.type}
                 onToggle={(tag) => handleTagToggle("type", tag)}
                 defaultCategory="Musical Acts"
               />
               <TagSelector
-                title="Genre"
+                title={
+                  <>
+                    Genre<span className="text-green">*</span>
+                  </>
+                }
                 tags={ARTIST_GENRES}
                 selectedTags={formData.additionalInfo.genre || []}
                 onToggle={(tag) => handleTagToggle("genre", tag)}
@@ -469,7 +507,11 @@ export default function UpdateProfileForm({ onUpdate }) {
             </>
           ) : (
             <TagSelector
-              title="Venue Type"
+              title={
+                <>
+                  Venue Type<span className="text-green">*</span>
+                </>
+              }
               tags={VENUE_TYPES}
               selectedTags={formData.type}
               onToggle={(tag) => handleTagToggle("type", tag)}
@@ -477,11 +519,218 @@ export default function UpdateProfileForm({ onUpdate }) {
           )}
         </div>
 
-        {/* Gallery and Social Links Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
+        {/* Venue-specific fields */}
+        {user.role === "venue" && (
+          <div className="space-y-8 pt-8">
+            <h3 className="text-lg md:text-xl font-bold mb-6">Venue Details</h3>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {/* Left Column - Address */}
+              <div className="space-y-6">
+                <div className="border border-midnightBlack/10 p-4 rounded-lg">
+                  <h4 className="text-md font-semibold mb-6">Address</h4>
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Street Name<span className="text-green">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="streetName"
+                        value={formData.additionalInfo.address.streetName}
+                        onChange={handleAddressChange}
+                        className="w-full p-2 border rounded-lg"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Number<span className="text-green">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="number"
+                        value={formData.additionalInfo.address.number}
+                        onChange={handleAddressChange}
+                        className="w-full p-2 border rounded-lg"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Zip Code<span className="text-green">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="zipCode"
+                          value={formData.additionalInfo.address.zipCode}
+                          onChange={handleAddressChange}
+                          className="w-full p-2 border rounded-lg"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          City<span className="text-green">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="city"
+                          value={formData.additionalInfo.address.city}
+                          onChange={handleAddressChange}
+                          className="w-full p-2 border rounded-lg"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column - Revenue Split and Times */}
+              <div className="space-y-6">
+                {/* Revenue Split */}
+                <div className="border border-midnightBlack/10 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-6">Venue Operations</h4>
+                  <div className="space-y-3">
+                    <div className="border border-midnightBlack/10 p-4 rounded-lg">
+                      <label className="block font-bold text-gray-700 mb-1">
+                        Revenue Split<span className="text-green">*</span>
+                      </label>
+                      <select
+                        name="revenueSplit"
+                        value={formData.additionalInfo.revenueSplit}
+                        onChange={(e) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            additionalInfo: {
+                              ...prev.additionalInfo,
+                              revenueSplit: e.target.value,
+                            },
+                          }));
+                          setHasUnsavedChanges(true);
+                        }}
+                        className="w-full p-2 border rounded-lg bg-white"
+                      >
+                        <option value="">Select a revenue split</option>
+                        {REVENUE_SPLIT_OPTIONS.map((split) => (
+                          <option key={split} value={split}>
+                            {split.split("/")[0] || "Not Set "}% artist /{" "}
+                            {split.split("/")[1] || "Not Set "}% venue
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Times Arrays */}
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {["openingTimes", "performingTimes"].map((timeType) => (
+                        <div
+                          key={timeType}
+                          className="border border-midnightBlack/10 p-4 rounded-lg"
+                        >
+                          <label className="block font-bold text-gray-700 mb-1">
+                            {timeType === "openingTimes" ? (
+                              <>
+                                Opening Times
+                                <span className="text-green">*</span>
+                              </>
+                            ) : (
+                              <>
+                                Performance Times
+                                <span className="text-green">*</span>
+                              </>
+                            )}
+                          </label>
+                          {formData.additionalInfo[timeType].some(
+                            (time) => time.trim() === ""
+                          ) && (
+                            <p className="text-red-500 text-sm mb-2">
+                              Please type in a time
+                            </p>
+                          )}
+                          <div className="space-y-2">
+                            {formData.additionalInfo[timeType].map(
+                              (time, index) => (
+                                <div key={index} className="flex gap-2">
+                                  <input
+                                    type="text"
+                                    value={time}
+                                    onChange={(e) =>
+                                      handleTimeArrayChange(
+                                        timeType,
+                                        index,
+                                        e.target.value
+                                      )
+                                    }
+                                    className="w-full p-2 border rounded-lg"
+                                    placeholder={`E.g. ${
+                                      timeType === "openingTimes"
+                                        ? "19:00 - 23:00"
+                                        : "20:00 - 22:00"
+                                    }`}
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleRemoveTime(timeType, index)
+                                    }
+                                    className="text-red-500 hover:text-red-700"
+                                  >
+                                    <svg
+                                      className="w-5 h-5"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                  </button>
+                                </div>
+                              )
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleAddTime(timeType)}
+                              className="text-green hover:text-greenHover flex items-center gap-1"
+                            >
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 4v16m8-8H4"
+                                />
+                              </svg>
+                              Add{" "}
+                              {timeType === "openingTimes"
+                                ? "Opening"
+                                : "Performance"}{" "}
+                              Time
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Media and Social Links Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Gallery Images */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Gallery Images</h3>
+            <h3 className="text-lg md:text-xl font-bold mb-6">
+              Gallery Images
+            </h3>
             <div className="space-y-6">
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {formData.images.map((image, index) => (
@@ -526,7 +775,9 @@ export default function UpdateProfileForm({ onUpdate }) {
           <div className="space-y-8">
             {/* Social Links */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Social Links</h3>
+              <h3 className="text-lg md:text-xl font-bold mb-6">
+                Social Links
+              </h3>
               <div className="space-y-4">
                 {formData.socialLinks.map((link, index) => (
                   <div
@@ -600,7 +851,7 @@ export default function UpdateProfileForm({ onUpdate }) {
 
             {/* Media Links */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Media Links</h3>
+              <h3 className="text-lg md:text-xl font-bold mb-6">Media Links</h3>
               <div className="space-y-4">
                 {user.role === "artist"
                   ? ["YouTube", "Spotify", "SoundCloud"].map((platform) => (
@@ -650,7 +901,9 @@ export default function UpdateProfileForm({ onUpdate }) {
 
         {/* Availability Calendar */}
         <div>
-          <h3 className="text-lg font-semibold mb-3">Set Your Availability</h3>
+          <h3 className="text-lg md:text-xl font-bold mb-6 text-center md:text-left">
+            Set Your Availability<span className="text-green">*</span>
+          </h3>
           <div className="bg-white rounded-lg p-6 border border-gray-200">
             <p className="text-gray-600 mb-4 text-center md:text-left">
               Select dates when you're available for bookings. Any confirmed
@@ -674,13 +927,14 @@ export default function UpdateProfileForm({ onUpdate }) {
                 ⚠️ You have unsaved changes
               </span>
             )}
-            <button
-              type="submit"
+            <Button
+              type="button"
+              variant="green"
+              onClick={handleFormSubmit}
               disabled={status.loading || !hasUnsavedChanges}
-              className="bg-green text-white px-4 sm:px-8 py-2 sm:py-3 rounded-lg hover:bg-greenHover disabled:bg-gray-400 text-xs sm:text-base"
             >
               {status.loading ? "Saving..." : "Save Changes"}
-            </button>
+            </Button>
           </div>
         </div>
       </form>
@@ -696,8 +950,8 @@ export default function UpdateProfileForm({ onUpdate }) {
               Are you sure you want to save these changes?
             </p>
             <p className="text-sm text-gray-600">
-              These changes will be published to your public profile and will be
-              visible to other venues and artists.
+              Once all the required fields are filled in, these changes will be
+              published to your public profile.
             </p>
             <div className="flex justify-center space-x-4">
               <Button

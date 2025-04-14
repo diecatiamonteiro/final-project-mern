@@ -299,10 +299,10 @@ export const removeFavourite = async (req, res, next) => {
     const userId = req.user.id; // From checkToken middleware
     const { id: favouriteId } = req.params; // ID of user to be removed from favourites
 
-    // Check if user to be unfavorited exists
+    // Check if user to be unfavourited exists
     const favouriteUser = await User.findById(favouriteId);
     if (!favouriteUser) {
-      return next(createError(404, "User to be unfavorited not found"));
+      return next(createError(404, "User to be unfavourited not found"));
     }
 
     // Find user and remove from favourites array

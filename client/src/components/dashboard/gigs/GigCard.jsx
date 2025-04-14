@@ -142,7 +142,7 @@ export default function GigCard({ gig }) {
         </Button>
         <Button
           onClick={() => setShowModal(true)}
-          variant="danger"
+          variant="outlineDanger"
           size="small"
           className="flex-1"
         >

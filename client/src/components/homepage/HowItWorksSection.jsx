@@ -1,6 +1,7 @@
 import React from "react";
 import homepageHowItWorks from "../../assets/homepage/homepage-howItWorks.jpg";
 import Button from "../Button";
+import { motion } from "framer-motion";
 
 function StepCard({ number, title, description }) {
   return (
@@ -45,7 +46,7 @@ export default function HowItWorksSection() {
   return (
     <section className="py-24 mb-12 lg:my-24 flex flex-col lg:flex-row items-start justify-between gap-16 px-6">
       {/* Image */}
-      <div
+      <motion.div
         className="lg:w-1/2 flex"
         initial={{ opacity: 0, x: -50 }}
         whileInView={{ opacity: 1, x: 0 }}
@@ -57,10 +58,10 @@ export default function HowItWorksSection() {
           alt="Booking gig in a laptop"
           className="rounded-lg shadow-lg w-full"
         />
-      </div>
+      </motion.div>
 
       {/* Text */}
-      <div
+      <motion.div
         className="w-full lg:w-1/2 flex flex-col space-y-8 items-center text-center lg:text-left"
         initial={{ opacity: 0, x: 50 }}
         whileInView={{ opacity: 1, x: 0 }}
@@ -85,7 +86,7 @@ export default function HowItWorksSection() {
         </div>
 
         {/* Buttons */}
-        <div
+        <motion.div
           className="flex flex-col w-full gap-4 pt-6 md:flex-row lg:flex-wrap justify-center lg:justify-start"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -101,8 +102,8 @@ export default function HowItWorksSection() {
           <Button to="/register" variant="outlineGreen">
             Get Started
           </Button>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

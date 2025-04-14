@@ -557,7 +557,7 @@ export const deleteAccount = async (req, res, next) => {
         { session }
       );
 
-      // Remove from favorites lists with transaction
+      // Remove from favourites lists with transaction
       await User.updateMany(
         { favourites: userId },
         { $pull: { favourites: userId } },

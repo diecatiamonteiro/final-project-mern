@@ -26,10 +26,40 @@ export default function FeaturedArtistsAndVenues() {
     getAllVenues(usersDispatch);
   }, [usersDispatch]);
 
-  // Get first three artists and venues
+  // Add these helper functions at the top of your component
+  const getCompletedArtists = (artists) => {
+    return artists?.filter(
+      (artist) =>
+        artist.name &&
+        artist.description &&
+        artist.type?.length > 0 &&
+        artist.additionalInfo?.genre &&
+        artist.availability?.length > 0
+    );
+  };
+
+  const getCompletedVenues = (venues) => {
+    return venues?.filter(
+      (venue) =>
+        venue.name &&
+        venue.description &&
+        venue.type?.length > 0 &&
+        venue.additionalInfo?.address?.streetName &&
+        venue.additionalInfo?.address?.number &&
+        venue.additionalInfo?.address?.zipCode &&
+        venue.additionalInfo?.address?.city &&
+        venue.additionalInfo?.revenueSplit &&
+        venue.additionalInfo?.openingTimes?.length > 0 &&
+        venue.additionalInfo?.performingTimes?.length > 0
+    );
+  };
+
+  // Modify your useEffect for artists and venues
   useEffect(() => {
     if (artists.length > 0) {
-      const randomThreeArtists = [...artists].slice(0, 3).map((artist) => ({
+      // First filter completed artists, then take first 3
+      const completedArtists = getCompletedArtists(artists);
+      const randomThreeArtists = completedArtists.slice(0, 3).map((artist) => ({
         ...artist,
         isFavourited:
           usersState.user?.favourites?.some((fav) => fav._id === artist._id) ||
@@ -39,7 +69,9 @@ export default function FeaturedArtistsAndVenues() {
     }
 
     if (venues.length > 0) {
-      const randomThreeVenues = [...venues].slice(0, 3).map((venue) => ({
+      // First filter completed venues, then take first 3
+      const completedVenues = getCompletedVenues(venues);
+      const randomThreeVenues = completedVenues.slice(0, 3).map((venue) => ({
         ...venue,
         isFavourited:
           usersState.user?.favourites?.some((fav) => fav._id === venue._id) ||
@@ -54,7 +86,7 @@ export default function FeaturedArtistsAndVenues() {
   };
 
   const handleFavouriteClick = async (e, item, type) => {
-    // 1. Prevent default behavior and stop event propagation
+    // 1. Prevent default behaviour and stop event propagation
     e.preventDefault();
     e.stopPropagation();
 
@@ -74,7 +106,7 @@ export default function FeaturedArtistsAndVenues() {
     try {
       // 5a. If item is already favourited, remove it
       if (item.isFavourited) {
-        // Make API call to remove favorite
+        // Make API call to remove favourite
         await removeFavourite(usersDispatch, item._id);
         toast.success(`${type} removed from favourites.`);
 
@@ -95,9 +127,9 @@ export default function FeaturedArtistsAndVenues() {
           );
         }
       }
-      // 5b. If item is not favorited, add it
+      // 5b. If item is not favourited, add it
       else {
-        // Make API call to add favorite
+        // Make API call to add favourite
         await addFavourite(usersDispatch, item._id);
         toast.success(`${type} added to favourites.`);
 
@@ -196,15 +228,37 @@ export default function FeaturedArtistsAndVenues() {
                       {artist.name}
                     </h3>
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {artist.additionalInfo.genre &&
-                        artist.additionalInfo.genre.map((genre, index) => (
+                      {/* Type Tags */}
+                      {artist.type?.length > 0 ? (
+                        artist.type.map((type) => (
                           <span
-                            key={`${artist._id || artist.id}-genre-${index}`}
+                            key={type}
+                            className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full"
+                          >
+                            {type}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full">
+                          Type Not Available
+                        </span>
+                      )}
+
+                      {/* Genre Tags */}
+                      {artist.additionalInfo?.genre?.length > 0 ? (
+                        artist.additionalInfo.genre.map((genre) => (
+                          <span
+                            key={genre}
                             className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full"
                           >
                             {genre}
                           </span>
-                        ))}
+                        ))
+                      ) : (
+                        <span className="border border-midnightBlack/50 text-midnightBlack text-sm px-3 py-1 rounded-full">
+                          Genre Not Available
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>

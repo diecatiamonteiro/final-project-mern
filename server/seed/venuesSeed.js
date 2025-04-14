@@ -214,7 +214,7 @@ export const venues = [
       "https://picsum.photos/924",
     ],
     description:
-      "Cozy indie venue in the heart of Leipzig's Plagwitz district. Known for intimate live music shows, poetry readings, and its welcoming atmosphere. A favorite spot for up-and-coming indie artists and local bands.",
+      "Cozy indie venue in the heart of Leipzig's Plagwitz district. Known for intimate live music shows, poetry readings, and its welcoming atmosphere. A favourite spot for up-and-coming indie artists and local bands.",
     type: ["Bar", "Music Venue", "Cultural Space"],
     additionalInfo: {
       address: {
