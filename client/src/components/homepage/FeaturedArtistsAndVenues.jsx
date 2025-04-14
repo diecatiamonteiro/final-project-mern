@@ -210,16 +210,20 @@ export default function FeaturedArtistsAndVenues() {
                       className="w-full h-48 object-cover"
                     />
                     {/* Favourite Button */}
-                    <button
-                      onClick={(e) => handleFavouriteClick(e, artist, "Artist")}
-                      className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg border border-midnightBlack/30 shadow-midnightBlack/10 hover:scale-[1.05] duration-300 cursor-pointer"
-                    >
-                      {artist.isFavourited ? (
-                        <FaHeart className="text-xl text-red-500" />
-                      ) : (
-                        <FaRegHeart className="text-xl text-midnightBlack" />
-                      )}
-                    </button>
+                    {usersState.user?._id !== artist._id && (
+                      <button
+                        onClick={(e) =>
+                          handleFavouriteClick(e, artist, "Artist")
+                        }
+                        className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg border border-midnightBlack/30 shadow-midnightBlack/10 hover:scale-[1.05] duration-300 cursor-pointer"
+                      >
+                        {artist.isFavourited ? (
+                          <FaHeart className="text-xl text-red-500" />
+                        ) : (
+                          <FaRegHeart className="text-xl text-midnightBlack" />
+                        )}
+                      </button>
+                    )}
                   </div>
 
                   {/* Content Container */}
@@ -299,16 +303,18 @@ export default function FeaturedArtistsAndVenues() {
                       alt={venue.name}
                       className="w-full h-full object-cover"
                     />
-                    <button
-                      onClick={(e) => handleFavouriteClick(e, venue, "Venue")}
-                      className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg border border-midnightBlack/30 shadow-midnightBlack/10 hover:scale-[1.05] duration-300 cursor-pointer"
-                    >
-                      {venue.isFavourited ? (
-                        <FaHeart className="text-xl text-red-500" />
-                      ) : (
-                        <FaRegHeart className="text-xl text-midnightBlack" />
-                      )}
-                    </button>
+                    {usersState.user?._id !== venue._id && (
+                      <button
+                        onClick={(e) => handleFavouriteClick(e, venue, "Venue")}
+                        className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg border border-midnightBlack/30 shadow-midnightBlack/10 hover:scale-[1.05] duration-300 cursor-pointer"
+                      >
+                        {venue.isFavourited ? (
+                          <FaHeart className="text-xl text-red-500" />
+                        ) : (
+                          <FaRegHeart className="text-xl text-midnightBlack" />
+                        )}
+                      </button>
+                    )}
 
                     {/* Revenue Split Badge */}
                     <div className="absolute top-4 left-4 p-2 bg-midnightBlack/70 rounded-lg shadow-lg">

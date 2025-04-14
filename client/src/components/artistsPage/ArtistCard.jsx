@@ -48,6 +48,8 @@ export default function ArtistCard({ artist, onFavoriteClick }) {
     }
   };
 
+  const isOwnProfile = usersState.user?._id === artist?._id;
+
   return (
     <div
       className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer flex flex-col transform transition-transform hover:scale-[1.02]"
@@ -62,8 +64,9 @@ export default function ArtistCard({ artist, onFavoriteClick }) {
         />
 
         {/* Favourite Button */}
-        <button
-          onClick={handleFavouriteClick}
+        {!isOwnProfile && (
+          <button
+            onClick={handleFavouriteClick}
           className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg border border-midnightBlack/30 shadow-midnightBlack/10 hover:scale-[1.05] duration-300 cursor-pointer"
         >
           {onFavoriteClick ? (
@@ -71,9 +74,10 @@ export default function ArtistCard({ artist, onFavoriteClick }) {
           ) : artist.isFavourited ? (
             <FaHeart className="text-xl text-red-500" />
           ) : (
-            <FaRegHeart className="text-xl text-midnightBlack" />
-          )}
-        </button>
+              <FaRegHeart className="text-xl text-midnightBlack" />
+            )}
+          </button>
+        )}
       </div>
 
       {/* Content Section */}
