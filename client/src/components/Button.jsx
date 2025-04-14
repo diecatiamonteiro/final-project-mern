@@ -66,7 +66,7 @@ export default function Button({
       return;
     }
     // Always scroll to top first
-    window.scrollTo(0, 0);
+    // window.scrollTo(0, 0);
 
     // Call the original onClick if it exists
     if (onClick) {
