@@ -57,12 +57,12 @@ const Privacy = () => {
             </p>
           </div>
         </div>
-      </div>
-      <div>
-        <p className="mt-20 italic">
-          By using this site, you agree to these terms,or at least to scrolling
-          past them without reading, like everyone else does.
-        </p>
+        <div>
+          <p className="mt-20 italic">
+            By using this site, you agree to these terms,or at least to
+            scrolling past them without reading, like everyone else does.
+          </p>
+        </div>
       </div>
     </section>
   );
