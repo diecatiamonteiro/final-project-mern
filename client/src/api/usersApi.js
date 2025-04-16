@@ -30,7 +30,6 @@ import { USER_ACTIONS } from "../reducers/usersReducer";
 */
 
 export const register = async (usersDispatch, userData) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.post("api/auth/register", userData);
     usersDispatch({
@@ -52,7 +51,6 @@ export const register = async (usersDispatch, userData) => {
 };
 
 export const verifyEmail = async (usersDispatch, token, userId) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.get(
       `/api/auth/verify-email?token=${token}&userId=${userId}`
@@ -76,7 +74,6 @@ export const verifyEmail = async (usersDispatch, token, userId) => {
 };
 
 export const login = async (usersDispatch, credentials) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     // Clear any existing errors first
     usersDispatch({ type: USER_ACTIONS.SET_ERROR, payload: null });
@@ -101,7 +98,6 @@ export const login = async (usersDispatch, credentials) => {
 };
 
 export const googleLogin = async (usersDispatch, credentials) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     // Clear any existing errors first
     usersDispatch({ type: USER_ACTIONS.SET_ERROR, payload: null });
@@ -138,7 +134,6 @@ export const googleLogin = async (usersDispatch, credentials) => {
 };
 
 export const logout = async (usersDispatch) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     await axios.get("/api/auth/logout");
     usersDispatch({
@@ -157,7 +152,6 @@ export const logout = async (usersDispatch) => {
 };
 
 export const getUserData = async (usersDispatch) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.get("/api/auth/user-data");
 
@@ -189,7 +183,6 @@ export const getUserData = async (usersDispatch) => {
 };
 
 export const updateAccount = async (usersDispatch, userData) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.patch(
       "/api/auth/update-account",
@@ -227,7 +220,6 @@ export const updateAccount = async (usersDispatch, userData) => {
 };
 
 export const changePassword = async (usersDispatch, passwordData) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.patch(
       "/api/auth/change-password",
@@ -252,7 +244,6 @@ export const changePassword = async (usersDispatch, passwordData) => {
 };
 
 export const forgotPassword = async (usersDispatch, { email }) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.post("/api/auth/forgot-password", { email });
     usersDispatch({
@@ -277,7 +268,6 @@ export const resetPassword = async (
   usersDispatch,
   { token, userId, newPassword }
 ) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.post("/api/auth/reset-password", {
       token,
@@ -303,7 +293,6 @@ export const resetPassword = async (
 };
 
 export const deleteAccount = async (usersDispatch) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     await axios.delete("api/auth/delete-account");
     usersDispatch({
@@ -323,7 +312,6 @@ export const deleteAccount = async (usersDispatch) => {
 };
 
 export const getAllVenues = async (usersDispatch) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.get("api/users/venues");
     usersDispatch({
@@ -345,7 +333,6 @@ export const getAllVenues = async (usersDispatch) => {
 };
 
 export const getAllArtists = async (usersDispatch) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.get("api/users/artists");
     usersDispatch({
@@ -367,7 +354,6 @@ export const getAllArtists = async (usersDispatch) => {
 };
 
 export const getIndividualArtistOrVenue = async (usersDispatch, userId) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.get(`/api/users/${userId}`);
     usersDispatch({
@@ -389,7 +375,6 @@ export const getIndividualArtistOrVenue = async (usersDispatch, userId) => {
 };
 
 export const updateProfile = async (usersDispatch, userId, profileData) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.patch(
       `/api/users/${userId}/update-profile`,
@@ -414,7 +399,6 @@ export const updateProfile = async (usersDispatch, userId, profileData) => {
 };
 
 export const deleteSingleMedia = async (usersDispatch, userId, mediaId) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.delete(
       `/api/users/${userId}/delete-media/${mediaId}`
@@ -438,7 +422,6 @@ export const deleteSingleMedia = async (usersDispatch, userId, mediaId) => {
 };
 
 export const deleteSingleImage = async (usersDispatch, userId, imageId) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.delete(
       `/api/users/${userId}/delete-image/${imageId}`
@@ -500,7 +483,6 @@ export const removeFavourite = async (usersDispatch, favouriteId) => {
 };
 
 export const getAllFavourites = async (usersDispatch) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.get("/api/users/favourites");
     usersDispatch({
@@ -522,7 +504,6 @@ export const getAllFavourites = async (usersDispatch) => {
 };
 
 export const getAllReceivedAndSentBookings = async (usersDispatch, userId) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.get(`/api/users/${userId}/bookings`);
     usersDispatch({
@@ -544,7 +525,6 @@ export const getAllReceivedAndSentBookings = async (usersDispatch, userId) => {
 };
 
 export const getAllReceivedBookings = async (usersDispatch, userId) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.get(`/api/users/${userId}/bookings/received`);
     usersDispatch({
@@ -566,7 +546,6 @@ export const getAllReceivedBookings = async (usersDispatch, userId) => {
 };
 
 export const getAllSentBookings = async (usersDispatch, userId) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.get(`/api/users/${userId}/bookings/sent`);
     usersDispatch({
@@ -588,7 +567,6 @@ export const getAllSentBookings = async (usersDispatch, userId) => {
 };
 
 export const searchForArtistOrVenue = async (usersDispatch, searchParams) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.get("/api/users/search", {
       params: searchParams,

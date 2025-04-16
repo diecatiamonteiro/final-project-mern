@@ -2,7 +2,6 @@ import axios from "axios";
 import { USER_ACTIONS } from "../reducers/usersReducer";
 
 export const sendEmail = async (usersDispatch, emailData) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.post("/api/email", emailData);
     usersDispatch({

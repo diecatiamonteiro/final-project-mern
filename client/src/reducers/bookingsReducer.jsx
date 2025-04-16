@@ -1,7 +1,7 @@
 export const bookingsInitialState = {
   booking: null, // Single booking object
   allAcceptedBookings: [],
-  isLoading: false,
+  isLoading: true,
   error: null,
 };
 
