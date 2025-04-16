@@ -28,3 +28,6 @@ export const getSoundCloudUrl = (url) => {
     url
   )}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false&buying=false&sharing=false&download=false&show_playcount=false`;
 };
+
+// Constant for platform ordering
+export const MEDIA_PLATFORM_ORDER = ["YouTube", "Spotify", "SoundCloud"];

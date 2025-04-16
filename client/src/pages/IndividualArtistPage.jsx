@@ -21,6 +21,7 @@ import {
   getYouTubeId,
   getSpotifyId,
   getSoundCloudUrl,
+  MEDIA_PLATFORM_ORDER,
 } from "../utils/mediaHelpers";
 import ScrollToTopButton from "../components/ScrollToTopButton";
 
@@ -137,12 +138,18 @@ export default function IndividualArtistPage() {
     );
   }
 
-  // Group media items by platform type
+  // Grouping logic to maintain order
   const groupedMedia = artist.media?.reduce((acc, item) => {
     if (item.platform === "YouTube") {
       acc.youtube = [...(acc.youtube || []), item];
     } else if (["Spotify", "SoundCloud"].includes(item.platform)) {
       acc.audio = [...(acc.audio || []), item];
+      // Sort audio platforms according to defined order
+      acc.audio.sort(
+        (a, b) =>
+          MEDIA_PLATFORM_ORDER.indexOf(a.platform) -
+          MEDIA_PLATFORM_ORDER.indexOf(b.platform)
+      );
     } else {
       acc.other = [...(acc.other || []), item];
     }
@@ -206,14 +213,14 @@ export default function IndividualArtistPage() {
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-4xl font-bold">{artist.name}</h1>
             {!isOwnProfile && (
-            <button
-              onClick={handleFavouriteClick}
-              className={`p-2 rounded-full transition-colors ${
-                currentArtist?.isFavourited
-                  ? "text-red-500 hover:text-red-600"
-                  : "text-gray-400 hover:text-red-500"
-              }`}
-            >
+              <button
+                onClick={handleFavouriteClick}
+                className={`p-2 rounded-full transition-colors ${
+                  currentArtist?.isFavourited
+                    ? "text-red-500 hover:text-red-600"
+                    : "text-gray-400 hover:text-red-500"
+                }`}
+              >
                 <FaHeart size={24} />
               </button>
             )}
@@ -355,24 +362,34 @@ export default function IndividualArtistPage() {
                 <h2 className="text-xl font-semibold mb-4">Upcoming Gigs</h2>
                 <div className="space-y-4">
                   <div>
-                    {artist.bookingsReceived.concat(artist.bookingsSent)
-                      .filter(booking => 
-                        booking.status === "accepted" && 
-                        new Date(booking.performanceDate) >= new Date()
+                    {artist.bookingsReceived
+                      .concat(artist.bookingsSent)
+                      .filter(
+                        (booking) =>
+                          booking.status === "accepted" &&
+                          new Date(booking.performanceDate) >= new Date()
                       )
-                      .sort((a, b) => new Date(a.performanceDate) - new Date(b.performanceDate))
+                      .sort(
+                        (a, b) =>
+                          new Date(a.performanceDate) -
+                          new Date(b.performanceDate)
+                      )
                       .slice(0, 3)
                       .map((booking) => {
                         // Determine if this is a sent or received booking
-                        const venue = booking.receivedBy.role === "venue" 
-                          ? booking.receivedBy 
-                          : booking.initiatedBy;
-                        
+                        const venue =
+                          booking.receivedBy.role === "venue"
+                            ? booking.receivedBy
+                            : booking.initiatedBy;
+
                         return (
-                          <div key={booking._id} className="mb-3 p-3 bg-gray-50 rounded-lg">
+                          <div
+                            key={booking._id}
+                            className="mb-3 p-3 bg-gray-50 rounded-lg"
+                          >
                             <div className="flex items-center gap-3">
-                              <img 
-                                src={venue.profilePicture} 
+                              <img
+                                src={venue.profilePicture}
                                 alt={venue.name}
                                 className="w-10 h-10 rounded-full object-cover cursor-pointer hover:scale-105 transition-transform"
                                 onClick={() => {
@@ -382,11 +399,13 @@ export default function IndividualArtistPage() {
                               <div>
                                 <p className="font-medium">{venue.name}</p>
                                 <p className="text-sm text-gray-600">
-                                  {new Date(booking.performanceDate).toLocaleDateString('en-US', {
-                                    weekday: 'long',
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
+                                  {new Date(
+                                    booking.performanceDate
+                                  ).toLocaleDateString("en-US", {
+                                    weekday: "long",
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
                                   })}
                                 </p>
                               </div>
@@ -394,11 +413,16 @@ export default function IndividualArtistPage() {
                           </div>
                         );
                       })}
-                    {artist.bookingsReceived.concat(artist.bookingsSent).filter(b => 
-                      b.status === "accepted" && 
-                      new Date(b.performanceDate) >= new Date()
-                    ).length === 0 && (
-                      <p className="text-gray-500 text-sm italic">No upcoming gigs</p>
+                    {artist.bookingsReceived
+                      .concat(artist.bookingsSent)
+                      .filter(
+                        (b) =>
+                          b.status === "accepted" &&
+                          new Date(b.performanceDate) >= new Date()
+                      ).length === 0 && (
+                      <p className="text-gray-500 text-sm italic">
+                        No upcoming gigs
+                      </p>
                     )}
                   </div>
                 </div>
