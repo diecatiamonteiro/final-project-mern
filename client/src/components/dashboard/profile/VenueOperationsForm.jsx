@@ -1,5 +1,5 @@
 import React from "react";
-import { REVENUE_SPLIT_OPTIONS } from "../../../constants";
+import { REVENUE_SPLIT_OPTIONS } from "../../../constants/profileFormConstants";
 
 const VenueOperationsForm = ({
   formData,
