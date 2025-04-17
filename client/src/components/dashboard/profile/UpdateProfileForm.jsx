@@ -173,7 +173,7 @@ export default function UpdateProfileForm({ onUpdate }) {
     setHasUnsavedChanges(true);
   };
 
-  // Add new handlers for venue-specific fields
+  // Handler for address updates (venue)
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -189,6 +189,7 @@ export default function UpdateProfileForm({ onUpdate }) {
     setHasUnsavedChanges(true);
   };
 
+  // Handler for opening/performance time updates (venue)
   const handleTimeArrayChange = (type, index, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -224,7 +225,7 @@ export default function UpdateProfileForm({ onUpdate }) {
     setHasUnsavedChanges(true);
   };
 
-  // Add these handlers for tag management
+  // Handler for tag management
   const handleTagToggle = (category, tag) => {
     setFormData((prev) => {
       if (category === "genre") {
@@ -256,7 +257,7 @@ export default function UpdateProfileForm({ onUpdate }) {
     setHasUnsavedChanges(true);
   };
 
-  // Add this validation helper function
+  // Helper function to validate times
   const validateTimes = (times) => {
     // Check if there are any times and that none are empty strings
     return times.length > 0 && times.every((time) => time.trim() !== "");
@@ -428,7 +429,7 @@ export default function UpdateProfileForm({ onUpdate }) {
           </div>
         )}
 
-        {/* Media and Social Links Section */}
+        {/* Media & Social Links and Gallery Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Gallery Images */}
           <div>
