@@ -11,14 +11,19 @@ import {
   globalErrorHandler,
   routeNotFound,
 } from "./middleware/errorHandler.js";
-
+import path from 'path';
+import { fileURLToPath } from 'url';
 // Connect to the database
 await connectDB();
 
 // Initialise Express application
 const app = express();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Middleware
+app.use(express.static(path.join(__dirname, 'client/dist')));
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
@@ -35,6 +40,11 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/bookings", bookingRouter);
 app.use("/api/email", emailRouter);
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
+});
+
 
 // Error handling middleware
 app.use(routeNotFound);
