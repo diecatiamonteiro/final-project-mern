@@ -23,7 +23,7 @@ export default function ReceivedBookings() {
         getAllReceivedBookings(usersDispatch, usersState.user._id);
         getAllAcceptedBookings(bookingsDispatch);
       }
-      toast.success("Booking accepted! Find it in My Gigs.");
+      toast.success("Booking accepted! Find it in My Confirmed Gigs.");
     } catch (error) {
       console.error("Error accepting booking:", error);
       toast.error("Failed to accept booking. Please try again.");

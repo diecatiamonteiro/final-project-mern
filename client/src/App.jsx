@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import Layout from "./pages/Layout";
 import Homepage from "./pages/Homepage";
@@ -21,14 +21,16 @@ import ScrollToTop from "./components/ScrollToTop";
 import Privacy from "./pages/Privacy";
 import Contact from "./pages/Contact";
 import Terms from "./pages/Terms";
+import HashHandler from "./components/HashHandler";
 
 function App() {
   return (
     <>
       <ScrollToTop />
+      <HashHandler />
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path="/" element={<Homepage />} />
+          <Route index element={<Homepage />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="venues" element={<AllVenuesPage />} />

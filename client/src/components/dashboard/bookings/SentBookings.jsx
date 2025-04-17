@@ -24,14 +24,14 @@ export default function SentBookings() {
     const getReceiverAcceptedGigs = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:8000/api/users/${booking.receivedBy._id}`
+          `/api/users/${booking.receivedBy._id}/bookings-received`
         );
 
         const acceptedSentBookings = data.data.bookingsSent
           .filter((booking) => booking.status === "accepted")
           .map((booking) => booking.performanceDate);
 
-        const acceptedReceivedBookings = data.data.bookingsReceived
+        const acceptedReceivedBookings = data.data.bookingsReceive
           .filter((booking) => booking.status === "accepted")
           .map((booking) => booking.performanceDate);
 

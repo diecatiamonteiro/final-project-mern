@@ -40,7 +40,7 @@ export default function UserData() {
         alert(
           "Email update initiated. Please check your email to verify your new email address. You will be redirected to login."
         );
-        window.location.href = "/login";
+        window.location.href = "/#/login";
       } else if (response?.data) {
         setSuccess(true);
         setFormData({

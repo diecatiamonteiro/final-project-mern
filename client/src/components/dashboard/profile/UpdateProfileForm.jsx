@@ -295,6 +295,9 @@ export default function UpdateProfileForm({ onUpdate }) {
       setHasUnsavedChanges(false);
       setShowConfirmModal(false);
 
+      // Scroll to top after successful update
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
       toast.success("Profile updated successfully!");
 
       // Call the onUpdate callback to refresh parent component
