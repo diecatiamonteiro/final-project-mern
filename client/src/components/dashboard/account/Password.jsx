@@ -4,7 +4,7 @@ import { changePassword } from "../../../api/usersApi";
 import Button from "../../../components/Button";
 import { USER_ACTIONS } from "../../../reducers/usersReducer";
 import ShowHidePassword from "../../ShowHidePassword";
-
+import { useNavigate } from "react-router-dom";
 export default function Password() {
   const { usersState, usersDispatch } = useContext(DataContext);
   const { error, isLoading } = usersState;
@@ -18,6 +18,7 @@ export default function Password() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,7 +74,7 @@ export default function Password() {
         });
         // Redirect to login page
         setTimeout(() => {
-          window.location.href = "/login";
+          navigate("/login");
         }, 3000);
       }
     } catch (error) {
