@@ -1,54 +1,61 @@
 # The Greenroom, Where Artists Meet Their Stage (MERN Stack)
 
+**Disclaimer**: This is a non-commercial project created as part of our web development course. All photos and media content are the property of their respective owners and are used solely for educational and demonstrational purposes.
+
+**Note**: The back end is hosted on Render's free tier - please allow ~10 seconds for the initial load while the server spins up from the cold start.
+
 ## 1. Project Overview
 
 The Greenroom is a web platform connecting artists and small venues in Germany for performances, jam sessions, and gigs. It provides a space where musicians, comedians, poets, and other performers can showcase their work and easily find performance opportunities, while venues can discover new talent and manage their bookings efficiently.
+
+See live demo [here](https://alt-west-connect-neighbourhood-helper.vercel.app/).
 
 ## 2. Core Features
 
 ### User Accounts & Authentication
 
-- User Registration & Login (Artists & venues)
-- Welcome Email upon Signup (email verification required)
-- Role Selection (Artist or venue) upon Signup
-- Guest Access (Limited browsing, no booking access or chat/contact)
+- User registration & login
+- Role selection (artist or venue) upon signup
+- Verification email upon signup (required)
+- Guest access (limited browsing: no favouriting, booking access or messaging)
 
-### Profile Management in User Dashboard (Artists & Venues)
+### Profile Management in User Dashboard
 
 - Edit account settings (first name, last name, email)
 - Change password
 - Delete account and all associated data
-- Edit profile information (description, media, photos, revenue split, etc.)
+- Edit public profile information (public name, description, genres & types, media, address & opening/performing times, revenue split, and availability)
 - Set own available dates on calendar and see booked dates
 
 ### Artist and Venue Features
 
-- Create bio and upload media and photos about their work/space
+- Create bio and upload media and photos about work/space
 - Browse venues and artists and view individual profiles
 - Set own available dates in dashboard
 - Check availability and book an artist or venue via calendar on individual profile pages (both artists and venues can do this)
 - Request a booking (both artists and venues can do this)
 - Receive a booking (both artists and venues can do this)
-- Received and made bookings are stored under My Bookings in the user dashboard
+- Received and requested bookings are stored under My Bookings in the user dashboard
 - Booking dates can be edited by the user who initated it until booking is accepted from the receiver
-- Once booking is accepted by the other party, the booking moves from My Bookings to My Gigs
+- Once booking is accepted by the other party, the booking moves from My Bookings to My Confirmed Gigs
+- When a booking is accepted, an email is sent to the other party
 - When a booking is declined by the other party, an email is sent to the other party and removed from user dashboard (kept in DB)
 - When a booking is cancelled by the other party, an email is sent to the other party and removed from user dashboard (kept in DB)
 
 ### Platform-Wide Features
 
-- Search & filter system with text search for artist and venue names, and dropdown filters for location (neighbourhood/district), perfomance type (e.g., Band) and venue type (e.g., Bar)
-- User dashboard (upcoming & past bookings, profile and user data management)
-- Contact user via email form or social links
+- Search & filter system in both Find Artists and Find Venues pages with text search and dropdown filters
+- User dashboard (bookings, confirmed gigs, profile and user data management)
+- Contact user via email form (only once booking has been accepted) or social links
 - Responsive design (accessible across devices)
 
 ### Possible Future Features
 
-- Admin controls
-- Notifications system (for status of received & sent bookings and gigs)
-- Review and rating system
-- Preview and then publish profile in the user dashboard
-- Expand artist type to include comedians, poets, dancers, etc.
+- Reviews & ratings
+- Preview profile before publishing
+- Germany-only address filter
+- Auto-filling addresses & search bar
+- Real-time notification system (Socket.IO)
 
 ## 3. User Stories
 
@@ -56,42 +63,47 @@ Users can be artists, venues or guests.
 
 ### Artist User Stories
 
-- As an artist, I want to register and receive a verification email. I am redirected to homepage.
-- As an artist, I want to be able to change my password using a verification link in my email that redirects me to user dashboard with the open change password modal.
+- As an artist, I want to register and receive a verification email. I am redirected to login page and after logging in, I am redirected to my dashboard.
+- As an artist, I want to be able to change my password. After clicking "Change Password", I am redirected to the login page so I can login with my new password.
+- As an artist, I want to be able to change my email. After this, I am informed about a verification link sent to my email and I am logged out. I must then verify new email through the link and login again with updated email.
+- As an artist, I want to be able to delete my account. After typing DELETE, I am redirected to the login page and my account and all associated data are permanently deleted.
 - As an artist, I want to create a profile so that I can showcase my work and attract venues.
 - As an artist, I want to upload links and photos to my profile so that venues can see examples of my performances.
 - As an artist, I want to be able to set my availability in my calendar in the user dashboard.
 - As an artist, I want to browse all venues and see their available gig dates and revenue split so that I can decide whether to make a booking.
-- As an artist, I want to browse other artists.
+- As an artist, I want to browse other artists and see their next three confirmed gigs with dates, names and clickable profile pictures of the venues.
 - As an artist, I want to receive bookings from venues via my booking calendar on my profile page.
 - As an artist, I want to book venues via the venue's booking calendar on their profile page.
 - As an artist, I want to see my received and sent bookings in my user dashboard with the booking details (name, profile picture, link to profile, date, revenue split).
 - As an artist, I want to be able to edit the booking date I requested before the booking is accepted by the other party.
 - As an artist, I want to be able to accept or decline received bookings, and an email will be sent to the other party in both cases.
-- As an artist, I want to contact the venue via an email form once booking is confirmed. Users can always access each other's social media.
-- As an artist, I want to see my accepted bookings stored under "My Gigs" in the user dashboard.
+- As an artist, I want to see my accepted bookings stored under "My Confirmed Gigs" in the user dashboard.
 - As an artist, I want to be able to cancel accepted bookings, and an email will be sent to the other party.
-- As an artist, I want to favourite artists and venues.
+- As an artist, I want to contact the venue via an email form. This is only possible for confirmed gigs. Users can always access each other's social media.
+- As an artist, I want to favourite artists and venues, but I cannot favourite my own profile.
 
 ### Venue User Stories
 
-- As a venue, I want to register and receive a verification email. I am redirected to homepage.
-- As a venue, I want to be able to change my password using a verification link in my email that redirects me to user dashboard with the open change password modal.
+- As a venue, I want to register and receive a verification email. I am redirected to login page and after logging in, I am redirected to my dashboard.
+- As a venue, I want to be able to change my password. After clicking "Change Password", I am redirected to the login page so I can login with my new password.
+- As a venue, I want to be able to change my email. After this, I am informed about a verification link sent to my email and I am logged out. I must then verify new email through the link and login again with updated email.
+- As a venue, I want to be able to delete my account. After typing DELETE, I am redirected to the login page and my account and all associated data are permanently deleted.
 - As a venue, I want to create a profile so that artists can learn about my venue and available gig dates.
-- As a venue, I want to upload photos of my venue so that artists can see the performance space.
-- As a venue, I want to be able to set my availability in my calendar in the user dashboard.
+- As a venue, I want to add the address of my venue to my profile, as well as opening and performing times.
 - As a venue, I want to define the revenue split on my profile.
+- As a venue, I want to upload links and photos of my venue so that artists can see the performance space.
+- As a venue, I want to be able to set my availability in my calendar in the user dashboard.
 - As a venue, I want to browse all artists and see their available gig dates and music so that I can decide whether to make a booking.
-- As a venue, I want to browse other venues.
+- As a venue, I want to browse other venues and see their next three confirmed gigs with dates, names and clickable profile pictures of the artists.
 - As a venue, I want to receive bookings from artists via my booking calendar on my profile page.
 - As a venue, I want to book artists via the artist's booking calendar on their profile page.
 - As a venue, I want to see my received and sent bookings in my user dashboard with the booking details (name, profile picture, link to profile, date, revenue split).
 - As a venue, I want to be able to edit the booking date I requested before the booking is accepted by the other party.
 - As a venue, I want to be able to accept or decline received bookings, and an email will be sent to the other party in both cases.
-- As a venue, I want to contact the artist via an email form once booking is confirmed. Users can always access each other's social media.
-- As a venue, I want to see my accepted bookings stored under "My Gigs" in the user dashboard.
+- As a venue, I want to see my accepted bookings stored under "My Confirmed Gigs" in the user dashboard.
 - As a venue, I want to be able to cancel accepted bookings, and an email will be sent to the other party.
-- As a venue, I want to favourite artists and venues.
+- As a venue, I want to contact the artist via an email form. This is only possible for confirmed gigs. Users can always access each other's social media.
+- As a venue, I want to favourite artists and venues, but I cannot favourite my own profile.
 
 ### Guest User Stories
 
@@ -99,17 +111,29 @@ Users can be artists, venues or guests.
 - As a guest, I want to access the registration and login pages so that I can create an account when I'm ready.
 - As a guest, I want to browse all venues so that I can explore potential performance spaces before signing up.
 - As a guest, I want to browse all artists so that I can see the types of performers available on the platform.
-- As a guest, I want to see individual venue and artist profiles so that I can get a sense of the platform. I cannot make bookings nor email artists/venues but I can see their social media links.
+- As a guest, I want to see individual venue and artist profiles so that I can get a sense of the platform. I cannot make bookings, favourite artists/venues, or email artists/venues, but I can see their social media links.
 
 ## 3. Pages in the FE
 
 - **Register Page**: Sign up for an account
 - **Login Page**: Securely log in
-- **Homepage**: Explain how platform works and have a glimpse of what users can
+- **Forgot Password Page**: Send a reset link to email
+- **Reset Password Page**: Set new password
+- **Homepage**: Explain how platform works and have a glimpse of what users can do
+- **All Artists Page (Find Artists)**: Display all artist cards
+- **All Venues Page (Find Venues)**: Display all venue cards
+- **Individual Artist Page**: Artist profile page with gallery and details, media, social links, and booking calendar
+- **Individual Venue Page**: Venue profile page with gallery and details, media, social links, and booking calendar
+- **Favourites Page**: Display all favourited artists and venues
+- **My Greenroom**: Profile type, first name, last name, email, password. Ability to edit all data, change password and delete account.
   - **My Account**: Profile type, first name, last name, email, password. Ability to edit all data, change password and delete account.
-  - **My Profile**: Artistic name/venue name, description, profile picture, performance type, genre, images, social links, media links, and calendar availability. Address, revenue split, opening times and performing times for venues only. Ability to edit all data.
-  - **My Bookings**: Received bookings (to accept or decline) & sent bookings (with option to edit booking date, only enabled until booking is accepted). If accepted, booking moves to My Gigs and an email is sent to the other party. If declined, booking is removed from dashboard but remains in DB (soft delete) and an email is sent to the other party.
-  - **My Gigs** - Gig cards with option to message other party via email form or to cancel. If cancelled, booking is removed from dashboard but remains in DB (soft delete) and an email is sent to the other party.
+  - **My Public Profile**: Artistic name/venue name, description, profile picture, performance type, genre, images, social links, media links, and calendar availability. Address, revenue split, opening times and performing times for venues only. Ability to edit all data.
+  - **My Bookings**: Received bookings (to accept or decline) & sent bookings (with option to edit booking date, only enabled until booking is accepted). If accepted, booking moves to My Confirmed Gigs and an email is sent to the other party. If declined, booking is removed from dashboard but remains in DB (soft delete) and an email is sent to the other party.
+  - **My Confirmed Gigs** - Gig cards with option to message other party via email form or to cancel. If cancelled, booking is removed from dashboard but remains in DB (soft delete) and an email is sent to the other party.
+- **About Us Page**: Briefly explain the platform and its purpose
+- **Privacy Policy Page**: Explain how we handle user data and privacy
+- **Contact Us Page**: Contact form to send a message to the platform admins via Formspree
+- **Terms of Service Page**: Reference to our Privacy Policy
 - **Not Found Page**: A 404 page for invalid URLs
 
 ## 4. Data Structure (MongoDB & Mongoose)
@@ -117,99 +141,97 @@ Users can be artists, venues or guests.
 #### 4.1. User Collection (Stores user data for both artists and venues)
 
 ```js
-{
+const UserSchema = new Schema(
+  {
     // Registration
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, enum: ["artist", "venue"], required: true }, // Defines account type
-    isConfirmed: {type: Boolean, default: false} // Email verification
+    isConfirmed: { type: Boolean, default: false }, // Email verification
 
     // Profile
     name: { type: String }, // artisticName for artists & venue name for venues
     description: { type: String }, // Bio for artists & description for venues
     type: [{ type: String }], // Performance type for artists & venue type for venues
 
-    // additionalInfo for venue or artist only
+    //additionalInfo for venue or artist only:
     additionalInfo: {
-      //Venue only:
-    address: {
-      streetName: { type: String },
-      number: { type: String },
-      zipCode: { type: String },
-      city: { type: String }
+      // Venue only:
+      address: {
+        streetName: { type: String },
+        number: { type: String },
+        zipCode: { type: String },
+        city: { type: String },
+      },
+      revenueSplit: { type: String },
+      openingTimes: [{ type: String }],
+      performingTimes: [{ type: String }],
+      // Artist only:
+      genre: [{ type: String }],
     },
-    revenueSplit: { type: String },
-    openingTimes: [{ type: String }],
-    performingTimes: [{ type: String }],
-    // Artist only:
-    genre: [{type: String}]
-  },
 
     // Media
-    profilePicture: { type: String, default: "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v1700000000/default-avatar.png"}, // Default Cloudinary image
-    media: [{ url: { type: String }, platform: { type: String}}], // YouTube for artists & venues. Spotify and SoundCloud for artists only
+    profilePicture: {
+      type: String,
+      default:
+        "https://res.cloudinary.com/dtlnz58z5/image/upload/v1742665279/icon-7797704_1280_lifkba.webp",
+    }, // Default Cloudinary image
+    media: [{ url: { type: String }, platform: { type: String } }], // YouTube for artists & venues. Spotify and SoundCloud for artists only
     images: [{ type: String }], // Cloudinary URLs to store images
     socialLinks: [{ type: String }], // Social media and portfolio links
 
     // Mark own availability
-    availability: [{ type: Date }],  // Dates the user has marked as available in their availability calendar
+    availability: [{ type: Date }], // Dates the user has marked as available in their availability calendar
 
     // Bookings
-    bookingsReceived: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Booking' }],
-    bookingsSent: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Booking' }],
+    bookingsReceived: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "Booking" },
+    ],
+    bookingsSent: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
 
     // Favourites
-    favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
-},
-{ timestamps: true }
+    favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+
+    // Temporary email fields
+    tempEmail: String,
+    emailVerificationToken: String,
+    emailVerificationExpires: Date,
+  },
+  { timestamps: true }
+);
 ```
 
 #### 4.2. Booking Collection (Stores booking data between artists and venues)
 
 ```js
-{
-  // Venue or artist who makes the request booking
-  initiatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  // Venue or artist who receives the request booking
-  receivedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  performanceDate: { type: Date, required: true },
-  status: { type: String, enum: ['pending', 'accepted', 'declined', 'cancelled'], default: 'pending' },
-  statusUpdatedAt: { type: Date, default: Date.now },
-  isCancelledOrDeclined: { type: Boolean, default: false }, // Soft deleted from DB (not deleted from DB but does not appear in the FE)
-},
-{ timestamps: true };
+const BookingSchema = new Schema(
+  {
+    // Venue or artist who makes the request booking
+    initiatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    // Venue or artist who receives the request booking
+    receivedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    performanceDate: { type: Date, required: true },
+    status: {
+      type: String,
+      enum: ["pending", "accepted", "declined", "cancelled"],
+      default: "pending",
+    },
+    statusUpdatedAt: { type: Date, default: Date.now },
+    isCancelledOrDeclined: { type: Boolean, default: false }, // Soft deleted from DB (not deleted from DB but does not appear in the FE)
+  },
+  { timestamps: true }
+);
 ```
-
----
-
-FE will check: If a date is in availability, it's clickable (open for booking).
-Once booked, the date is removed from availability and stored in the Booking model.
-
-#### How the Booking Flow Works
-
-1. User Requests a Booking
-2. A booking is created with status: "pending".
-3. The requested date is still available in the calendar.
-
-#### User Accepts a Booking
-
-1. The booking status updates from "pending" → "confirmed".
-2. FE now blocks that date in the calendar.
-3. Other pending requests for the same date are still visible but won't block the date.
-
-#### User Declines a Booking
-
-1. The booking status updates to "declined".
-2. The date remains available.
-
-#### User Cancels a Confirmed Booking
-
-1. The booking status updates to "cancelled".
-2. FE removes the date from blocked dates, making it available again.
-
----
 
 ## 5. Backend API Design (Express & MongoDB)
 
@@ -269,20 +291,6 @@ Once booked, the date is removed from availability and stored in the Booking mod
 | ------ | -------- | ---------------------------------------------------- | --------------- |
 | POST   | `/`      | Send message via email form once booking is accepted | ✅ Yes          |
 
----
-
-### Steps for auth / user controller
-
-Step 1: Registration (POST /api/auth/register)
-
-Creates a user only with auth-related fields (email, password, role).
-Other fields remain empty or undefined until the user creates their profile.
-
-Step 2: Profile Creation (POST /api/users/:id/create-profile)
-
-Updates the existing user with profile details (name, bio, media, availability, etc.).
-Does not modify email, password, or role.
-
 ## 6. Backend Middleware
 
 | Page              | Description                                                                                   |
@@ -293,7 +301,7 @@ Does not modify email, password, or role.
 
 ## 7. User Journey
 
-#### 🎭 User Registration & Authentication Flow
+#### User Registration & Authentication Flow
 
 📌 **User registers (with email verification)**
 
@@ -310,7 +318,7 @@ Does not modify email, password, or role.
 
 1. User opens the email.
 2. Clicks the verification link.
-3. Redirected to verification page (loading state).
+3. Redirected to verification page (most likley won't be seen by the user as they are redirected to login page almost immediately).
 4. Once verification is complete, automatically redirected to login page with an added message on top: "Your email has been successfully verified. Please log in to continue."
 5. User manually enters credentials & logs in.
 6. Account is now marked as "isConfirmed: true" in the database.
@@ -320,32 +328,27 @@ Does not modify email, password, or role.
 1. User goes to the login page.
 2. Enters email & password.
 3. Clicks "Login".
-4. Sees error message: "Please verify your email before logging in."
+4. Sees error message on login form: "Please verify your email before logging in."
 5. Can request resend verification email.
 
 📌 **User is logged in and changes password in dashboard**
 
-1. User logs in and navigates to Dashboard > My Account.
-2. Clicks "Change Password".
+1. User logs in and navigates to My Greenroom > My Account (tab) > Password (tab).
+2. Types in current password and new password twice, and clicks "Change Password".
 3. Backend generates a one-time secure link with a token.
-4. Email is sent and sees a message: "For security reasons, we have sent you an email with a link to change your password."
-5. User receives an email with a "Change Password" button.
-6. Clicks the link → Redirected to Dashboard page with an open change password modal.
-7. Enters New Password & Confirm Password.
-8. Clicks "Save New Password" and password is updated.
-9. User is logged out. Previous session is invalidated (logs out from all devices).
-10. User logs in manually again.
+4. User sees a success message: "Password changed successfully. You will be redirected to login..."
+5. User is logged out. Previous session is invalidated (logs out from all devices).
+6. User logs in manually again.
 
 📌 **User is logged out and forgets password**
 
 1. User clicks "Forgot Password?" on the login page.
-2. Enters their email address.
+2. Is redirected to Forgot Password page and enters their email address.
 3. Clicks "Send Reset Link".
 4. Receives an email with a unique link.
-5. Clicks the link and is redirected to the login page with a added message on top: "Your password has been successfully changed. Please log in to continue."
-6. Enters a new password and clicks "Save New Password".
-7. Sees confirmation message:"Your password has been updated. Please log in."
-8. User logs in manually.
+5. Clicks the link and is redirected to the Reset Password page.
+6. Enters a new password and clicks "Reset Password".
+7. User is redirected to login page and can now log in with new password.
 
 📌 **User logs in after verifying account**
 
@@ -542,7 +545,7 @@ Does not modify email, password, or role.
 | View received & sent bookings in dashboard      | ❌ No                     | ✅ Yes                         |
 | See accepted bookings ("My Gigs")               | ❌ No                     | ✅ Yes                         |
 | Contact a venue/artist via email form           | ❌ No                     | ✅ Yes                         |
-| Favourite artists & venues                       | ❌ No                     | ✅ Yes                         |
+| Favourite artists & venues                      | ❌ No                     | ✅ Yes                         |
 | Delete account                                  | ❌ No                     | ✅ Yes                         |
 
 ## 9. Frontend Structure
