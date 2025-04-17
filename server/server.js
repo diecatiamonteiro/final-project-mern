@@ -23,7 +23,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Middleware
-app.use(express.static(path.join(__dirname, 'client/dist')));
+app.use(express.json());
+app.use(cookieParser());
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
@@ -32,19 +33,28 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-app.use(express.json());
-app.use(cookieParser());
 
-// Routes
+// Serve static files
+app.use(express.static(path.join(__dirname, 'client/dist')));
+
+// API Routes
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/bookings", bookingRouter);
 app.use("/api/email", emailRouter);
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
+// Add this before the catch-all route
+app.use((req, res, next) => {
+  console.log('Request URL:', req.url);
+  next();
 });
 
+// Modified catch-all route with logging
+app.get('*', (req, res) => {
+  const indexPath = path.join(__dirname, 'client/dist/index.html');
+  console.log('Serving index.html from:', indexPath);
+  res.sendFile(indexPath);
+});
 
 // Error handling middleware
 app.use(routeNotFound);
