@@ -51,7 +51,7 @@ app.use((req, res, next) => {
 
 // Modified catch-all route with logging
 app.get('*', (req, res) => {
-  const indexPath = path.join(__dirname, 'client/dist/index.html');
+  const indexPath = path.join(__dirname, 'client/dist', '/index.html');
   console.log('Serving index.html from:', indexPath);
   res.sendFile(indexPath);
 });
