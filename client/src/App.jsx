@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import Layout from "./pages/Layout";
 import Homepage from "./pages/Homepage";
@@ -27,6 +27,7 @@ function App() {
     <>
       <ScrollToTop />
       <Routes>
+        <Route path="" element={<Navigate to="/" replace />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<Homepage />} />
           <Route path="register" element={<RegisterPage />} />
