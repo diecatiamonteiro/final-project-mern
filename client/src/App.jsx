@@ -21,13 +21,14 @@ import ScrollToTop from "./components/ScrollToTop";
 import Privacy from "./pages/Privacy";
 import Contact from "./pages/Contact";
 import Terms from "./pages/Terms";
+import HashHandler from "./components/HashHandler";
 
 function App() {
   return (
     <>
       <ScrollToTop />
+      <HashHandler />
       <Routes>
-        <Route path="" element={<Navigate to="/" replace />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<Homepage />} />
           <Route path="register" element={<RegisterPage />} />
