@@ -49,11 +49,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// Modified catch-all route with logging
-app.get('*', (req, res) => {
-  const indexPath = path.join(__dirname, 'client/dist', '/index.html');
-  console.log('Serving index.html from:', indexPath);
-  res.sendFile(indexPath);
+// Handle React routing, return all requests to React app
+app.get('*', function(req, res) {
+  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'), function(err) {
+    if (err) {
+      res.status(500).send(err);
+    }
+  });
 });
 
 // Error handling middleware
