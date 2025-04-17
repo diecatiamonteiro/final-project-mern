@@ -5,9 +5,10 @@ import react from "@vitejs/plugin-react-swc";
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: 'dist',
+    outDir: "dist",
   },
   server: {
-    port: 5173
-  }
+    port: 5173,
+  },
+  publicDir: "public",
 });
