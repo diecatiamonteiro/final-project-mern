@@ -6,10 +6,11 @@ export default function HashHandler() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Only run once on initial mount
     if (!location.hash && location.pathname === '/') {
       navigate('/', { replace: true });
     }
-  }, [location, navigate]);
+  }, []); // Empty dependency array - runs only once
 
   return null;
 } 
