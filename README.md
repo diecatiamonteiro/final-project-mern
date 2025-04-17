@@ -6,11 +6,24 @@
 
 ## 1. Project Overview
 
+![Homepage](client/public/screenshots/homepage-hero.png)
+
 The Greenroom is a web platform connecting artists and small venues in Germany for performances, jam sessions, and gigs. It provides a space where musicians, comedians, poets, and other performers can showcase their work and easily find performance opportunities, while venues can discover new talent and manage their bookings efficiently.
 
-See live demo [here](https://alt-west-connect-neighbourhood-helper.vercel.app/).
+See live demo [here](https://thegreenroom.onrender.com).
 
-## 2. Core Features
+## 2. Contributors
+
+This web application was developed from March to April 2025 as a final project for our Web Development course.
+
+The team consisted of 4 full stack developers:
+
+- [Cátia Monteiro](https://github.com/diecatiamonteiro) 
+- [Evie Wilcock](https://github.com/eviesw) 
+- [Omar Skervin](https://github.com/Coderomarskervin) 
+- [Swagatika Pati](https://github.com/Swagatikapati19) 
+
+## 3. Core Features
 
 ### User Accounts & Authentication
 
@@ -57,7 +70,7 @@ See live demo [here](https://alt-west-connect-neighbourhood-helper.vercel.app/).
 - Auto-filling addresses & search bar
 - Real-time notification system (Socket.IO)
 
-## 3. User Stories
+## 4. User Stories
 
 Users can be artists, venues or guests.
 
@@ -113,7 +126,7 @@ Users can be artists, venues or guests.
 - As a guest, I want to browse all artists so that I can see the types of performers available on the platform.
 - As a guest, I want to see individual venue and artist profiles so that I can get a sense of the platform. I cannot make bookings, favourite artists/venues, or email artists/venues, but I can see their social media links.
 
-## 3. Pages in the FE
+## 5. Pages in the FE
 
 - **Register Page**: Sign up for an account
 - **Login Page**: Securely log in
@@ -136,9 +149,9 @@ Users can be artists, venues or guests.
 - **Terms of Service Page**: Reference to our Privacy Policy
 - **Not Found Page**: A 404 page for invalid URLs
 
-## 4. Data Structure (MongoDB & Mongoose)
+## 6. Data Structure (MongoDB & Mongoose)
 
-#### 4.1. User Collection (Stores user data for both artists and venues)
+#### 6.1. User Collection (Stores user data for both artists and venues)
 
 ```js
 const UserSchema = new Schema(
@@ -203,7 +216,7 @@ const UserSchema = new Schema(
 );
 ```
 
-#### 4.2. Booking Collection (Stores booking data between artists and venues)
+#### 6.2. Booking Collection (Stores booking data between artists and venues)
 
 ```js
 const BookingSchema = new Schema(
@@ -233,9 +246,9 @@ const BookingSchema = new Schema(
 );
 ```
 
-## 5. Backend API Design (Express & MongoDB)
+## 7. Backend API Design (Express & MongoDB)
 
-#### 5.1. Auth Routes (`/api/auth`)
+#### 7.1. Auth Routes (`/api/auth`)
 
 | Method | Endpoint           | Description                                                                           | Logged in User? |
 | ------ | ------------------ | ------------------------------------------------------------------------------------- | --------------- |
@@ -251,29 +264,25 @@ const BookingSchema = new Schema(
 | POST   | `/forgot-password` | User clicks forgot password, is sent an                                               | ❌ No           |
 | POST   | `/reset-password`  | User clicks reset password, is sent an                                                | ✅ Yes          |
 
-#### 5.2. User Routes: Artists & Venues (`api/users`)
+#### 7.2. User Routes: Artists & Venues (`api/users`)
 
 | Method | Endpoint                     | Description                                                                             | Logged in User? |
 | ------ | ---------------------------- | --------------------------------------------------------------------------------------- | --------------- |
 | GET    | `/venues`                    | Display all venues on venues page                                                       | ❌ No           |
 | GET    | `/artists`                   | Display all artists on artists page                                                     | ❌ No           |
 | GET    | `/:id`                       | Get specific artist/venue profile                                                       | ❌ No           |
-| ------ | ---------------------------- | --------------------------------------------------------------------------------------- | --------------- |
 | PATCH  | `/:id/update-profile`        | Update an existing artist/venue profile (includes everything profile related)           | ✅ Yes          |
 | DELETE | `/:id/delete-media/:mediaId` | Delete individual media link                                                            | ✅ Yes          |
 | DELETE | `/:id/delete-image/:imageId` | Delete individual image                                                                 | ✅ Yes          |
-| ------ | ---------------------------- | --------------------------------------------------------------------------------------- | --------------- |
 | POST   | `/favourites`                | Add artist/venue to favourites                                                          | ✅ Yes          |
 | DELETE | `/favourites/:id`            | Remove artist/venue from favourites                                                     | ✅ Yes          |
 | GET    | `/favourites`                | Display all favourited artists/venues                                                   | ✅ Yes          |
-| ------ | ---------------------------- | --------------------------------------------------------------------------------------- | --------------- |
 | GET    | `/:id/bookings`              | Get all received & sent bookings of a user                                              | ✅ Yes          |
 | GET    | `/:id/bookings/received`     | Get only received bookings of a user                                                    | ✅ Yes          |
 | GET    | `/:id/bookings/sent`         | Get only sent bookings of a user                                                        | ✅ Yes          |
-| ------ | ---------------------------- | --------------------------------------------------------------------------------------- | --------------- |
 | GET    | `/search?q=searchTerm`       | Search artists/venues by name, performance/venue type, artist genre, location           | ✅ Yes          |
 
-#### 5.3. Booking Routes (`api/bookings`)
+#### 7.3. Booking Routes (`api/bookings`)
 
 | Method | Endpoint       | Description                                                      | Logged in User? |
 | ------ | -------------- | ---------------------------------------------------------------- | --------------- |
@@ -285,13 +294,13 @@ const BookingSchema = new Schema(
 | PATCH  | `/:id/cancel`  | Cancel accepted booking and notify other party (automatic email) | ✅ Yes          |
 | GET    | `/accepted`    | Get all accepted bookings (under My Gigs)                        | ✅ Yes          |
 
-#### 5.4 Email Routes (`api/email`)
+#### 7.4 Email Routes (`api/email`)
 
 | Method | Endpoint | Description                                          | Logged in User? |
 | ------ | -------- | ---------------------------------------------------- | --------------- |
 | POST   | `/`      | Send message via email form once booking is accepted | ✅ Yes          |
 
-## 6. Backend Middleware
+## 8. Backend Middleware
 
 | Page              | Description                                                                                   |
 | ----------------- | --------------------------------------------------------------------------------------------- |
@@ -299,7 +308,7 @@ const BookingSchema = new Schema(
 | `errorHandler.js` | Global error handler & 404 route not found                                                    |
 | `checkUploads.js` | Checks link origin for media and social links and converts media to embed                     |
 
-## 7. User Journey
+## 9. User Journey
 
 #### User Registration & Authentication Flow
 
@@ -355,42 +364,45 @@ const BookingSchema = new Schema(
 1. User clicks "Log In".
 2. Enters email & password.
 3. Clicks "Login".
-4. Redirected to the homepage.
-5. Can now access their dashboard.
+4. Redirected to the dashboard.
 
 📌 **User deletes account**
 
-1. User navigates to Dashboard > My Account.
-2. Clicks "Delete Account".
-3. Sees confirmation modal.
-4. Clicks "Confirm Delete".
-5. Account is deleted & user is logged out.
+1. User navigates to My Greenroom > My Account (tab) > Delete Account (tab).
+2. Types "DELETE" in the confirmation field.
+3. Clicks "Confirm Deletion".
+4. Account is deleted & user is logged out.
 
 #### Profile Management Flow
 
 📌 **User creates or updates profile**
 
-1. Navigates to Dashboard > My Profile.
-2. Fills out profile fields:
+1. Navigates to My Greenroom > My Public Profile.
+2. Fills out profile fields and/or add:
    - Name (artist name/venue name)
-   - Bio/Description
-   - Profile Picture
-   - **For venues**: Revenue split, opening times, address
+   - Description
+   - Profile picture
+   - Genre & types
+   - **For venues**: Revenue split, opening times, performance times, address
    - Media links (YouTube, Spotify, etc.)
-   - Images (venue photos, artist performances)
+   - Images
    - Social media links
+   - Availability calendar
 3. Clicks "Save Changes".
-4. Success message appears.
-5. Profile is updated.
+4. Confirm modal appears & user clicks "Confirm".
+5. Success message appears.
+6. Profile is updated.
+
+**NOTE**: Profile is only published once all required fields have been filled in. An orange info box appears at the top of the page saying "Profile Not Published" and listing which required fields have not been filled in yet. Once filled in, green info box appears saying "Profile Published" with a button to view own profile.
 
 📌 **User sets availability (calendar)**
 
-1. Navigates to Dashboard > My Profile.
-2. Clicks on the availability calendar.
-3. Selects available dates.
-4. Clicks "Save".
-5. Success toast appears.
-6. Available dates are saved and can now be booked.
+1. Navigates to My Greenroom > My Public Profile.
+2. Selects available dates on calendar.
+3. Clicks "Save Changes".
+4. Confirm modal appears & user clicks "Confirm".
+5. Success message appears.
+6. Profile is updated.
 
 #### Booking Flow
 
@@ -399,73 +411,85 @@ const BookingSchema = new Schema(
 1. User navigates to an artist or venue profile.
 2. Selects an available date from the calendar.
 3. Clicks "Request Booking".
-4. Clicks "Send Request".
-5. Success toast appears.
-6. Pending booking is created and added to Dashboard > My Bookings > Sent Bookings.
-7. The other party receives an email.
+4. Confirmation modal appears.
+5. Clicks "Request Booking".
+6. Success toast appears.
+7. Pending booking is created and added to My Greenroom > My Bookings > Sent Bookings.
+8. The other party receives an email.
 
 📌 **Artist/venue who initiated booking edits a pending booking**
 
-1. User navigates to Dashboard > My Bookings > Sent Bookings.
+1. User navigates to My Greenroom > My Bookings > Sent Bookings.
 2. Clicks "Edit Date".
 3. Modal appears and user selects another available date from the calendar.
 4. Clicks "Confirm".
 5. Success toast appears.
 6. Pending booking is updated and awaits confirmation from the other party.
-7. The other party receives an email and the booking is updated in their user dashboard.
+7. The other party receives an email and the booking is updated in their dashboard.
 
 📌 **Other party confirms booking**
 
-1. User navigates to Dashboard > My Bookings > Received Bookings.
+1. User navigates to My Greenroom > My Bookings > Received Bookings.
 2. Sees pending booking request.
 3. Clicks "Accept".
 4. Success toast appears.
 5. Booking status updates to "accepted".
 6. An email confirmation is sent to the other party.
 7. The booked date is removed from availability.
-8. Booking moves from "My Bookings" to "My Gigs".
+8. Booking moves from "My Bookings" to "My Confirmed Gigs".
 9. Messaging (email form - nodemailer) is now enabled.
 
 📌 **Other party declines booking**
 
-1. User navigates to Dashboard > My Bookings > Received Bookings.
+1. User navigates to My Greenroom > My Bookings > Received Bookings.
 2. Sees pending booking request.
 3. Clicks "Decline".
-4. Success toast appears.
-5. Booking status updates to "declined".
-6. An email is sent to the other party.
+4. Confirmation modal appears.
+5. Clicks "Decline Booking".
+6. Success toast appears.
 7. The booking disappears from the dashboard (soft delete).
-8. The requested date remains available.
+8. An email is sent to the other party.
+9. The requested date remains available.
 
 📌 **User cancels an accepted booking**
 
-1. User navigates to Dashboard > My Gigs.
+1. User navigates to My Greenroom > My Confirmed Gigs.
 2. Clicks "Cancel Gig".
-3. Sees confirmation modal.
+3. Confirmation modal appears.
 4. Clicks "Cancel Gig".
 5. Success toast appears.
-6. Booking status updates to "cancelled".
-7. The booking disappears from the dashboard (soft delete).
+6. The booking disappears from the dashboard (soft delete).
+7. An email is sent to the other party.
 8. The date becomes available again in the calendar.
-9. An email is sent to the other party.
+
+📌 **Artist visits another artist's profile**
+
+1. Navigates to an artist's profile.
+2. Cannot see their calendar.
+3. Instead sees their next three confirmed gigs with dates, names and clickable profile pictures of the venues.
+
+📌 **Venue visits another venue's profile**
+
+1. Navigates to a venue's profile.
+2. Cannot see their calendar.
+3. Instead sees their next three confirmed gigs with dates, names and clickable profile pictures of the artists.
 
 #### Search & Browse Flow
 
 📌 **User searches for artists or venues**
 
-1. Navigates to "Artists" or "Venues" page.
-2. Can browse all artists and venues (pagination)
-3. Can use the search bar to type a name.
-4. Can use filters (performance type/venue type, artist genre, venue location, revenue split) to refine search.
-5. Clicks "Search Venues" or "Search Artists".
-6. Sees filtered results.
-7. Clicks on a profile to view more details.
+1. Navigates to "Find Artists" or "Find Venues" page.
+2. Can browse all artists and venues cards.
+3. Can use the search bar to refine search.
+4. Clicks "Search Venues" or "Search Artists".
+5. Sees filtered results or a no results message.
+6. Clicks on a profile to view more details.
 
 📌 **Guest browsing**
 
 1. Navigates to homepage.
 2. Reads how The Greenroom works.
-3. Clicks on "Browse Artists" or "Browse Venues".
+3. Clicks on "Find Artists" or "Find Venues".
 4. Can view profiles, including:
    - Name
    - Description
@@ -474,40 +498,27 @@ const BookingSchema = new Schema(
    - Media links (YouTube, SoundCloud, etc.)
    - Revenue split, opening hours, performance times (for venues)
    - Availability calendar (but cannot book)
-5. Cannot book Artist/Venue or contact them via email form.
+5. Cannot book artist/venue or contact them via email form.
 6. When tries to book, a toast appears asking guest user to log in to make a booking.
 7. When tries to favourite, a toast appears asking guest user to log in to add a favourite.
 
 #### Favourites Flow
 
-📌 **User favourites an artist/venue**
+📌 **Registered user favourites an artist/venue**
 
-1. Navigates to Find Artists or Find Venues page, or individual artist/venue page.
+1. Navigates to homepage in Featured section, or to Find Artists/Venues page, or individual artist/venue page.
 2. Clicks heart icon.
 3. Success toast appears.
 4. The favourite is saved.
-5. Navigates to Favourites page.
-6. Sees list of saved artists and venues.
+5. Navigates to My Favourites page.
+6. Sees list of saved artists and venues grouped by type.
 
-📌 **User removes a favourite**
+📌 **Registered user removes a favourite**
 
-1. Navigates to Favourites page.
-2. Clicks the "X" button on an artist/venue.
+1. Navigates to My Favourites page.
+2. Clicks the "X" button on an artist/venue card.
 3. Success toast appears.
 4. Artist/venue is removed from favourites.
-
-#### Communication Flow
-
-📌 **User contacts another user**
-
-1. Once a booking is accepted, user navigates to My Gigs and can contact other party via an email form.
-2. User clicks "Message".
-3. A modal pops up with subject and message inputs.
-4. Writes a message in a form with pre-filled sender and receiver emails.
-5. Clicks "Send Message".
-6. The other party receives an email and can reply directly.
-
-#### Error & Edge Case Flow
 
 📌 **User tries to book a date that was taken**
 
@@ -515,14 +526,19 @@ const BookingSchema = new Schema(
 2. Tries to select a date that was booked by someone else, button is faded and unclickable.
 3. Selects a new date & reattempts booking.
 
-📌 **User tries to book without a profile**
+#### Communication Flow
 
-1. User logs in but hasn't completed their profile.
-2. Tries to book an artist/venue.
-3. Sees error message: "Please complete your profile before making a booking." (middleware to check for profile completion)
-4. Redirected to Dashboard > My Profile.
+📌 **User contacts another user**
 
-## 8. Permissions
+1. Once a booking is accepted, user navigates to My Confirmed Gigs and can contact other party via an email form.
+2. User clicks "Message".
+3. A modal pops up with subject and message inputs.
+4. Writes a message in a form with pre-filled sender and receiver emails.
+5. Clicks "Send Message".
+6. The other party receives an email and can reply directly.
+
+
+## 10. Permissions
 
 | Action                                          | Unregistered User (Guest) | Registered User (Artist/Venue) |
 | ----------------------------------------------- | ------------------------- | ------------------------------ |
@@ -543,42 +559,28 @@ const BookingSchema = new Schema(
 | Accept or decline a booking                     | ❌ No                     | ✅ Yes                         |
 | Cancel a confirmed booking                      | ❌ No                     | ✅ Yes                         |
 | View received & sent bookings in dashboard      | ❌ No                     | ✅ Yes                         |
-| See accepted bookings ("My Gigs")               | ❌ No                     | ✅ Yes                         |
+| See accepted bookings ("My Confirmed Gigs")     | ❌ No                     | ✅ Yes                         |
 | Contact a venue/artist via email form           | ❌ No                     | ✅ Yes                         |
 | Favourite artists & venues                      | ❌ No                     | ✅ Yes                         |
 | Delete account                                  | ❌ No                     | ✅ Yes                         |
 
-## 9. Frontend Structure
+## 11. Frontend State Management (Context API & Reducers)
 
-| Page                       | Description                                                   |
-| -------------------------- | ------------------------------------------------------------- |
-| `RegisterPage.jsx`         | Create an account                                             |
-| `VerificationPage.jsx`     | Temporary page during email verification process              |
-| `LoginPage.jsx`            | Securely log in                                               |
-| `Homepage.jsx`             | Overview, FAQ, how it works                                   |
-| `AllVenuesPage.jsx`        | Browse all venues                                             |
-| `AllArtistsPage.jsx`       | Browse all artists                                            |
-| `IndividualVenuePage.jsx`  | Venue profile                                                 |
-| `IndividualArtistPage.jsx` | Artist profile                                                |
-| `FavouritesPage.jsx`       | Favourited artists & venues                                   |
-| `UserDashboardPage.jsx`    | User dashboard (my account, my profile, my bookings, my gigs) |
-| `NotFoundPage.jsx`         | A 404 page for invalid URLs                                   |
-
-#### State Management (Context API & Reducers)
-
+We have 2 reducers, matching the 2 collections in the database:
 - Users (`usersReducer.js`)
 - Bookings (`bookingsReducer.js`)
-- These are managed in `Context.jsx` to provide a **global state**.
 
-## 10. Branch naming
+These are managed in `Context.jsx` to provide a **global state**.
 
-- Use **`feature/...`** if you’re adding or enhancing functionality or content.
+## 12. Branch naming
 
-- Use **`fix/...`** if you’re correcting a mistake.
+- Use **`feature/...`** if you're adding or enhancing functionality or content.
 
-- Use **`refactor/...`** if you’re improving structure or code without adding new functionality.
+- Use **`fix/...`** if you're correcting a mistake.
 
-- Please add **your name** before: `catia/refactor/navbar`
+- Use **`refactor/...`** if you're improving structure or code without adding new functionality.
+
+- Please add **your name** before branch name.
 
 #### Examples:
 
@@ -588,7 +590,7 @@ const BookingSchema = new Schema(
 
 `swagatika/refactor/home-page`
 
-## 11. Getting Started
+## 13. Getting Started
 
 1. Clone the repository:
 
@@ -611,3 +613,43 @@ npm run dev
 ```
 
 4. Open [http://localhost:5173](http://localhost:5173) in your browser **(FE)**.
+
+## 14. Preview
+
+#### Find Artists Page
+
+![Find Artists Page](client/public/screenshots/find-artists-page.png)
+
+<br>
+
+#### My Greenroom Dashboard Overview
+
+![Dashboard Overview](client/public/screenshots/my-greenroom-overview.png)
+
+<br>
+
+#### My Greenroom Dashboard - My Public Profile Tab
+
+![Dashboard Public Profile Tab](client/public/screenshots/my-public-profile.png)
+
+<br>
+
+#### My Greenroom Dashboard - My Received Bookings & My Confirmed Gigs Tabs
+
+<div style="display: flex; gap: 20px;">
+    <img src="client/public/screenshots/my-received-bookings.png" alt="My Received Bookings" width="45%">
+    <img src="client/public/screenshots/my-confirmed-gigs.png" alt="My Confirmed Gigs" width="45%">
+</div>
+
+
+<br>
+<br>
+<br>
+
+---
+
+<br>
+
+#### See live demo [here](https://thegreenroom.onrender.com).
+Thanks for checking out our project! ❤️ We hope you enjoy **The Greenroom** as much as we do. 
+
