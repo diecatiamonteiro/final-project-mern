@@ -11,16 +11,12 @@ import {
   globalErrorHandler,
   routeNotFound,
 } from "./middleware/errorHandler.js";
-import path from 'path';
-import { fileURLToPath } from 'url';
+
 // Connect to the database
 await connectDB();
 
 // Initialise Express application
 const app = express();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(express.json());
@@ -34,29 +30,11 @@ app.use(
   })
 );
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'client/dist')));
-
 // API Routes
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/bookings", bookingRouter);
 app.use("/api/email", emailRouter);
-
-// Add this before the catch-all route
-app.use((req, res, next) => {
-  console.log('Request URL:', req.url);
-  next();
-});
-
-// Handle React routing, return all requests to React app
-app.get('*', function(req, res) {
-  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'), function(err) {
-    if (err) {
-      res.status(500).send(err);
-    }
-  });
-});
 
 // Error handling middleware
 app.use(routeNotFound);
