@@ -16,6 +16,9 @@ import {
   ARTIST_GENRES,
   VENUE_TYPES,
 } from "../../../constants/profileFormConstants";
+import ProfilePictureSection from "./ProfilePictureSection";
+import GallerySection from "./GallerySection";
+import BasicInfoSection from "./BasicInfoSection";
 
 export default function UpdateProfileForm({ onUpdate }) {
   const { usersState, usersDispatch } = useContext(DataContext);
@@ -327,42 +330,15 @@ export default function UpdateProfileForm({ onUpdate }) {
       <form onSubmit={handleFormSubmit} className="max-w-7xl mx-auto space-y-8">
         {/* Profile Header Section */}
         <div className="flex flex-col md:flex-row md:items-start md:space-x-8 mb-12">
-          {/* Center profile picture section on mobile */}
-          <div className="flex-shrink-0 mb-8 md:mb-0 flex flex-col items-center md:items-start">
-            <h3 className="text-lg md:text-xl font-bold mb-4 text-center md:text-left">
-              Profile Picture
-            </h3>
-            <ProfilePictureUpload
-              currentImage={formData.profilePicture}
-              onImageUpload={handleProfilePicture}
-            />
-          </div>
-
-          {/* Basic Info stacks below profile picture on mobile */}
-          <div className="flex-grow w-full">
-            <h3 className="text-lg md:text-xl font-bold mb-4">
-              Basic Information<span className="text-green">*</span>
-            </h3>
-            <div className="space-y-4">
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder={
-                  user.role === "artist" ? "Artist Name" : "Venue Name"
-                }
-                className="w-full p-2 border rounded-lg"
-              />
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Description"
-                className="w-full p-2 border rounded-lg h-32"
-              />
-            </div>
-          </div>
+          <ProfilePictureSection
+            formData={formData}
+            handleProfilePicture={handleProfilePicture}
+          />
+          <BasicInfoSection
+            formData={formData}
+            handleChange={handleChange}
+            user={user}
+          />
         </div>
 
         {/* Performance Type and Genre */}
@@ -435,52 +411,11 @@ export default function UpdateProfileForm({ onUpdate }) {
 
         {/* Media & Social Links and Gallery Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Gallery Images */}
-          <div>
-            <h3 className="text-lg md:text-xl font-bold mb-6">
-              Gallery Images
-            </h3>
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {formData.images.map((image, index) => (
-                  <div key={index} className="relative aspect-square">
-                    <img
-                      src={image}
-                      alt={`Gallery ${index + 1}`}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 transition-colors"
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                ))}
-                {formData.images.length < 10 && (
-                  <div className="flex items-center justify-center aspect-square bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                    <GalleryUpload
-                      onImageUpload={handleGalleryImage}
-                      className="text-xs sm:text-base"
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Social & Media Links */}
+          <GallerySection
+            formData={formData}
+            handleGalleryImage={handleGalleryImage}
+            handleRemoveImage={handleRemoveImage}
+          />
           <SocialAndMediaLinks
             formData={formData}
             setFormData={setFormData}
