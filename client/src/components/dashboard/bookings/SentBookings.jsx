@@ -16,45 +16,46 @@ export default function SentBookings() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [editingBooking, setEditingBooking] = useState(null);
 
-  const handleEditClick = (booking) => {
+  const handleEditClick = async (booking) => {
     setEditingBooking(booking);
-    setShowCalendar(true);
 
-    // Get all accepted bookings from the receiver (venue/artist)
-    const getReceiverAcceptedGigs = async () => {
-      try {
-        const { data } = await axios.get(
-          `/api/users/${booking.receivedBy._id}/bookings-received`
-        );
+    try {
+      const { data } = await axios.get(
+        `/api/users/${booking.receivedBy._id}/bookings/received`
+      );
 
-        const acceptedSentBookings = data.data.bookingsSent
-          .filter((booking) => booking.status === "accepted")
-          .map((booking) => booking.performanceDate);
-
-        const acceptedReceivedBookings = data.data.bookingsReceive
-          .filter((booking) => booking.status === "accepted")
-          .map((booking) => booking.performanceDate);
-
-        const allAcceptedBookings = [
-          ...acceptedSentBookings,
-          ...acceptedReceivedBookings,
-        ].filter((date) => date !== booking.performanceDate); // Exclude current booking's date
-
-        // Update the editingBooking with the accepted bookings
-        setEditingBooking((prev) => ({
-          ...prev,
-          receivedBy: {
-            ...prev.receivedBy,
-            bookedDates: allAcceptedBookings,
-          },
-        }));
-      } catch (error) {
-        console.error("Error fetching receiver's bookings:", error);
-        toast.error("Failed to fetch availability");
+      if (!data || !data.data) {
+        throw new Error("Invalid response format");
       }
-    };
 
-    getReceiverAcceptedGigs();
+      const acceptedSentBookings =
+        data.data?.bookingsSent
+          ?.filter((booking) => booking.status === "accepted")
+          .map((booking) => booking.performanceDate) || [];
+
+      const acceptedReceivedBookings =
+        data.data?.bookingsReceive
+          ?.filter((booking) => booking.status === "accepted")
+          .map((booking) => booking.performanceDate) || [];
+
+      const allAcceptedBookings = [
+        ...acceptedSentBookings,
+        ...acceptedReceivedBookings,
+      ].filter((date) => date !== booking.performanceDate);
+
+      setEditingBooking((prev) => ({
+        ...prev,
+        receivedBy: {
+          ...prev.receivedBy,
+          bookedDates: allAcceptedBookings,
+        },
+      }));
+
+      setShowCalendar(true);
+    } catch (error) {
+      console.error("Error fetching receiver's bookings:", error);
+      toast.error("Failed to fetch availability");
+    }
   };
 
   const handleConfirm = async (date) => {

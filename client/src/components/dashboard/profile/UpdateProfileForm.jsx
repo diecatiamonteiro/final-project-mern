@@ -1,6 +1,4 @@
 import { useState, useContext } from "react";
-import axios from "axios";
-import { ProfilePictureUpload, GalleryUpload } from "./UploadImage";
 import AvailabilityCalendar from "../../calendars/AvailabilityCalendar";
 import { DataContext } from "../../../contexts/Context";
 import Modal from "../../Modal";
@@ -11,14 +9,14 @@ import TagSelector from "./TagSelector";
 import VenueAddressForm from "./VenueAddressForm";
 import VenueOperationsForm from "./VenueOperationsForm";
 import SocialAndMediaLinks from "./SocialAndMediaLinks";
+import ProfilePictureSection from "./ProfilePictureSection";
+import GallerySection from "./GallerySection";
+import BasicInfoSection from "./BasicInfoSection";
 import {
   ARTIST_PERFORMANCE_TYPES,
   ARTIST_GENRES,
   VENUE_TYPES,
 } from "../../../constants/profileFormConstants";
-import ProfilePictureSection from "./ProfilePictureSection";
-import GallerySection from "./GallerySection";
-import BasicInfoSection from "./BasicInfoSection";
 
 export default function UpdateProfileForm({ onUpdate }) {
   const { usersState, usersDispatch } = useContext(DataContext);
