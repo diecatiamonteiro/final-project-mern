@@ -12,7 +12,6 @@ import { BOOKING_ACTIONS } from "../reducers/bookingsReducer";
 */
 
 export const requestArtistOrVenue = async (bookingsDispatch, bookingData) => {
-  bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.post("/api/bookings", bookingData);
     bookingsDispatch({
@@ -34,7 +33,6 @@ export const requestArtistOrVenue = async (bookingsDispatch, bookingData) => {
 };
 
 export const getSpecificBooking = async (bookingsDispatch, bookingId) => {
-  bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.get(`api/bookings/${bookingId}`);
     bookingsDispatch({
@@ -60,7 +58,6 @@ export const editBookingDate = async (
   bookingId,
   bookingData
 ) => {
-  bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.patch(
       `api/bookings/${bookingId}/edit`,
@@ -89,7 +86,6 @@ export const acceptBooking = async (
   bookingId,
   bookingData
 ) => {
-  bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.patch(
       `api/bookings/${bookingId}/accept`,
@@ -118,7 +114,6 @@ export const declineBooking = async (
   bookingId,
   bookingData
 ) => {
-  bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.patch(
       `api/bookings/${bookingId}/decline`,
@@ -147,7 +142,6 @@ export const cancelBooking = async (
   bookingId,
   bookingData
 ) => {
-  bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.patch(
       `api/bookings/${bookingId}/cancel`,
@@ -176,7 +170,6 @@ export const cancelBooking = async (
 };
 
 export const getAllAcceptedBookings = async (bookingsDispatch) => {
-  bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.get(`api/bookings/accepted`);
     bookingsDispatch({

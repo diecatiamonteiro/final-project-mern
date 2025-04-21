@@ -1,6 +1,4 @@
 import { useState, useContext } from "react";
-import axios from "axios";
-import { ProfilePictureUpload, GalleryUpload } from "./UploadImage";
 import AvailabilityCalendar from "../../calendars/AvailabilityCalendar";
 import { DataContext } from "../../../contexts/Context";
 import Modal from "../../Modal";
@@ -8,131 +6,17 @@ import Button from "../../Button";
 import { toast } from "react-toastify";
 import { updateProfile } from "../../../api/usersApi";
 import TagSelector from "./TagSelector";
-
-const ARTIST_PERFORMANCE_TYPES = {
-  "Musical Acts": [
-    "Band",
-    "Duo",
-    "Solo Artist",
-    "Singer-Songwriter",
-    "Rapper",
-    "DJ",
-    "Orchestra",
-    "Ensemble",
-  ],
-  "Performing Acts": [
-    "Dancer",
-    "Comedian",
-    "Poet",
-    "Spoken Word Artist",
-    "Magician",
-    "Theatrical Performer",
-    "Drag Performer",
-    "Improv Performer",
-  ],
-  Other: [
-    "Digital Artist",
-    "Multi-disciplinary Artist",
-    "Performance Collective",
-    "Other",
-  ],
-};
-
-const ARTIST_GENRES = {
-  "Music Genres": [
-    "Alternative",
-    "Art Pop",
-    "Blues",
-    "Classical",
-    "Country",
-    "Dance",
-    "Disco",
-    "Dream Pop",
-    "EDM",
-    "Electronic",
-    "Experimental",
-    "Folk",
-    "Folk Rock",
-    "Funk",
-    "Garage Rock",
-    "Hip Hop",
-    "Indie",
-    "Indie Pop",
-    "Indie Rock",
-    "Jazz",
-    "Latin",
-    "Metal",
-    "Pop",
-    "Psychedelic Rock",
-    "Punk",
-    "Reggae",
-    "Rock",
-    "R&B",
-    "Soul",
-    "World Music",
-  ],
-  "Dance Styles": [
-    "Ballet",
-    "Ballroom",
-    "Break Dance",
-    "Contemporary",
-    "Hip Hop Dance",
-    "Jazz Dance",
-    "Modern Dance",
-    "Street Dance",
-    "Tap",
-    "Traditional Dance",
-  ],
-  "Comedy & Spoken Word": [
-    "Improv Comedy",
-    "Slam Poetry",
-    "Stand-up",
-    "Traditional Poetry",
-  ],
-  "Performance Arts": [
-    "Theater",
-    "Burlesque",
-    "Cabaret",
-    "Digital Performance",
-    "Drag",
-    "Magic",
-  ],
-  Other: ["Adult", "Family-Friendly", "Other"],
-};
-
-const VENUE_TYPES = [
-  "Bar",
-  "Jazz Bar",
-  "Club",
-  "Concert Hall",
-  "Arena",
-  "Comedy Club",
-  "Cabaret Club",
-  "Outdoor Venue",
-  "Rooftop Venue",
-  "Festival",
-  "Theater",
-  "Cultural Center",
-  "Community Center",
-  "Café",
-  "Restaurant",
-  "Hotel",
-  "Art Gallery",
-  "Museum",
-  "Co-working Space",
-  "Bookstore",
-  "Pop-up Space",
-  "Other",
-];
-
-const REVENUE_SPLIT_OPTIONS = [
-  "100/0",
-  "90/10",
-  "80/20",
-  "70/30",
-  "60/40",
-  "50/50",
-];
+import VenueAddressForm from "./VenueAddressForm";
+import VenueOperationsForm from "./VenueOperationsForm";
+import SocialAndMediaLinks from "./SocialAndMediaLinks";
+import ProfilePictureSection from "./ProfilePictureSection";
+import GallerySection from "./GallerySection";
+import BasicInfoSection from "./BasicInfoSection";
+import {
+  ARTIST_PERFORMANCE_TYPES,
+  ARTIST_GENRES,
+  VENUE_TYPES,
+} from "../../../constants/profileFormConstants";
 
 export default function UpdateProfileForm({ onUpdate }) {
   const { usersState, usersDispatch } = useContext(DataContext);
@@ -291,7 +175,7 @@ export default function UpdateProfileForm({ onUpdate }) {
     setHasUnsavedChanges(true);
   };
 
-  // Add new handlers for venue-specific fields
+  // Handler for address updates (venue)
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -307,6 +191,7 @@ export default function UpdateProfileForm({ onUpdate }) {
     setHasUnsavedChanges(true);
   };
 
+  // Handler for opening/performance time updates (venue)
   const handleTimeArrayChange = (type, index, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -342,7 +227,7 @@ export default function UpdateProfileForm({ onUpdate }) {
     setHasUnsavedChanges(true);
   };
 
-  // Add these handlers for tag management
+  // Handler for tag management
   const handleTagToggle = (category, tag) => {
     setFormData((prev) => {
       if (category === "genre") {
@@ -374,7 +259,7 @@ export default function UpdateProfileForm({ onUpdate }) {
     setHasUnsavedChanges(true);
   };
 
-  // Add this validation helper function
+  // Helper function to validate times
   const validateTimes = (times) => {
     // Check if there are any times and that none are empty strings
     return times.length > 0 && times.every((time) => time.trim() !== "");
@@ -413,7 +298,7 @@ export default function UpdateProfileForm({ onUpdate }) {
       setShowConfirmModal(false);
 
       // Scroll to top after successful update
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
 
       toast.success("Profile updated successfully!");
 
@@ -443,42 +328,15 @@ export default function UpdateProfileForm({ onUpdate }) {
       <form onSubmit={handleFormSubmit} className="max-w-7xl mx-auto space-y-8">
         {/* Profile Header Section */}
         <div className="flex flex-col md:flex-row md:items-start md:space-x-8 mb-12">
-          {/* Center profile picture section on mobile */}
-          <div className="flex-shrink-0 mb-8 md:mb-0 flex flex-col items-center md:items-start">
-            <h3 className="text-lg md:text-xl font-bold mb-4 text-center md:text-left">
-              Profile Picture
-            </h3>
-            <ProfilePictureUpload
-              currentImage={formData.profilePicture}
-              onImageUpload={handleProfilePicture}
-            />
-          </div>
-
-          {/* Basic Info stacks below profile picture on mobile */}
-          <div className="flex-grow w-full">
-            <h3 className="text-lg md:text-xl font-bold mb-4">
-              Basic Information<span className="text-green">*</span>
-            </h3>
-            <div className="space-y-4">
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder={
-                  user.role === "artist" ? "Artist Name" : "Venue Name"
-                }
-                className="w-full p-2 border rounded-lg"
-              />
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Description"
-                className="w-full p-2 border rounded-lg h-32"
-              />
-            </div>
-          </div>
+          <ProfilePictureSection
+            formData={formData}
+            handleProfilePicture={handleProfilePicture}
+          />
+          <BasicInfoSection
+            formData={formData}
+            handleChange={handleChange}
+            user={user}
+          />
         </div>
 
         {/* Performance Type and Genre */}
@@ -529,377 +387,41 @@ export default function UpdateProfileForm({ onUpdate }) {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Left Column - Address */}
-              <div className="space-y-6">
-                <div className="border border-midnightBlack/10 p-4 rounded-lg">
-                  <h4 className="text-md font-semibold mb-6">Address</h4>
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Street Name<span className="text-green">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="streetName"
-                        value={formData.additionalInfo.address.streetName}
-                        onChange={handleAddressChange}
-                        className="w-full p-2 border rounded-lg"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Number<span className="text-green">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="number"
-                        value={formData.additionalInfo.address.number}
-                        onChange={handleAddressChange}
-                        className="w-full p-2 border rounded-lg"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Zip Code<span className="text-green">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          name="zipCode"
-                          value={formData.additionalInfo.address.zipCode}
-                          onChange={handleAddressChange}
-                          className="w-full p-2 border rounded-lg"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          City<span className="text-green">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          name="city"
-                          value={formData.additionalInfo.address.city}
-                          onChange={handleAddressChange}
-                          className="w-full p-2 border rounded-lg"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <VenueAddressForm
+                formData={formData}
+                handleAddressChange={handleAddressChange}
+              />
 
               {/* Right Column - Revenue Split and Times */}
               <div className="space-y-6">
-                {/* Revenue Split */}
-                <div className="border border-midnightBlack/10 p-4 rounded-lg">
-                  <h4 className="font-semibold mb-6">Venue Operations</h4>
-                  <div className="space-y-3">
-                    <div className="border border-midnightBlack/10 p-4 rounded-lg">
-                      <label className="block font-bold text-gray-700 mb-1">
-                        Revenue Split<span className="text-green">*</span>
-                      </label>
-                      <select
-                        name="revenueSplit"
-                        value={formData.additionalInfo.revenueSplit}
-                        onChange={(e) => {
-                          setFormData((prev) => ({
-                            ...prev,
-                            additionalInfo: {
-                              ...prev.additionalInfo,
-                              revenueSplit: e.target.value,
-                            },
-                          }));
-                          setHasUnsavedChanges(true);
-                        }}
-                        className="w-full p-2 border rounded-lg bg-white"
-                      >
-                        <option value="">Select a revenue split</option>
-                        {REVENUE_SPLIT_OPTIONS.map((split) => (
-                          <option key={split} value={split}>
-                            {split.split("/")[0] || "Not Set "}% artist /{" "}
-                            {split.split("/")[1] || "Not Set "}% venue
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Times Arrays */}
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {["openingTimes", "performingTimes"].map((timeType) => (
-                        <div
-                          key={timeType}
-                          className="border border-midnightBlack/10 p-4 rounded-lg"
-                        >
-                          <label className="block font-bold text-gray-700 mb-1">
-                            {timeType === "openingTimes" ? (
-                              <>
-                                Opening Times
-                                <span className="text-green">*</span>
-                              </>
-                            ) : (
-                              <>
-                                Performance Times
-                                <span className="text-green">*</span>
-                              </>
-                            )}
-                          </label>
-                          {formData.additionalInfo[timeType].some(
-                            (time) => time.trim() === ""
-                          ) && (
-                            <p className="text-red-500 text-sm mb-2">
-                              Please type in a time
-                            </p>
-                          )}
-                          <div className="space-y-2">
-                            {formData.additionalInfo[timeType].map(
-                              (time, index) => (
-                                <div key={index} className="flex gap-2">
-                                  <input
-                                    type="text"
-                                    value={time}
-                                    onChange={(e) =>
-                                      handleTimeArrayChange(
-                                        timeType,
-                                        index,
-                                        e.target.value
-                                      )
-                                    }
-                                    className="w-full p-2 border rounded-lg"
-                                    placeholder={`E.g. ${
-                                      timeType === "openingTimes"
-                                        ? "19:00 - 23:00"
-                                        : "20:00 - 22:00"
-                                    }`}
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      handleRemoveTime(timeType, index)
-                                    }
-                                    className="text-red-500 hover:text-red-700"
-                                  >
-                                    <svg
-                                      className="w-5 h-5"
-                                      fill="currentColor"
-                                      viewBox="0 0 20 20"
-                                    >
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                        clipRule="evenodd"
-                                      />
-                                    </svg>
-                                  </button>
-                                </div>
-                              )
-                            )}
-                            <button
-                              type="button"
-                              onClick={() => handleAddTime(timeType)}
-                              className="text-green hover:text-greenHover flex items-center gap-1"
-                            >
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M12 4v16m8-8H4"
-                                />
-                              </svg>
-                              Add{" "}
-                              {timeType === "openingTimes"
-                                ? "Opening"
-                                : "Performance"}{" "}
-                              Time
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                <VenueOperationsForm
+                  formData={formData}
+                  setFormData={setFormData}
+                  setHasUnsavedChanges={setHasUnsavedChanges}
+                  handleTimeArrayChange={handleTimeArrayChange}
+                  handleAddTime={handleAddTime}
+                  handleRemoveTime={handleRemoveTime}
+                />
               </div>
             </div>
           </div>
         )}
 
-        {/* Media and Social Links Section */}
+        {/* Media & Social Links and Gallery Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Gallery Images */}
-          <div>
-            <h3 className="text-lg md:text-xl font-bold mb-6">
-              Gallery Images
-            </h3>
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {formData.images.map((image, index) => (
-                  <div key={index} className="relative aspect-square">
-                    <img
-                      src={image}
-                      alt={`Gallery ${index + 1}`}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 transition-colors"
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                ))}
-                {formData.images.length < 10 && (
-                  <div className="flex items-center justify-center aspect-square bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                    <GalleryUpload
-                      onImageUpload={handleGalleryImage}
-                      className="text-xs sm:text-base"
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Social & Media Links */}
-          <div className="space-y-8">
-            {/* Social Links */}
-            <div>
-              <h3 className="text-lg md:text-xl font-bold mb-6">
-                Social Links
-              </h3>
-              <div className="space-y-4">
-                {formData.socialLinks.map((link, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-2 sm:space-y-0 relative"
-                  >
-                    <input
-                      type="url"
-                      value={link}
-                      onChange={(e) => handleSocialLink(e, index)}
-                      placeholder="Social media URL"
-                      className="w-full p-2 border rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFormData((prev) => ({
-                          ...prev,
-                          socialLinks: prev.socialLinks.filter(
-                            (_, i) => i !== index
-                          ),
-                        }));
-                        setHasUnsavedChanges(true);
-                      }}
-                      className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 transition-colors"
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                ))}
-
-                {/* Add New Link Button */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      socialLinks: [...prev.socialLinks, ""],
-                    }));
-                    setHasUnsavedChanges(true);
-                  }}
-                  className="mt-4 flex items-center text-green hover:text-greenHover transition-colors"
-                >
-                  <svg
-                    className="w-5 h-5 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 4v16m8-8H4"
-                    />
-                  </svg>
-                  Add Social Link
-                </button>
-              </div>
-            </div>
-
-            {/* Media Links */}
-            <div>
-              <h3 className="text-lg md:text-xl font-bold mb-6">Media Links</h3>
-              <div className="space-y-4">
-                {user.role === "artist"
-                  ? ["YouTube", "Spotify", "SoundCloud"].map((platform) => (
-                      <div
-                        key={platform}
-                        className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-2 sm:space-y-0"
-                      >
-                        <div className="w-24 flex-shrink-0 text-gray-600">
-                          {platform}:
-                        </div>
-                        <input
-                          type="url"
-                          value={
-                            formData.media.find((m) => m.platform === platform)
-                              ?.url || ""
-                          }
-                          onChange={(e) => handleMediaLink(e, platform)}
-                          placeholder={`${platform} URL`}
-                          className="w-full p-2 border rounded-lg"
-                        />
-                      </div>
-                    ))
-                  : ["YouTube"].map((platform) => (
-                      <div
-                        key={platform}
-                        className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-2 sm:space-y-0"
-                      >
-                        <div className="w-24 flex-shrink-0 text-gray-600">
-                          {platform}:
-                        </div>
-                        <input
-                          type="url"
-                          value={
-                            formData.media.find((m) => m.platform === platform)
-                              ?.url || ""
-                          }
-                          onChange={(e) => handleMediaLink(e, platform)}
-                          placeholder={`${platform} URL`}
-                          className="w-full p-2 border rounded-lg"
-                        />
-                      </div>
-                    ))}
-              </div>
-            </div>
-          </div>
+          <GallerySection
+            formData={formData}
+            handleGalleryImage={handleGalleryImage}
+            handleRemoveImage={handleRemoveImage}
+          />
+          <SocialAndMediaLinks
+            formData={formData}
+            setFormData={setFormData}
+            setHasUnsavedChanges={setHasUnsavedChanges}
+            handleSocialLink={handleSocialLink}
+            handleMediaLink={handleMediaLink}
+            user={user}
+          />
         </div>
 
         {/* Availability Calendar */}

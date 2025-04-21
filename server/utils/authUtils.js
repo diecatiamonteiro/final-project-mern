@@ -23,6 +23,7 @@ export const tokenizeCookie = async (user, res) => {
       httpOnly: true,
       sameSite: "none",
       secure: true,
+      path: "/",
     });
   } catch (error) {
     return next(createError(500, "Error generating authentication token"));

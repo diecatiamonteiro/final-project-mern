@@ -18,10 +18,10 @@ This web application was developed from March to April 2025 as a final project f
 
 The team consisted of 4 full stack developers:
 
-- [Cátia Monteiro](https://github.com/diecatiamonteiro) 
-- [Evie Wilcock](https://github.com/eviesw) 
-- [Omar Skervin](https://github.com/Coderomarskervin) 
-- [Swagatika Pati](https://github.com/Swagatikapati19) 
+- [Cátia Monteiro](https://github.com/diecatiamonteiro)
+- [Evie Wilcock](https://github.com/eviesw)
+- [Omar Skervin](https://github.com/Coderomarskervin)
+- [Swagatika Pati](https://github.com/Swagatikapati19)
 
 ## 3. Core Features
 
@@ -266,21 +266,21 @@ const BookingSchema = new Schema(
 
 #### 7.2. User Routes: Artists & Venues (`api/users`)
 
-| Method | Endpoint                     | Description                                                                             | Logged in User? |
-| ------ | ---------------------------- | --------------------------------------------------------------------------------------- | --------------- |
-| GET    | `/venues`                    | Display all venues on venues page                                                       | ❌ No           |
-| GET    | `/artists`                   | Display all artists on artists page                                                     | ❌ No           |
-| GET    | `/:id`                       | Get specific artist/venue profile                                                       | ❌ No           |
-| PATCH  | `/:id/update-profile`        | Update an existing artist/venue profile (includes everything profile related)           | ✅ Yes          |
-| DELETE | `/:id/delete-media/:mediaId` | Delete individual media link                                                            | ✅ Yes          |
-| DELETE | `/:id/delete-image/:imageId` | Delete individual image                                                                 | ✅ Yes          |
-| POST   | `/favourites`                | Add artist/venue to favourites                                                          | ✅ Yes          |
-| DELETE | `/favourites/:id`            | Remove artist/venue from favourites                                                     | ✅ Yes          |
-| GET    | `/favourites`                | Display all favourited artists/venues                                                   | ✅ Yes          |
-| GET    | `/:id/bookings`              | Get all received & sent bookings of a user                                              | ✅ Yes          |
-| GET    | `/:id/bookings/received`     | Get only received bookings of a user                                                    | ✅ Yes          |
-| GET    | `/:id/bookings/sent`         | Get only sent bookings of a user                                                        | ✅ Yes          |
-| GET    | `/search?q=searchTerm`       | Search artists/venues by name, performance/venue type, artist genre, location           | ✅ Yes          |
+| Method | Endpoint                     | Description                                                                   | Logged in User? |
+| ------ | ---------------------------- | ----------------------------------------------------------------------------- | --------------- |
+| GET    | `/venues`                    | Display all venues on venues page                                             | ❌ No           |
+| GET    | `/artists`                   | Display all artists on artists page                                           | ❌ No           |
+| GET    | `/:id`                       | Get specific artist/venue profile                                             | ❌ No           |
+| PATCH  | `/:id/update-profile`        | Update an existing artist/venue profile (includes everything profile related) | ✅ Yes          |
+| DELETE | `/:id/delete-media/:mediaId` | Delete individual media link                                                  | ✅ Yes          |
+| DELETE | `/:id/delete-image/:imageId` | Delete individual image                                                       | ✅ Yes          |
+| POST   | `/favourites`                | Add artist/venue to favourites                                                | ✅ Yes          |
+| DELETE | `/favourites/:id`            | Remove artist/venue from favourites                                           | ✅ Yes          |
+| GET    | `/favourites`                | Display all favourited artists/venues                                         | ✅ Yes          |
+| GET    | `/:id/bookings`              | Get all received & sent bookings of a user                                    | ✅ Yes          |
+| GET    | `/:id/bookings/received`     | Get only received bookings of a user                                          | ✅ Yes          |
+| GET    | `/:id/bookings/sent`         | Get only sent bookings of a user                                              | ✅ Yes          |
+| GET    | `/search?q=searchTerm`       | Search artists/venues by name, performance/venue type, artist genre, location | ✅ Yes          |
 
 #### 7.3. Booking Routes (`api/bookings`)
 
@@ -537,7 +537,6 @@ const BookingSchema = new Schema(
 5. Clicks "Send Message".
 6. The other party receives an email and can reply directly.
 
-
 ## 10. Permissions
 
 | Action                                          | Unregistered User (Guest) | Registered User (Artist/Venue) |
@@ -567,6 +566,7 @@ const BookingSchema = new Schema(
 ## 11. Frontend State Management (Context API & Reducers)
 
 We have 2 reducers, matching the 2 collections in the database:
+
 - Users (`usersReducer.js`)
 - Bookings (`bookingsReducer.js`)
 
@@ -641,7 +641,6 @@ npm run dev
     <img src="client/public/screenshots/my-confirmed-gigs.png" alt="My Confirmed Gigs" width="45%">
 </div>
 
-
 <br>
 <br>
 <br>
@@ -651,5 +650,5 @@ npm run dev
 <br>
 
 #### See live demo [here](https://thegreenroom.onrender.com).
-Thanks for checking out our project! ❤️ We hope you enjoy **The Greenroom** as much as we do. 
 
+Thanks for checking out our project! ❤️ We hope you enjoy **The Greenroom** as much as we do.
