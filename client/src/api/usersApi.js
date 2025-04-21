@@ -135,17 +135,20 @@ export const googleLogin = async (usersDispatch, credentials) => {
 
 export const logout = async (usersDispatch) => {
   try {
-    await axios.get("/api/auth/logout");
+    await axios.get("/api/auth/logout", { withCredentials: true });
+    // Force clear any client-side state
     usersDispatch({
       type: USER_ACTIONS.LOGOUT,
     });
+    // Force reload the page to clear any cached state
+    window.location.href = "/";
   } catch (error) {
     const errorMessage = error.response?.data?.message || "Logout failed.";
     usersDispatch({
       type: USER_ACTIONS.SET_ERROR,
       payload: errorMessage,
     });
-    throw error; // Need to throw error to stop the function and show error message
+    throw error;
   } finally {
     usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
   }
