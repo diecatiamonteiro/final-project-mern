@@ -24,7 +24,7 @@ const SocialMediaLinks = ({
                 value={link}
                 onChange={(e) => handleSocialLink(e, index)}
                 placeholder="Social media URL"
-                className="w-full p-2 border rounded-lg"
+                className="w-full p-2 pr-10 border rounded-lg"
               />
               <button
                 type="button"
@@ -35,10 +35,10 @@ const SocialMediaLinks = ({
                   }));
                   setHasUnsavedChanges(true);
                 }}
-                className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 transition-colors"
+                className="absolute sm:top-2.5 top-2 right-2 bg-red-500 text-white p-1 sm:p-1.5 rounded-full hover:bg-red-600 transition-colors"
               >
                 <svg
-                  className="w-4 h-4"
+                  className="w-3 h-3 sm:w-4 sm:h-4"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >

@@ -429,7 +429,7 @@ export default function UpdateProfileForm({ onUpdate }) {
           <h3 className="text-lg md:text-xl font-bold mb-6 text-center md:text-left">
             Set Your Availability<span className="text-green">*</span>
           </h3>
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
+          <div className="bg-white rounded-lg p-6 md:border md:border-gray-200">
             <p className="text-gray-600 mb-4 text-center md:text-left">
               Select dates when you're available for bookings. Any confirmed
               gigs are also shown here.
