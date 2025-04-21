@@ -236,7 +236,7 @@ export default function IndividualArtistPage() {
               >
                 {type}
                 {/* Tooltip */}
-                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-max px-3 py-1 bg-gray-800 text-white text-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-max px-3 py-1 bg-gray-800 text-white text-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-[9999]">
                   Type
                 </span>
               </span>
@@ -249,7 +249,7 @@ export default function IndividualArtistPage() {
               >
                 {genre}
                 {/* Tooltip */}
-                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-max px-3 py-1 bg-gray-800 text-white text-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-max px-3 py-1 bg-gray-800 text-white text-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-[9999]">
                   Genre
                 </span>
               </span>
