@@ -7,10 +7,6 @@
 
 body {
   overflow-x: hidden;
-  min-width: 320px; /* Minimum width to prevent squishing on very small devices */
-  width: 100%;
-  margin: 0;
-  padding: 0;
   /* So we don't have a horizontal scrollbar because of the footer */
 }
 
@@ -31,16 +27,4 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
-}
-
-.prevent-overflow {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-.content-container {
-  width: 100%;
-  padding-left: max(1rem, env(safe-area-inset-left));
-  padding-right: max(1rem, env(safe-area-inset-right));
-  box-sizing: border-box;
 }
