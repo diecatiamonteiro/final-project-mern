@@ -51,31 +51,40 @@ export default function BookingCard({
             <h3 className="text-lg font-semibold">{otherParty.name}</h3>
           </Link>
           <div className="border-t border-gray-200 pt-4 space-y-2">
-            <p className="text-gray-600 text-sm flex items-center gap-2">
-              <FaCalendar className="text-gray-400" />
-              Performance Date: {formattedDate}
-            </p>
-            <p className="text-sm flex items-center gap-2">
-              <FaEuroSign className="text-gray-400" />
-              Revenue Split:{" "}
-              {venueRevenueSplit ? (
-                <span>
-                  {venueRevenueSplit.split("/")[0]}% artist
-                  {" / "}
-                  {venueRevenueSplit.split("/")[1]}% venue
-                </span>
-              ) : (
-                "Not specified"
-              )}{" "}
-            </p>
-            <p className="text-sm flex items-center gap-2">
-              <FaCircle className={"text-xs text-gray-400"} />
-              Status:{" "}
-              <span className={`font-bold`}>
+            <div className="sm:flex sm:items-center sm:gap-2">
+              <p className="text-gray-600 text-sm flex items-center gap-2 mb-1 sm:mb-0">
+                <FaCalendar className="text-gray-400" />
+                Performance Date:
+              </p>
+              <p className="text-sm pl-6 sm:pl-0">{formattedDate}</p>
+            </div>
+            <div className="sm:flex sm:items-center sm:gap-2">
+              <p className="text-sm flex items-center gap-2 mb-1 sm:mb-0">
+                <FaEuroSign className="text-gray-400" />
+                Revenue Split:
+              </p>
+              <p className="text-sm pl-6 sm:pl-0">
+                {venueRevenueSplit ? (
+                  <span>
+                    {venueRevenueSplit.split("/")[0]}% artist
+                    {" / "}
+                    {venueRevenueSplit.split("/")[1]}% venue
+                  </span>
+                ) : (
+                  "Not specified"
+                )}
+              </p>
+            </div>
+            <div className="sm:flex sm:items-center sm:gap-2">
+              <p className="text-sm flex items-center gap-2 mb-1 sm:mb-0">
+                <FaCircle className="text-xs text-gray-400" />
+                Status:
+              </p>
+              <p className="text-sm pl-6 sm:pl-0 font-bold">
                 {booking.status.charAt(0).toUpperCase() +
                   booking.status.slice(1)}
-              </span>
-            </p>
+              </p>
+            </div>
           </div>
         </div>
 
