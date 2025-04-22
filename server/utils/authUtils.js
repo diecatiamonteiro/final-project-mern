@@ -21,7 +21,7 @@ export const tokenizeCookie = async (user, res) => {
     res.cookie("jwtToken", token, {
       maxAge: 24 * 60 * 60 * 1000, // 1-day expiration
       httpOnly: true,
-      sameSite: "none",
+      sameSite: "None",
       secure: true,
       path: "/",
     });

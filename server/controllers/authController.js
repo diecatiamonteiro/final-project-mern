@@ -200,7 +200,9 @@ export const login = async (req, res, next) => {
     });
 
     // First check if this email exists as a tempEmail (pending verification)
-    let user = await User.findOne({ tempEmail: sanitizedEmail }).populate("favourites");
+    let user = await User.findOne({ tempEmail: sanitizedEmail }).populate(
+      "favourites"
+    );
     if (user) {
       return next(
         createError(401, "Please verify your email before logging in")
@@ -294,9 +296,7 @@ export const googleLogin = async (req, res, next) => {
     // Then check if it exists as a primary email
     user = await User.findOne({ email }).populate("favourites");
     if (!user || user.tempEmail) {
-      return next(
-        createError(401, "User not found. Please register first.")
-      );
+      return next(createError(401, "User not found. Please register first."));
     }
 
     // Check email verification status
@@ -328,7 +328,7 @@ export const logout = async (req, res, next) => {
   try {
     res.clearCookie("jwtToken", {
       httpOnly: true,
-      sameSite: "none",
+      sameSite: "None",
       secure: true,
     });
     res.send({ message: "User successfully logged out" });
@@ -408,7 +408,7 @@ export const updateAccount = async (req, res, next) => {
           tempEmail: sanitizedEmail,
           emailVerificationToken: verificationToken,
           emailVerificationExpires: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
-          isConfirmed: false // Invalidate current email
+          isConfirmed: false, // Invalidate current email
         },
       });
 
@@ -424,7 +424,7 @@ export const updateAccount = async (req, res, next) => {
       // Clear the authentication cookie
       res.clearCookie("jwtToken", {
         httpOnly: true,
-        sameSite: "none",
+        sameSite: "None",
         secure: true,
         path: "/",
       });
@@ -432,7 +432,7 @@ export const updateAccount = async (req, res, next) => {
       // Send response
       return res.status(200).json({
         message: "Please check your new email for verification link",
-        requireReauth: true
+        requireReauth: true,
       });
     }
 
@@ -498,7 +498,7 @@ export const changePassword = async (req, res, next) => {
     // Clear cookie before response
     res.clearCookie("jwtToken", {
       httpOnly: true,
-      sameSite: "none",
+      sameSite: "None",
       secure: true,
       path: "/",
     });
@@ -581,7 +581,7 @@ export const deleteAccount = async (req, res, next) => {
       // Clear auth cookie
       res.clearCookie("jwtToken", {
         httpOnly: true,
-        sameSite: "none",
+        sameSite: "None",
         secure: true,
       });
 
