@@ -26,7 +26,6 @@ export default function FeaturedArtistsAndVenues() {
     getAllVenues(usersDispatch);
   }, [usersDispatch]);
 
-  // Add these helper functions at the top of your component
   const getCompletedArtists = (artists) => {
     return artists?.filter(
       (artist) =>
@@ -54,7 +53,6 @@ export default function FeaturedArtistsAndVenues() {
     );
   };
 
-  // Modify your useEffect for artists and venues
   useEffect(() => {
     if (artists.length > 0) {
       // First filter completed artists, then take first 3
@@ -179,13 +177,23 @@ export default function FeaturedArtistsAndVenues() {
         <div className="mb-16">
           <div className="flex justify-between items-center mb-4 md:mb-8">
             <h3 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
-              Featured Artists
+              Our Artists
             </h3>
+            {/* Button for mobile only */}
             <Button
               to="/artists"
               variant="black"
               size="medium"
-              className="flex flex-row items-center gap-2"
+              className="flex flex-row items-center gap-2 md:hidden"
+            >
+              View All <FaArrowRightLong />
+            </Button>
+            {/* Button from screens larger than md size */}
+            <Button
+              to="/artists"
+              variant="black"
+              size="medium"
+              className="flex flex-row items-center gap-2 hidden md:flex"
             >
               View All Artists <FaArrowRightLong />
             </Button>
@@ -198,9 +206,12 @@ export default function FeaturedArtistsAndVenues() {
                 <div
                   key={artist._id || artist.id}
                   className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer transform transition-transform hover:scale-[1.02]"
-                  onClick={() =>
-                    handleProfileClick("artist", artist._id || artist.id)
-                  }
+                  onClick={(e) => {
+                    // Only handle click on non-mobile screens (from md size and up)
+                    if (window.innerWidth >= 768) {
+                      handleProfileClick("artist", artist._id || artist.id);
+                    }
+                  }}
                 >
                   {/* Image */}
                   <div className="aspect-w-16 aspect-h-9 relative">
@@ -264,6 +275,16 @@ export default function FeaturedArtistsAndVenues() {
                         </span>
                       )}
                     </div>
+                    <Button
+                      onClick={(e) => {
+                        navigate(`/artist/${artist._id}`);
+                      }}
+                      variant="green"
+                      size="small"
+                      className="md:hidden mt-4 w-full" // Only show on mobile
+                    >
+                      View Artist Profile
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -274,12 +295,21 @@ export default function FeaturedArtistsAndVenues() {
         <div>
           <div className="flex justify-between items-center mb-4 md:mb-8">
             <h3 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
-              Featured Venues
+              Our Venues
             </h3>
+            {/* Button for mobile only */}
             <Button
               to="/venues"
               variant="black"
-              className="flex flex-row items-center gap-2"
+              className="flex flex-row items-center gap-2 md:hidden"
+            >
+              View All <FaArrowRightLong />
+            </Button>
+            {/* Button from screens larger than md size */}
+            <Button
+              to="/venues"
+              variant="black"
+              className="flex flex-row items-center gap-2 hidden md:flex"
             >
               View All Venues <FaArrowRightLong />
             </Button>
@@ -292,9 +322,12 @@ export default function FeaturedArtistsAndVenues() {
                 <div
                   key={venue._id || venue.id}
                   className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer transform transition-transform hover:scale-[1.02] flex flex-col"
-                  onClick={() =>
-                    handleProfileClick("venue", venue._id || venue.id)
-                  }
+                  onClick={(e) => {
+                    // Only handle click on non-mobile screens (from md size and up)
+                    if (window.innerWidth >= 768) {
+                      handleProfileClick("venue", venue._id || venue.id);
+                    }
+                  }}
                 >
                   {/* Image Container */}
                   <div className="h-48 relative">
@@ -353,6 +386,16 @@ export default function FeaturedArtistsAndVenues() {
                           ))}
                       </div>
                     </div>
+                    <Button
+                      onClick={(e) => {
+                        navigate(`/venue/${venue._id}`);
+                      }}
+                      variant="green"
+                      size="small"
+                      className="md:hidden mt-4 w-full" // Only show on mobile
+                    >
+                      View Venue Profile
+                    </Button>
                   </div>
                 </div>
               ))}

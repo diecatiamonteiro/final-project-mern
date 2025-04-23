@@ -111,7 +111,7 @@ export default function AllArtistsPage() {
       {/* Hero Section */}
       <div className="relative mt-[-110px]">
         {/* Hero Image */}
-        <div className="full-width-section h-[90vh] md:h-[70vh] xl:h-[60vh]">
+        <div className="full-width-section h-[100vh] xl:h-[65vh]">
           <img
             src={heroImage}
             alt="stage set for a gig"

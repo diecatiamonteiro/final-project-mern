@@ -53,7 +53,12 @@ export default function VenueCard({ venue, onFavoriteClick }) {
   return (
     <div
       className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer flex flex-col transform transition-transform hover:scale-[1.02]"
-      onClick={() => navigate(`/venue/${venue._id}`)}
+      onClick={(e) => {
+        // Only handle click on non-mobile screens (from md size and up)
+        if (window.innerWidth >= 768) {
+          navigate(`/venue/${venue._id}`);
+        }
+      }}
     >
       {/* Image Section */}
       <div className="relative w-full">
