@@ -53,7 +53,11 @@ export default function ArtistCard({ artist, onFavoriteClick }) {
   return (
     <div
       className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer flex flex-col transform transition-transform hover:scale-[1.02]"
-      onClick={() => navigate(`/artist/${artist._id}`)}
+      onClick={(e) => {
+        if (window.innerWidth >= 768) {
+          navigate(`/artist/${artist._id}`);
+        }
+      }}
     >
       {/* Image Section */}
       <div className="relative w-full">
@@ -67,13 +71,13 @@ export default function ArtistCard({ artist, onFavoriteClick }) {
         {!isOwnProfile && (
           <button
             onClick={handleFavouriteClick}
-          className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg border border-midnightBlack/30 shadow-midnightBlack/10 hover:scale-[1.05] duration-300 cursor-pointer"
-        >
-          {onFavoriteClick ? (
-            <IoClose className="text-xl text-red-500" />
-          ) : artist.isFavourited ? (
-            <FaHeart className="text-xl text-red-500" />
-          ) : (
+            className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg border border-midnightBlack/30 shadow-midnightBlack/10 hover:scale-[1.05] duration-300 cursor-pointer"
+          >
+            {onFavoriteClick ? (
+              <IoClose className="text-xl text-red-500" />
+            ) : artist.isFavourited ? (
+              <FaHeart className="text-xl text-red-500" />
+            ) : (
               <FaRegHeart className="text-xl text-midnightBlack" />
             )}
           </button>

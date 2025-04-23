@@ -46,31 +46,21 @@ export default function HowItWorksSection() {
   return (
     <section className="py-24 mb-12 lg:my-24 flex flex-col lg:flex-row items-start justify-between gap-16 px-6">
       {/* Image */}
-      <motion.div
-        className="lg:w-1/2 flex"
-        initial={{ opacity: 0, x: -50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
+      <div className="lg:w-1/2 flex">
         <img
           src={homepageHowItWorks}
           alt="Booking gig in a laptop"
           className="rounded-lg shadow-lg w-full"
         />
-      </motion.div>
+      </div>
 
       {/* Text */}
-      <motion.div
-        className="w-full lg:w-1/2 flex flex-col space-y-8 items-center text-center lg:text-left"
-        initial={{ opacity: 0, x: 50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
+      <div className="w-full lg:w-1/2 flex flex-col space-y-8 items-center text-center lg:text-left">
         {/* Title & Intro */}
         <div className="text-center lg:text-left">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2">How It Works</h2>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2">
+            How It Works
+          </h2>
           <p className="text-base md:text-lg text-gray-600">
             The Greenroom connects artists with stages in Germany for
             performances, jam sessions, and gigs. Follow these steps to get
@@ -86,13 +76,7 @@ export default function HowItWorksSection() {
         </div>
 
         {/* Buttons */}
-        <motion.div
-          className="flex flex-col w-full gap-4 pt-6 md:flex-row lg:flex-wrap justify-center lg:justify-start"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-        >
+        <div className="flex flex-col w-full gap-4 pt-6 md:flex-row lg:flex-wrap justify-center lg:justify-start">
           <Button to="/venues" variant="green">
             Find a Stage
           </Button>
@@ -102,8 +86,8 @@ export default function HowItWorksSection() {
           <Button to="/register" variant="outlineGreen">
             Get Started
           </Button>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </section>
   );
 }

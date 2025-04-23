@@ -11,12 +11,11 @@ export default function Footer() {
         {/* Grid Container */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-12 mb-8">
           {/* Logo & Description */}
-          <div className="col-span-1 md:col-span-2">
+          <div className="col-span-2">
             <Logo />
-            <p className="text-offwhite/90 mt-4 text-sm">
+            <p className="text-offwhite/90 mt-4 text-sm font-semibold">
               Connecting artists with venues across Germany.
             </p>
-            <p className="text-offwhite/90 text-sm">Find your stage. </p>
           </div>
 
           {/* Quick Links */}
