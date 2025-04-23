@@ -27,7 +27,7 @@ export default function MyAccount() {
           <button
             onClick={() => setActiveTab("password")}
             className={`
-              py-4 px-1 border-b-2 font-medium ttext-sm md:text-base
+              py-4 px-1 border-b-2 font-medium text-sm md:text-base
               ${
                 activeTab === "password"
                   ? "border-green text-green"
