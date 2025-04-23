@@ -32,7 +32,7 @@ const baseEmailTemplate = (content) => `
       color: #888888;
       font-size: 14px;
     ">
-     <a href="https://thegreenroom.onrender.com" style="margin: 0 0; color: #059669; text-decoration: none; hover: scale-105;">The Greenroom &#8599;</a>
+     <a href="https://the-greenroom.onrender.com" style="margin: 0 0; color: #059669; text-decoration: none; hover: scale-105;">The Greenroom &#8599;</a>
       <p style="margin: 0 0;">Berlin, Germany</p>
       <p style="margin: 10px 0 5px; font-size: 12px; color: #888888;">
         © ${new Date().getFullYear()} The Greenroom. All rights reserved.

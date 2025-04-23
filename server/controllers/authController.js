@@ -17,6 +17,7 @@ import {
   generateVerificationToken,
 } from "../utils/authUtils.js";
 import { deleteFromCloudinary } from "../utils/cloudinaryUtils.js";
+import { getAppURL } from "../config/urlConfig.js";
 
 /**
  * @desc    Register a new user
@@ -89,7 +90,9 @@ export const register = async (req, res, next) => {
     const verificationToken = generateVerificationToken();
 
     // Create verification link
-    const verificationLink = `${process.env.FRONTEND_URL}/#/verify-email?token=${verificationToken}&userId=${savedUser._id}`;
+    const verificationLink = `${getAppURL()}/#/verify-email?token=${verificationToken}&userId=${
+      savedUser._id
+    }`;
 
     // Send verification email using imported transporter and template
     await transporter.sendMail({
@@ -413,7 +416,7 @@ export const updateAccount = async (req, res, next) => {
       });
 
       // Send verification email
-      const verificationLink = `${process.env.FRONTEND_URL}/#/verify-email?token=${verificationToken}&userId=${userId}`;
+      const verificationLink = `${getAppURL()}/#/verify-email?token=${verificationToken}&userId=${userId}`;
       await transporter.sendMail({
         from: process.env.EMAIL_USER,
         to: sanitizedEmail,
@@ -631,7 +634,9 @@ export const forgotPassword = async (req, res, next) => {
     const resetToken = generateVerificationToken();
 
     // Create reset link
-    const resetLink = `${process.env.FRONTEND_URL}/#/reset-password?token=${resetToken}&userId=${user._id}`;
+    const resetLink = `${getAppURL()}/#/reset-password?token=${resetToken}&userId=${
+      user._id
+    }`;
 
     // Send reset email
     await transporter.sendMail({
