@@ -142,7 +142,7 @@ export default function AllVenuesPage() {
       {/* Hero Section */}
       <div className="relative mt-[-110px]">
         {/* Hero Image */}
-        <div className="full-width-section h-[110vh] lg:h-[110vh] xl:h-[65vh]">
+        <div className="full-width-section h-[120vh] lg:h-[110vh] xl:h-[65vh]">
           <img
             src={heroImage}
             alt="stage set for a gig"
