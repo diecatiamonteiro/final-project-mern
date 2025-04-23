@@ -21,10 +21,6 @@ body {
 .full-width-section {
   position: relative;
   margin-left: calc(-50vw + 50%); /* centered on the page */
-  /* left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;*/
   width: 100vw; 
   overflow-x: hidden;
 }

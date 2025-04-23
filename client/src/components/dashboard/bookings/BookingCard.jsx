@@ -98,7 +98,7 @@ export default function BookingCard({
                 size="small"
                 className="flex-1"
               >
-                Accept Booking
+                Accept
               </Button>
               <Button
                 onClick={handleDeclineClick}

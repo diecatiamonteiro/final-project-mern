@@ -85,7 +85,7 @@ export default function UserDashboardPage() {
 
       {/* Tab Navigation */}
       <div className="border-b border-gray-200 mb-8">
-        <nav className="flex space-x-8" aria-label="Dashboard Navigation">
+        <nav className="flex items-end space-x-8" aria-label="Dashboard Navigation">
           {tabs.map((tab) => (
             <button
               key={tab.id}
