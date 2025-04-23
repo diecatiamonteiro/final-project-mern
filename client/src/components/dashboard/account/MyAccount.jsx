@@ -35,7 +35,7 @@ export default function MyAccount() {
               }
             `}
           >
-            Password
+            Change Password
           </button>
           <button
             onClick={() => setActiveTab("deleteAccount")}

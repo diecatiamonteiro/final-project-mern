@@ -22,7 +22,7 @@ export default function HeroSection() {
               Discover the right{" "}
               <span className="text-emerald-400">talent</span>.
             </h1>
-            <h2 className="text-xl md:text-2xl font-medium mb-8 text-offwhite bg-midnightBlack/60 rounded-lg xl:bg-transparent">
+            <h2 className="text-lg leading-snug md:text-xl lg:text-2xl font-medium mb-8 text-offwhite bg-midnightBlack/50 rounded-lg xl:bg-transparent">
               The Greenroom helps artists in Germany find the perfect venues to
               perform and gives venues access to incredible talent. Whether
               you're looking for your next gig or booking your next performer,
