@@ -26,7 +26,7 @@ export default function RegisterPage() {
 
   if (isRegistered) {
     return (
-      <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+      <div className="min-h-screen pb-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
         <div className="max-w-xl w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
           <div>
             <h2 className="mb-10 text-center text-3xl md:text-4xl font-extrabold text-midnightBlack">
@@ -51,7 +51,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+    <div className="min-h-screen pb-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
         <div>
           <h2 className="mt-6 text-center text-3xl md:text-4xl font-extrabold text-gray-900">
