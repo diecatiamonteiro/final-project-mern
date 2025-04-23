@@ -4,8 +4,10 @@
 import axios from "axios";
 
 export const setAxiosDefaults = () => {
-  const baseURL = import.meta.env.VITE_BACKEND_URL;
-  axios.defaults.baseURL = baseURL;
+  // In production, we don't need baseURL as we'll use relative paths
+  if (process.env.NODE_ENV !== "production") {
+    axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
+  }
   axios.defaults.withCredentials = true;
   axios.defaults.headers.common["Content-Type"] = "application/json";
 };
