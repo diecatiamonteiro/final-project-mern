@@ -10,7 +10,7 @@
 
 The Greenroom is a web platform connecting artists and small venues in Germany for performances, jam sessions, and gigs. It provides a space where musicians, comedians, poets, and other performers can showcase their work and easily find performance opportunities, while venues can discover new talent and manage their bookings efficiently.
 
-See live demo [here](https://thegreenroom.onrender.com).
+See live demo [here](https://the-greenroom.onrender.com).
 
 ## 2. Contributors
 
@@ -649,6 +649,6 @@ npm run dev
 
 <br>
 
-#### See live demo [here](https://thegreenroom.onrender.com).
+#### See live demo [here](https://the-greenroom.onrender.com).
 
 Thanks for checking out our project! ❤️ We hope you enjoy **The Greenroom** as much as we do.
