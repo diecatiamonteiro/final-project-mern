@@ -4,9 +4,6 @@
  * @returns {string} The base URL for the application
  */
 export const getAppURL = () => {
-  console.log("NODE_ENV:", process.env.NODE_ENV);
-  console.log("FRONTEND_URL:", process.env.FRONTEND_URL);
-
   if (process.env.NODE_ENV === "production") {
     return "https://the-greenroom.onrender.com";
   }
