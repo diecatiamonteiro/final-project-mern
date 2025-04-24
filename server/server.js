@@ -60,5 +60,3 @@ app.use(globalErrorHandler);
 // Start the server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server is up and running on port ${PORT}`));
-
-// TEST COMMENT TEST TEST TEST
