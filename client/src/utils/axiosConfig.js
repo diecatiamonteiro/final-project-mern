@@ -5,7 +5,7 @@ import axios from "axios";
 
 export const setAxiosDefaults = () => {
   // In production, we don't need baseURL as we'll use relative paths
-  if (process.env.NODE_ENV !== "production") {
+  if (import.meta.env.MODE !== "production") {
     axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
   }
   axios.defaults.withCredentials = true;

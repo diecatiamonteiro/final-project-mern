@@ -28,11 +28,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    // In production, we don't need CORS since everything is served from same domain
     origin:
       process.env.NODE_ENV === "production"
-        ? false // Disable CORS in production since we're serving from same domain
-        : "http://localhost:5173", // Only allow local frontend in development
+        ? "https://the-greenroom.onrender.com"
+        : "http://localhost:5173",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
