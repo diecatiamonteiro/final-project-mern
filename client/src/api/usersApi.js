@@ -162,24 +162,29 @@ export const getUserData = async (usersDispatch) => {
     if (response.data.data) {
       const favouritesResponse = await axios.get("/api/users/favourites");
       response.data.data.favourites = favouritesResponse.data.data;
-    }
 
-    usersDispatch({
-      type: USER_ACTIONS.GET_USER_DATA,
-      payload: response.data,
-    });
-    return response.data;
-  } catch (error) {
-    // Don't dispatch error for 401 (unauthorized) status
-    if (error.response?.status !== 401) {
-      const errorMessage =
-        error.response?.data?.message || "Failed to get user data.";
       usersDispatch({
-        type: USER_ACTIONS.SET_ERROR,
-        payload: errorMessage,
+        type: USER_ACTIONS.GET_USER_DATA,
+        payload: response.data,
       });
     }
-    throw error;
+
+    return response.data;
+  } catch (error) {
+    // Ignore 401 (unauthorised) errors — this is normal if user not logged in
+    if (error.response?.status === 401) {
+      return null;
+    }
+
+    // For all other errors, dispatch an error
+    const errorMessage =
+      error.response?.data?.message || "Failed to get user data.";
+    usersDispatch({
+      type: USER_ACTIONS.SET_ERROR,
+      payload: errorMessage,
+    });
+
+    return null;
   } finally {
     usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
   }
