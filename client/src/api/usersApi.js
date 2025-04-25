@@ -486,8 +486,6 @@ export const addFavourite = async (usersDispatch, favouriteId) => {
       payload: errorMessage,
     });
     throw error;
-  } finally {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
   }
 };
 
@@ -508,8 +506,6 @@ export const removeFavourite = async (usersDispatch, favouriteId) => {
       payload: errorMessage,
     });
     throw error;
-  } finally {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
   }
 };
 
