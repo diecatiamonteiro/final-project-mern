@@ -12,8 +12,8 @@ import { BOOKING_ACTIONS } from "../reducers/bookingsReducer";
 */
 
 export const requestArtistOrVenue = async (bookingsDispatch, bookingData) => {
+  bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
-    bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.post("/api/bookings", bookingData);
     bookingsDispatch({
       type: BOOKING_ACTIONS.REQUEST_ARTIST_OR_VENUE,
@@ -34,8 +34,8 @@ export const requestArtistOrVenue = async (bookingsDispatch, bookingData) => {
 };
 
 export const getSpecificBooking = async (bookingsDispatch, bookingId) => {
+  bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
-    bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.get(`api/bookings/${bookingId}`);
     bookingsDispatch({
       type: BOOKING_ACTIONS.GET_SPECIFIC_BOOKING,
@@ -60,8 +60,8 @@ export const editBookingDate = async (
   bookingId,
   bookingData
 ) => {
+  bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
-    bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.patch(
       `api/bookings/${bookingId}/edit`,
       bookingData
@@ -89,8 +89,8 @@ export const acceptBooking = async (
   bookingId,
   bookingData
 ) => {
+  bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
-    bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.patch(
       `api/bookings/${bookingId}/accept`,
       bookingData
@@ -118,8 +118,8 @@ export const declineBooking = async (
   bookingId,
   bookingData
 ) => {
+  bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
-    bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.patch(
       `api/bookings/${bookingId}/decline`,
       bookingData
@@ -147,8 +147,8 @@ export const cancelBooking = async (
   bookingId,
   bookingData
 ) => {
+  bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
-    bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.patch(
       `api/bookings/${bookingId}/cancel`,
       bookingData
@@ -176,8 +176,8 @@ export const cancelBooking = async (
 };
 
 export const getAllAcceptedBookings = async (bookingsDispatch) => {
+  bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
   try {
-    bookingsDispatch({ type: BOOKING_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.get(`api/bookings/accepted`);
     bookingsDispatch({
       type: BOOKING_ACTIONS.GET_ALL_ACCEPTED_BOOKINGS,
