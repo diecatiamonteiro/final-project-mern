@@ -471,7 +471,6 @@ export const deleteSingleImage = async (usersDispatch, userId, imageId) => {
 
 export const addFavourite = async (usersDispatch, favouriteId) => {
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.post("/api/users/favourites", { favouriteId });
     usersDispatch({
       type: USER_ACTIONS.ADD_FAVOURITE,
@@ -486,14 +485,11 @@ export const addFavourite = async (usersDispatch, favouriteId) => {
       payload: errorMessage,
     });
     throw error;
-  } finally {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
   }
 };
 
 export const removeFavourite = async (usersDispatch, favouriteId) => {
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.delete(`/api/users/favourites/${favouriteId}`);
     usersDispatch({
       type: USER_ACTIONS.REMOVE_FAVOURITE,
@@ -508,14 +504,11 @@ export const removeFavourite = async (usersDispatch, favouriteId) => {
       payload: errorMessage,
     });
     throw error;
-  } finally {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: false });
   }
 };
 
 export const getAllFavourites = async (usersDispatch) => {
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.get("/api/users/favourites");
     usersDispatch({
       type: USER_ACTIONS.GET_ALL_FAVOURITES,
