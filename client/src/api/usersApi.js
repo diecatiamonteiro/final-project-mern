@@ -470,7 +470,6 @@ export const deleteSingleImage = async (usersDispatch, userId, imageId) => {
 };
 
 export const addFavourite = async (usersDispatch, favouriteId) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.post("/api/users/favourites", { favouriteId });
     usersDispatch({
@@ -490,7 +489,6 @@ export const addFavourite = async (usersDispatch, favouriteId) => {
 };
 
 export const removeFavourite = async (usersDispatch, favouriteId) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.delete(`/api/users/favourites/${favouriteId}`);
     usersDispatch({
@@ -510,7 +508,6 @@ export const removeFavourite = async (usersDispatch, favouriteId) => {
 };
 
 export const getAllFavourites = async (usersDispatch) => {
-  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
     const response = await axios.get("/api/users/favourites");
     usersDispatch({
