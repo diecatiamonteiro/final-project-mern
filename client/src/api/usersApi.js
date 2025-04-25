@@ -30,8 +30,8 @@ import { USER_ACTIONS } from "../reducers/usersReducer";
 */
 
 export const register = async (usersDispatch, userData) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.post("api/auth/register", userData);
     usersDispatch({
       type: USER_ACTIONS.REGISTER,
@@ -52,8 +52,8 @@ export const register = async (usersDispatch, userData) => {
 };
 
 export const verifyEmail = async (usersDispatch, token, userId) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.get(
       `/api/auth/verify-email?token=${token}&userId=${userId}`
     );
@@ -76,8 +76,8 @@ export const verifyEmail = async (usersDispatch, token, userId) => {
 };
 
 export const login = async (usersDispatch, credentials) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     // Clear any existing errors first
     usersDispatch({ type: USER_ACTIONS.SET_ERROR, payload: null });
 
@@ -101,8 +101,8 @@ export const login = async (usersDispatch, credentials) => {
 };
 
 export const googleLogin = async (usersDispatch, credentials) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     // Clear any existing errors first
     usersDispatch({ type: USER_ACTIONS.SET_ERROR, payload: null });
 
@@ -138,8 +138,8 @@ export const googleLogin = async (usersDispatch, credentials) => {
 };
 
 export const logout = async (usersDispatch) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     await axios.get("/api/auth/logout", { withCredentials: true });
     // Force clear any client-side state
     usersDispatch({
@@ -160,8 +160,8 @@ export const logout = async (usersDispatch) => {
 };
 
 export const getUserData = async (usersDispatch) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.get("/api/auth/user-data");
 
     // If we have a user, populate their favourites
@@ -197,8 +197,8 @@ export const getUserData = async (usersDispatch) => {
 };
 
 export const updateAccount = async (usersDispatch, userData) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.patch(
       "/api/auth/update-account",
       {
@@ -235,8 +235,8 @@ export const updateAccount = async (usersDispatch, userData) => {
 };
 
 export const changePassword = async (usersDispatch, passwordData) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.patch(
       "/api/auth/change-password",
       passwordData
@@ -260,8 +260,8 @@ export const changePassword = async (usersDispatch, passwordData) => {
 };
 
 export const forgotPassword = async (usersDispatch, { email }) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.post("/api/auth/forgot-password", { email });
     usersDispatch({
       type: USER_ACTIONS.FORGOT_PASSWORD,
@@ -285,8 +285,8 @@ export const resetPassword = async (
   usersDispatch,
   { token, userId, newPassword }
 ) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.post("/api/auth/reset-password", {
       token,
       userId,
@@ -311,8 +311,8 @@ export const resetPassword = async (
 };
 
 export const deleteAccount = async (usersDispatch) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     await axios.delete("api/auth/delete-account");
     usersDispatch({
       type: USER_ACTIONS.DELETE_ACCOUNT,
@@ -331,8 +331,8 @@ export const deleteAccount = async (usersDispatch) => {
 };
 
 export const getAllVenues = async (usersDispatch) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.get("api/users/venues");
     usersDispatch({
       type: USER_ACTIONS.GET_ALL_VENUES,
@@ -353,8 +353,8 @@ export const getAllVenues = async (usersDispatch) => {
 };
 
 export const getAllArtists = async (usersDispatch) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.get("api/users/artists");
     usersDispatch({
       type: USER_ACTIONS.GET_ALL_ARTISTS,
@@ -375,8 +375,8 @@ export const getAllArtists = async (usersDispatch) => {
 };
 
 export const getIndividualArtistOrVenue = async (usersDispatch, userId) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.get(`/api/users/${userId}`);
     usersDispatch({
       type: USER_ACTIONS.GET_INDIVIDUAL_ARTIST_OR_VENUE,
@@ -397,8 +397,8 @@ export const getIndividualArtistOrVenue = async (usersDispatch, userId) => {
 };
 
 export const updateProfile = async (usersDispatch, userId, profileData) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.patch(
       `/api/users/${userId}/update-profile`,
       profileData
@@ -422,8 +422,8 @@ export const updateProfile = async (usersDispatch, userId, profileData) => {
 };
 
 export const deleteSingleMedia = async (usersDispatch, userId, mediaId) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.delete(
       `/api/users/${userId}/delete-media/${mediaId}`
     );
@@ -446,8 +446,8 @@ export const deleteSingleMedia = async (usersDispatch, userId, mediaId) => {
 };
 
 export const deleteSingleImage = async (usersDispatch, userId, imageId) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.delete(
       `/api/users/${userId}/delete-image/${imageId}`
     );
@@ -470,8 +470,8 @@ export const deleteSingleImage = async (usersDispatch, userId, imageId) => {
 };
 
 export const addFavourite = async (usersDispatch, favouriteId) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.post("/api/users/favourites", { favouriteId });
     usersDispatch({
       type: USER_ACTIONS.ADD_FAVOURITE,
@@ -492,8 +492,8 @@ export const addFavourite = async (usersDispatch, favouriteId) => {
 };
 
 export const removeFavourite = async (usersDispatch, favouriteId) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.delete(`/api/users/favourites/${favouriteId}`);
     usersDispatch({
       type: USER_ACTIONS.REMOVE_FAVOURITE,
@@ -514,8 +514,8 @@ export const removeFavourite = async (usersDispatch, favouriteId) => {
 };
 
 export const getAllFavourites = async (usersDispatch) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.get("/api/users/favourites");
     usersDispatch({
       type: USER_ACTIONS.GET_ALL_FAVOURITES,
@@ -536,8 +536,8 @@ export const getAllFavourites = async (usersDispatch) => {
 };
 
 export const getAllReceivedAndSentBookings = async (usersDispatch, userId) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.get(`/api/users/${userId}/bookings`);
     usersDispatch({
       type: USER_ACTIONS.GET_ALL_RECEIVED_AND_SENT_BOOKINGS,
@@ -558,8 +558,8 @@ export const getAllReceivedAndSentBookings = async (usersDispatch, userId) => {
 };
 
 export const getAllReceivedBookings = async (usersDispatch, userId) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.get(`/api/users/${userId}/bookings/received`);
     usersDispatch({
       type: USER_ACTIONS.GET_ALL_RECEIVED_BOOKINGS,
@@ -580,8 +580,8 @@ export const getAllReceivedBookings = async (usersDispatch, userId) => {
 };
 
 export const getAllSentBookings = async (usersDispatch, userId) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.get(`/api/users/${userId}/bookings/sent`);
     usersDispatch({
       type: USER_ACTIONS.GET_ALL_SENT_BOOKINGS,
@@ -602,8 +602,8 @@ export const getAllSentBookings = async (usersDispatch, userId) => {
 };
 
 export const searchForArtistOrVenue = async (usersDispatch, searchParams) => {
+  usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
   try {
-    usersDispatch({ type: USER_ACTIONS.SET_LOADING, payload: true });
     const response = await axios.get("/api/users/search", {
       params: searchParams,
     });
