@@ -24,7 +24,7 @@ export default function VerificationPage() {
     };
 
     verify();
-  }, [token, userId, usersDispatch]);
+  }, []);
 
   if (verificationStatus === "verifying") {
     return (
