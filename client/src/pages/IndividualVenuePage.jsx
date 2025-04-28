@@ -97,11 +97,9 @@ export default function IndividualVenuePage() {
       if (currentVenue.isFavourited) {
         await removeFavourite(usersDispatch, currentVenue._id);
         setCurrentVenue({ ...currentVenue, isFavourited: false });
-        toast.success("Venue removed from favourites.");
       } else {
         await addFavourite(usersDispatch, currentVenue._id);
         setCurrentVenue({ ...currentVenue, isFavourited: true });
-        toast.success("Venue added to favourites.");
       }
     } catch (error) {
       console.error("Failed to update favourites:", error);

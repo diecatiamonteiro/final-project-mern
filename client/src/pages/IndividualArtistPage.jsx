@@ -96,11 +96,9 @@ export default function IndividualArtistPage() {
       if (currentArtist.isFavourited) {
         await removeFavourite(usersDispatch, currentArtist._id);
         setCurrentArtist({ ...currentArtist, isFavourited: false });
-        toast.success("Artist removed from favourites.");
       } else {
         await addFavourite(usersDispatch, currentArtist._id);
         setCurrentArtist({ ...currentArtist, isFavourited: true });
-        toast.success("Artist added to favourites.");
       }
     } catch (error) {
       console.error("Failed to update favourites:", error);
