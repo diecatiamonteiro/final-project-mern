@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { DataContext } from "../contexts/Context";
 import { resetPassword } from "../api/usersApi";
@@ -12,15 +12,26 @@ export default function ResetPasswordPage() {
   const { isLoading } = usersState;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
-  const userId = searchParams.get("userId");
+  
+  // Store token and userId in state
+  const [resetData, setResetData] = useState({
+    token: searchParams.get("token"),
+    userId: searchParams.get("userId")
+  });
+
+  // Verify we have necessary parameters
+  useEffect(() => {
+    if (!resetData.token || !resetData.userId) {
+      navigate("/forgot-password");
+    }
+  }, [resetData.token, resetData.userId, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await resetPassword(usersDispatch, {
-        token,
-        userId,
+        token: resetData.token,
+        userId: resetData.userId,
         newPassword: password,
       });
       navigate("/login");
