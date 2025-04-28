@@ -50,9 +50,6 @@ export default function FavouritesPage() {
 
     try {
       await removeFavourite(usersDispatch, item._id);
-      toast.success(
-        `${item.role === "venue" ? "Venue" : "Artist"} removed from favourites`
-      );
     } catch (error) {
       toast.error("Failed to remove from favourites");
     }

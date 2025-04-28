@@ -37,10 +37,8 @@ export default function ArtistCard({ artist, onFavoriteClick }) {
     try {
       if (artist.isFavourited) {
         await removeFavourite(usersDispatch, artist._id);
-        toast.success("Artist removed from favourites.");
       } else {
         await addFavourite(usersDispatch, artist._id);
-        toast.success("Artist added to favourites.");
       }
     } catch (error) {
       console.error("Failed to update favourites:", error);
@@ -52,7 +50,7 @@ export default function ArtistCard({ artist, onFavoriteClick }) {
 
   return (
     <div
-      className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer flex flex-col transform transition-transform hover:scale-[1.02]"
+      className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer flex flex-col transform transition-transform md:hover:scale-[1.02]"
       onClick={(e) => {
         if (window.innerWidth >= 768) {
           navigate(`/artist/${artist._id}`);

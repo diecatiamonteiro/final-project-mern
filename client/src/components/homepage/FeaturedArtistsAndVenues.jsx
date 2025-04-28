@@ -106,7 +106,6 @@ export default function FeaturedArtistsAndVenues() {
       if (item.isFavourited) {
         // Make API call to remove favourite
         await removeFavourite(usersDispatch, item._id);
-        toast.success(`${type} removed from favourites.`);
 
         // Update local state based on item type (we need to use local state because the API call is async, so it doesn't update immediately)
         if (type === "Artist") {
@@ -129,7 +128,6 @@ export default function FeaturedArtistsAndVenues() {
       else {
         // Make API call to add favourite
         await addFavourite(usersDispatch, item._id);
-        toast.success(`${type} added to favourites.`);
 
         // Update local state based on item type
         if (type === "Artist") {
@@ -205,7 +203,7 @@ export default function FeaturedArtistsAndVenues() {
               randomArtists.map((artist) => (
                 <div
                   key={artist._id || artist.id}
-                  className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer transform transition-transform hover:scale-[1.02]"
+                  className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer transform transition-transform md:hover:scale-[1.02]"
                   onClick={(e) => {
                     // Only handle click on non-mobile screens (from md size and up)
                     if (window.innerWidth >= 768) {
@@ -321,7 +319,7 @@ export default function FeaturedArtistsAndVenues() {
               randomVenues.map((venue) => (
                 <div
                   key={venue._id || venue.id}
-                  className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer transform transition-transform hover:scale-[1.02] flex flex-col"
+                  className="bg-offwhite border border-midnightBlack/10 rounded-lg shadow-lg overflow-hidden cursor-pointer transform transition-transform md:hover:scale-[1.02] flex flex-col"
                   onClick={(e) => {
                     // Only handle click on non-mobile screens (from md size and up)
                     if (window.innerWidth >= 768) {
